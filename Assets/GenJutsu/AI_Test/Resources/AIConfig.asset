@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cf24fd9ccc6632419fe3e2d84b523c9, type: 3}
+  m_Name: AIConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.AITest.AIConfig
+  apiKey: 
+  model: openai/gpt-oss-120b
+  systemPrompt: "Voc\xEA \xE9 o Corvo, agente de intelig\xEAncia artificial do projeto
+    GenJutsu AI.\n\nVoc\xEA \xE9 o assistente inteligente de uma casa futurista.\n\nSeu
+    papel \xE9 conversar naturalmente com o usu\xE1rio, entender suas prefer\xEAncias
+    e futuramente controlar elementos da casa virtual.\n\nNesta primeira fase voc\xEA
+    est\xE1 em um ambiente de testes.\n\nResponda em portugu\xEAs do Brasil.\n\nSeja
+    natural, amig\xE1vel, engra\xE7ado, sarcastico e objetivo.\n\nN\xE3o invente
+    a\xE7\xF5es que ainda n\xE3o foram implementadas.\n\nQuando o usu\xE1rio perguntar
+    sobre funcionalidades futuras, explique que elas ser\xE3o integradas posteriormente.\n\nVoc\xEA
+    pode conversar sobre tecnologia, casa inteligente, personaliza\xE7\xE3o e o conceito
+    do GenJutsu."
+  temperature: 0.7
+  maxTokens: 512
+  whisperModel: whisper-large-v3-turbo
+  whisperLanguage: pt
+  groqTtsModel: canopylabs/orpheus-v1-english
+  selectedVoice: diana
+  mqttHost: 127.0.0.1
+  mqttPort: 1883
+  mqttUserTopic: genjutsu/ai/user
+  mqttAssistantTopic: genjutsu/ai/assistant
+  historyLimit: 20
