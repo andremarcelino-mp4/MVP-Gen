@@ -10,6 +10,7 @@ namespace GenJutsu.TableProps
     {
         [SerializeField] float floorY = 0.15f;
         [SerializeField] float respawnDelay = 3f;
+        [SerializeField] float homeDistance = 0f;
 
         XRGrabInteractable grab;
         Rigidbody body;
@@ -52,6 +53,17 @@ namespace GenJutsu.TableProps
             {
                 belowFloorTimer = 0f;
                 return;
+            }
+
+            if (homeDistance > 0f)
+            {
+                var offset = transform.position - homePosition;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < homeDistance * homeDistance)
+                {
+                    belowFloorTimer = 0f;
+                    return;
+                }
             }
 
             belowFloorTimer += Time.deltaTime;

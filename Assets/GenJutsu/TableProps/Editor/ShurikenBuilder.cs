@@ -29,9 +29,12 @@ namespace GenJutsu.TableProps.EditorTools
             if (rootGo == null)
                 return "Root " + RootName + " not found — run GenJutsu/Rebuild Japanese Table Set first";
 
+            var tableGroup = rootGo.transform.Find("TableGroup");
             foreach (var childName in new[] { "ShurikenStand", "Shuriken" })
             {
                 var existing = rootGo.transform.Find(childName);
+                if (existing == null && tableGroup != null)
+                    existing = tableGroup.Find(childName);
                 if (existing != null)
                     Object.DestroyImmediate(existing.gameObject);
             }
@@ -46,7 +49,7 @@ namespace GenJutsu.TableProps.EditorTools
             var straw = MakeMat("MatoStraw", new Color(0.82f, 0.72f, 0.48f), smoothness: 0.3f);
             var rope = MakeMat("MatoRope", new Color(0.55f, 0.45f, 0.28f), smoothness: 0.25f);
 
-            BuildStand(rootGo.transform, red, gold);
+            BuildStand(tableGroup != null ? tableGroup : rootGo.transform, red, gold);
             var shuriken = BuildShuriken(rootGo.transform, steel, red);
             JapaneseTableBuilder.MakeGrabbable(shuriken, 0.06f);
             shuriken.AddComponent<ShurikenReturn>();

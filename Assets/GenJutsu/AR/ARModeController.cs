@@ -10,7 +10,6 @@ namespace GenJutsu.AR
     {
         [SerializeField] Camera targetCamera;
         [SerializeField] ARCameraManager cameraManager;
-        [SerializeField] GhostSystem ghostSystem;
         [SerializeField] ARRoomController roomController;
         [SerializeField] GravityProvider gravityProvider;
         [SerializeField] GameObject[] vrOnlyObjects;
@@ -31,8 +30,6 @@ namespace GenJutsu.AR
             originalBackgroundColor = Color.clear;
             if (targetCamera != null && !startInAR)
                 targetCamera.clearFlags = originalClearFlags;
-            if (ghostSystem != null)
-                ghostSystem.SetMode(false);
             if (startInAR)
                 SetAR();
         }
@@ -104,8 +101,6 @@ namespace GenJutsu.AR
             SetVrObjectsActive(false);
             if (roomController != null)
                 roomController.ForceHide();
-            if (ghostSystem != null)
-                ghostSystem.SetMode(true);
         }
 
         public void SetVR()
@@ -125,8 +120,6 @@ namespace GenJutsu.AR
             SetVrObjectsActive(true);
             if (roomController != null)
                 roomController.ForceHide();
-            if (ghostSystem != null)
-                ghostSystem.SetMode(false);
         }
 
         void SetVrObjectsActive(bool active)

@@ -118,15 +118,15 @@ namespace GenJutsu.TableProps.EditorTools
             var wood = MakeMat("Wood", new Color(0.35f, 0.22f, 0.12f));
             var ink = MakeMat("InkBlack", new Color(0.05f, 0.05f, 0.06f));
             var stone = MakeMat("Stone", new Color(0.45f, 0.45f, 0.48f));
-            var jade = MakeMat("Jade", new Color(0.25f, 0.75f, 0.45f), true, new Color(0.15f, 0.55f, 0.3f));
+            var jade = MakeMat("Jade", JadeDragonBuilder.JadeBase, true, JadeDragonBuilder.JadeGlow, 0f, JadeDragonBuilder.JadeSmoothness);
             var brushDark = MakeMat("BrushDark", new Color(0.09f, 0.06f, 0.05f), smoothness: 0.25f);
             var brushLacquer = MakeMat("BrushLacquer", new Color(0.15f, 0.07f, 0.05f), smoothness: 0.7f);
             var brushHair = MakeMat("BrushHair", new Color(0.88f, 0.85f, 0.75f), smoothness: 0.4f);
             var teaLiquid = MakeMat("TeaLiquid", new Color(0.52f, 0.31f, 0.12f), smoothness: 0.8f);
 
-            // Table (static) — legs are siblings so parent scale does not squash them.
-            // Top surface ~0.65 m (table center 0.62 + half thickness 0.03).
-            var table = CreatePrimitive(PrimitiveType.Cube, "Table", root.transform, new Vector3(0f, 0.62f, 0f), new Vector3(1.2f, 0.06f, 0.7f), white);
+            var tableGroup = new GameObject("TableGroup");
+            tableGroup.transform.SetParent(root.transform, false);
+            var table = CreatePrimitive(PrimitiveType.Cube, "Table", tableGroup.transform, new Vector3(0f, 0.62f, 0f), new Vector3(1.2f, 0.06f, 0.7f), white);
             Object.DestroyImmediate(table.GetComponent<Collider>());
             table.AddComponent<BoxCollider>();
             foreach (var leg in new[] {
@@ -134,10 +134,18 @@ namespace GenJutsu.TableProps.EditorTools
                 new Vector3(-0.5f, 0.30f, 0.28f), new Vector3(0.5f, 0.30f, 0.28f)
             })
             {
-                var l = CreatePrimitive(PrimitiveType.Cube, "Leg", root.transform, leg, new Vector3(0.06f, 0.60f, 0.06f), white);
+                var l = CreatePrimitive(PrimitiveType.Cube, "Leg", tableGroup.transform, leg, new Vector3(0.06f, 0.60f, 0.06f), white);
                 Object.DestroyImmediate(l.GetComponent<Collider>());
                 l.AddComponent<BoxCollider>();
             }
+            MakeGrabbable(tableGroup, 15f);
+            var tableBody = tableGroup.GetComponent<Rigidbody>();
+            tableBody.centerOfMass = new Vector3(0f, 0.33f, 0f);
+            tableBody.ResetInertiaTensor();
+            AddRespawn(tableGroup);
+            var tableRespawnSo = new SerializedObject(tableGroup.GetComponent<TablePropRespawn>());
+            tableRespawnSo.FindProperty("homeDistance").floatValue = 0.45f;
+            tableRespawnSo.ApplyModifiedPropertiesWithoutUndo();
 
             // Scroll surface — vertical (kakemono): red rolls on ±Z
             var scrollRoot = new GameObject("Scroll");
@@ -189,7 +197,7 @@ namespace GenJutsu.TableProps.EditorTools
             MakeGrabbable(scrollRoot, 0.2f);
             AddRespawn(scrollRoot);
 
-            var rest = CreatePrimitive(PrimitiveType.Cube, "BrushRest", root.transform, new Vector3(0.25f, 0.66f, -0.18f), new Vector3(0.12f, 0.02f, 0.04f), stone);
+            var rest = CreatePrimitive(PrimitiveType.Cube, "BrushRest", tableGroup.transform, new Vector3(0.25f, 0.66f, -0.18f), new Vector3(0.12f, 0.02f, 0.04f), stone);
             Object.DestroyImmediate(rest.GetComponent<Collider>());
             rest.AddComponent<BoxCollider>();
 
