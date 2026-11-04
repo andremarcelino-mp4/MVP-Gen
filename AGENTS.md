@@ -1,5 +1,13 @@
 # AGENTS.md
 
+## Time, aulas GTI e Graphify
+
+- Conceito e papéis (diretor → QA, cyber, CI/CD, IA, smarthome, VR, interiores): [docs/TIME_AGENTICO.md](docs/TIME_AGENTICO.md)
+- Alinhamento disciplinas × MVP: [docs/ALINHAMENTO_GTI.md](docs/ALINHAMENTO_GTI.md)
+- Skills GTI: `.cursor/skills/gti-nlp`, `gti-ml-dl`, `gti-genai-prompt`, `gti-ai-driven-se`, `gti-casa-que-aprende`
+- Unity: `.agents/skills/`
+- Se `graphify-out/` existir, consultar Graphify antes de explorar `Assets/GenJutsu` com Grep
+
 ## Android builds — versionamento (regra permanente)
 
 Antes de CADA novo build de APK, incrementar a versão do projeto via Unity eval:
