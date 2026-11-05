@@ -37,8 +37,8 @@ namespace GenJutsu.ProfileDemo
             director.hubDissolve.duration = 1.35f;
 
             var api = director.GetComponent<SessionApiClient>() ?? director.gameObject.AddComponent<SessionApiClient>();
-            if (director.sessionGate == null)
-                director.sessionGate = BuildGate(director.transform.parent != null ? director.transform.parent : director.transform, api);
+            var parent = director.transform.parent != null ? director.transform.parent : director.transform;
+            director.sessionGate = DedupAndEnsureGate(director.sessionGate, parent, api);
 
             var gaze = director.GetComponent<GazePublisher>() ?? director.gameObject.AddComponent<GazePublisher>();
             var dojo = director.GetComponent<DojoDirector>() ?? director.gameObject.AddComponent<DojoDirector>();
@@ -129,16 +129,57 @@ namespace GenJutsu.ProfileDemo
             return list.ToArray();
         }
 
-        static SessionGate BuildGate(Transform parent, SessionApiClient api)
+        static SessionGate DedupAndEnsureGate(SessionGate preferred, Transform parent, SessionApiClient api)
         {
-            var existing = parent.GetComponentInChildren<SessionGate>(true);
-            if (existing != null)
+            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            SessionGate keep = preferred;
+            if (keep == null)
             {
-                existing.client = api;
-                existing.gameObject.SetActive(true);
-                return existing;
+                foreach (var g in all)
+                {
+                    if (g != null)
+                    {
+                        keep = g;
+                        break;
+                    }
+                }
             }
 
+            foreach (var g in all)
+            {
+                if (g == null || g == keep)
+                    continue;
+                if (Application.isPlaying)
+                    UnityEngine.Object.Destroy(g.gameObject);
+                else
+                    UnityEngine.Object.DestroyImmediate(g.gameObject);
+            }
+
+            if (keep == null)
+                keep = BuildWelcomeCard(parent, api);
+            else
+            {
+                keep.client = api;
+                keep.gameObject.SetActive(true);
+                if (keep.title == null)
+                {
+                    var t = keep.transform.Find("Title");
+                    if (t != null)
+                        keep.title = t.GetComponent<TMP_Text>();
+                }
+                if (keep.status == null)
+                {
+                    var s = keep.transform.Find("Status");
+                    if (s != null)
+                        keep.status = s.GetComponent<TMP_Text>();
+                }
+            }
+
+            return keep;
+        }
+
+        static SessionGate BuildWelcomeCard(Transform parent, SessionApiClient api)
+        {
             var canvasGo = new GameObject("SessionGate", typeof(RectTransform));
             canvasGo.transform.SetParent(parent, false);
             canvasGo.transform.localPosition = new Vector3(0f, 1.15f, 0.55f);
@@ -148,50 +189,22 @@ namespace GenJutsu.ProfileDemo
             canvasGo.AddComponent<CanvasScaler>().dynamicPixelsPerUnit = 4f;
             canvasGo.AddComponent<GraphicRaycaster>();
             var rect = (RectTransform)canvasGo.transform;
-            rect.sizeDelta = new Vector2(920f, 520f);
+            rect.sizeDelta = new Vector2(920f, 360f);
 
             var group = canvasGo.AddComponent<CanvasGroup>();
+            group.interactable = false;
+            group.blocksRaycasts = false;
             FullImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f));
-            var title = Tmp(rect, "Title", "Código da sessão", 48f, new Color(0.16f, 0.18f, 0.22f),
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -88f), new Vector2(-36f, -20f));
+            var title = Tmp(rect, "Title", "Bem-vindo", 48f, new Color(0.16f, 0.18f, 0.22f),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -100f), new Vector2(-36f, -24f));
             title.fontStyle = FontStyles.Bold;
-            var hint = Tmp(rect, "Hint", "O questionário no site escolhe o look. Aqui só entra o código — sem escolher casa.",
-                26f, new Color(0.4f, 0.43f, 0.48f),
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -150f), new Vector2(-36f, -92f));
-            hint.textWrappingMode = TextWrappingModes.Normal;
-
-            var inputGo = new GameObject("Code", typeof(RectTransform));
-            inputGo.transform.SetParent(rect, false);
-            var inputRect = (RectTransform)inputGo.transform;
-            Stretch(inputRect, new Vector2(0f, 0.38f), new Vector2(1f, 0.52f), new Vector2(36f, 0f), new Vector2(-36f, 0f));
-            inputGo.AddComponent<Image>().color = new Color(0.92f, 0.93f, 0.95f, 1f);
-            var field = inputGo.AddComponent<TMP_InputField>();
-            var inputText = Tmp(inputRect, "Text", "", 34f, new Color(0.12f, 0.14f, 0.18f),
-                Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f));
-            inputText.raycastTarget = true;
-            var placeholder = Tmp(inputRect, "Placeholder", "ABCD-1234", 34f, new Color(0.55f, 0.58f, 0.62f),
-                Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f));
-            field.textViewport = inputRect;
-            field.textComponent = inputText;
-            field.placeholder = placeholder;
-            field.lineType = TMP_InputField.LineType.SingleLine;
-            field.characterLimit = 24;
-
-            var buttonGo = new GameObject("Submit", typeof(RectTransform));
-            buttonGo.transform.SetParent(rect, false);
-            var buttonRect = (RectTransform)buttonGo.transform;
-            Stretch(buttonRect, new Vector2(0f, 0.18f), new Vector2(1f, 0.34f), new Vector2(36f, 0f), new Vector2(-36f, 0f));
-            buttonGo.AddComponent<Image>().color = new Color(0.18f, 0.22f, 0.28f);
-            var button = buttonGo.AddComponent<Button>();
-            Tmp(buttonRect, "Label", "Entrar no dojo", 32f, Color.white, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-
-            var status = Tmp(rect, "Status", "", 24f, new Color(0.35f, 0.38f, 0.44f),
-                new Vector2(0f, 0f), new Vector2(1f, 0.18f), new Vector2(36f, 12f), new Vector2(-36f, 0f));
+            var status = Tmp(rect, "Status", "À espera que o anfitrião escolha a sessão no admin.",
+                28f, new Color(0.35f, 0.38f, 0.44f),
+                new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f));
             status.textWrappingMode = TextWrappingModes.Normal;
 
             var gate = canvasGo.AddComponent<SessionGate>();
-            gate.codeField = field;
-            gate.submitButton = button;
+            gate.title = title;
             gate.status = status;
             gate.group = group;
             gate.client = api;

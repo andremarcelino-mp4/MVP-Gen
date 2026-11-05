@@ -7,97 +7,55 @@ using UnityEngine.UI;
 namespace GenJutsu.ProfileDemo
 {
     /// <summary>
-    /// World-space code entry. Valid profile_id starts the morph; invalid/API down stays white.
+    /// Welcome card. Polls the admin-selected session; the visitor never types a code.
     /// </summary>
     public class SessionGate : MonoBehaviour
     {
-        public TMP_InputField codeField;
-        public Button submitButton;
+        public TMP_Text title;
         public TMP_Text status;
         public SessionApiClient client;
         public CanvasGroup group;
+        public float pollSeconds = 2f;
+
+        [HideInInspector] public TMP_InputField codeField;
+        [HideInInspector] public Button submitButton;
 
         public event Action<ProfileId> ProfileResolved;
 
-        bool busy;
+        bool applied;
+        ProfileId appliedId;
+        Coroutine poll;
 
         void Awake()
         {
             GuestSession.Load();
-            if (submitButton != null)
-                submitButton.onClick.AddListener(Submit);
-            if (codeField != null && !string.IsNullOrEmpty(GuestSession.Code))
-                codeField.text = GuestSession.Code;
-            SetStatus("Digite o código do site para entrar no dojo. O ambiente escolhe o look — você não escolhe a casa.", new Color(0.28f, 0.32f, 0.38f));
+            StripCodeControls();
+            ShowWaiting();
         }
 
-        void OnDestroy()
+        void OnEnable()
         {
-            if (submitButton != null)
-                submitButton.onClick.RemoveListener(Submit);
+            if (poll == null)
+                poll = StartCoroutine(PollRoutine());
         }
 
-        void Update()
+        void OnDisable()
         {
-            var kb = UnityEngine.InputSystem.Keyboard.current;
-            if (kb != null && kb.enterKey.wasPressedThisFrame)
-                Submit();
-        }
-
-        public void Submit()
-        {
-            if (busy)
-                return;
-            StartCoroutine(SubmitRoutine());
-        }
-
-        IEnumerator SubmitRoutine()
-        {
-            busy = true;
-            SetInteractable(false);
-            var code = codeField != null ? codeField.text : "";
-            SetStatus("A consultar a sessão…", new Color(0.35f, 0.4f, 0.48f));
-
-#if UNITY_EDITOR
-            if (useEditorMock)
+            if (poll != null)
             {
-                GuestSession.Save(code.Trim(), editorMockProfile);
-                SetStatus("Mock de Editor: look " + editorMockProfile + ".", Profiles.Get(editorMockProfile).Accent);
-                ProfileResolved?.Invoke(editorMockProfile);
-                busy = false;
-                yield break;
+                StopCoroutine(poll);
+                poll = null;
             }
-#endif
-
-            if (client == null)
-            {
-                SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
-                busy = false;
-                SetInteractable(true);
-                yield break;
-            }
-
-            SessionApiClient.Result result = default;
-            yield return client.Fetch(code, r => result = r);
-            if (!result.ok)
-            {
-                DemoSfx.Play(DemoSfx.Kind.Error, transform.position, 0.35f, 0.9f);
-                SetStatus(result.error, new Color(0.65f, 0.22f, 0.22f));
-                busy = false;
-                SetInteractable(true);
-                yield break;
-            }
-
-            GuestSession.Save(code.Trim(), result.profile);
-            SetStatus("Sessão " + Profiles.Get(result.profile).Title + ". O espaço muda consigo.", Profiles.Get(result.profile).Accent);
-            ProfileResolved?.Invoke(result.profile);
-            busy = false;
         }
 
         public void HideAfterMorph()
         {
             if (group != null)
+            {
                 group.interactable = false;
+                group.blocksRaycasts = false;
+            }
+
             gameObject.SetActive(false);
         }
 
@@ -105,22 +63,101 @@ namespace GenJutsu.ProfileDemo
         {
             gameObject.SetActive(true);
             if (group != null)
+            {
                 group.alpha = 1f;
-            SetInteractable(true);
-            busy = false;
+                group.interactable = false;
+                group.blocksRaycasts = false;
+            }
+
+            applied = false;
+            ShowWaiting();
+            if (isActiveAndEnabled && poll == null)
+                poll = StartCoroutine(PollRoutine());
         }
 
-        void SetInteractable(bool on)
+        IEnumerator PollRoutine()
         {
-            if (group != null)
+#if UNITY_EDITOR
+            if (useEditorMock)
             {
-                group.interactable = on;
-                group.blocksRaycasts = on;
+                var mockName = string.IsNullOrWhiteSpace(editorMockName) ? "Visitante" : editorMockName.Trim();
+                GuestSession.Save("EDITOR", mockName, editorMockProfile);
+                ShowWelcome(mockName, Profiles.Get(editorMockProfile).Title);
+                Notify(editorMockProfile);
+                yield break;
             }
-            if (submitButton != null)
-                submitButton.interactable = on;
-            if (codeField != null)
-                codeField.interactable = on;
+#endif
+            while (enabled)
+            {
+                if (client == null)
+                {
+                    SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
+                    yield return new WaitForSecondsRealtime(pollSeconds);
+                    continue;
+                }
+
+                SessionApiClient.Result result = default;
+                yield return client.FetchActive(r => result = r);
+                ApplyResult(result);
+                yield return new WaitForSecondsRealtime(Mathf.Max(1f, pollSeconds));
+            }
+        }
+
+        void ApplyResult(SessionApiClient.Result result)
+        {
+            switch (result.kind)
+            {
+                case SessionApiClient.Kind.WaitingForAdmin:
+                    if (!applied)
+                        ShowWaiting();
+                    return;
+                case SessionApiClient.Kind.Down:
+                    if (!applied)
+                        SetStatus(result.error, new Color(0.65f, 0.22f, 0.22f));
+                    return;
+                case SessionApiClient.Kind.Incomplete:
+                    GuestSession.Save(result.sessionCode, result.displayName, null);
+                    ShowWelcome(result.displayName, null);
+                    SetStatus("A casa ainda não tem perfil ZCEA. Permaneça no branco.", new Color(0.45f, 0.38f, 0.22f));
+                    return;
+                case SessionApiClient.Kind.Ready:
+                    GuestSession.Save(result.sessionCode, result.displayName, result.profile);
+                    ShowWelcome(result.displayName, Profiles.Get(result.profile).Title);
+                    Notify(result.profile);
+                    return;
+            }
+        }
+
+        void Notify(ProfileId id)
+        {
+            if (applied && appliedId == id)
+                return;
+            applied = true;
+            appliedId = id;
+            ProfileResolved?.Invoke(id);
+        }
+
+        void ShowWaiting()
+        {
+            SetTitle("Bem-vindo");
+            SetStatus("À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.",
+                new Color(0.28f, 0.32f, 0.38f));
+        }
+
+        void ShowWelcome(string rawName, string lookTitle)
+        {
+            var name = string.IsNullOrWhiteSpace(rawName) ? "visitante" : rawName.Trim();
+            SetTitle("Bem-vindo, " + name);
+            if (!string.IsNullOrEmpty(lookTitle))
+                SetStatus("Olá, " + name + ". A casa assume o look " + lookTitle + ".", new Color(0.28f, 0.32f, 0.38f));
+            else
+                SetStatus("Olá, " + name + ".", new Color(0.28f, 0.32f, 0.38f));
+        }
+
+        void SetTitle(string text)
+        {
+            if (title != null)
+                title.text = text;
         }
 
         void SetStatus(string text, Color color)
@@ -131,9 +168,27 @@ namespace GenJutsu.ProfileDemo
             status.color = color;
         }
 
+        void StripCodeControls()
+        {
+            if (codeField != null)
+                codeField.gameObject.SetActive(false);
+            if (submitButton != null)
+                submitButton.gameObject.SetActive(false);
+            HideChild("Code");
+            HideChild("Submit");
+        }
+
+        void HideChild(string name)
+        {
+            var t = transform.Find(name);
+            if (t != null)
+                t.gameObject.SetActive(false);
+        }
+
 #if UNITY_EDITOR
         [Header("QA Editor only — never invent a look in a device build")]
         public bool useEditorMock;
+        public string editorMockName = "André";
         public ProfileId editorMockProfile = ProfileId.Zen;
 #endif
     }

@@ -234,7 +234,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
 
         static SessionGate BuildSessionGate(Transform root)
         {
-            var canvas = WorldCanvas("SessionGate", root, new Vector2(920f, 520f), 0.00115f);
+            var canvas = WorldCanvas("SessionGate", root, new Vector2(920f, 360f), 0.00115f);
             canvas.transform.localPosition = new Vector3(0f, 1.15f, 0.55f);
             canvas.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             var xrRay = System.Type.GetType("UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster, Unity.XR.Interaction.Toolkit");
@@ -242,49 +242,18 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 canvas.gameObject.AddComponent(xrRay);
 
             var group = canvas.gameObject.AddComponent<CanvasGroup>();
+            group.interactable = false;
+            group.blocksRaycasts = false;
             var rect = (RectTransform)canvas.transform;
             UIImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            var title = UIText(rect, "Title", "Código da sessão", 48f, new Color(0.16f, 0.18f, 0.22f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -88f), new Vector2(-36f, -20f), TextAlignmentOptions.BottomLeft);
+            var title = UIText(rect, "Title", "Bem-vindo", 48f, new Color(0.16f, 0.18f, 0.22f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -100f), new Vector2(-36f, -24f), TextAlignmentOptions.BottomLeft);
             title.fontStyle = FontStyles.Bold;
-            UIText(rect, "Hint", "O questionário no site escolhe o look. Aqui só entra o código — sem escolher casa.", 26f, new Color(0.4f, 0.43f, 0.48f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -150f), new Vector2(-36f, -92f), TextAlignmentOptions.TopLeft).textWrappingMode = TextWrappingModes.Normal;
-
-            var inputGo = new GameObject("Code", typeof(RectTransform));
-            inputGo.transform.SetParent(rect, false);
-            var inputRect = (RectTransform)inputGo.transform;
-            inputRect.anchorMin = new Vector2(0f, 0.38f);
-            inputRect.anchorMax = new Vector2(1f, 0.52f);
-            inputRect.offsetMin = new Vector2(36f, 0f);
-            inputRect.offsetMax = new Vector2(-36f, 0f);
-            var inputBg = inputGo.AddComponent<UnityEngine.UI.Image>();
-            inputBg.color = new Color(0.92f, 0.93f, 0.95f, 1f);
-            var field = inputGo.AddComponent<TMP_InputField>();
-            var inputText = UIText(inputRect, "Text", "", 34f, new Color(0.12f, 0.14f, 0.18f), Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f), TextAlignmentOptions.MidlineLeft);
-            inputText.raycastTarget = true;
-            var placeholder = UIText(inputRect, "Placeholder", "ABCD-1234", 34f, new Color(0.55f, 0.58f, 0.62f), Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f), TextAlignmentOptions.MidlineLeft);
-            field.textViewport = inputRect;
-            field.textComponent = inputText;
-            field.placeholder = placeholder;
-            field.lineType = TMP_InputField.LineType.SingleLine;
-            field.characterLimit = 24;
-
-            var buttonGo = new GameObject("Submit", typeof(RectTransform));
-            buttonGo.transform.SetParent(rect, false);
-            var buttonRect = (RectTransform)buttonGo.transform;
-            buttonRect.anchorMin = new Vector2(0f, 0.18f);
-            buttonRect.anchorMax = new Vector2(1f, 0.34f);
-            buttonRect.offsetMin = new Vector2(36f, 0f);
-            buttonRect.offsetMax = new Vector2(-36f, 0f);
-            buttonGo.AddComponent<UnityEngine.UI.Image>().color = new Color(0.18f, 0.22f, 0.28f);
-            var button = buttonGo.AddComponent<UnityEngine.UI.Button>();
-            UIText(buttonRect, "Label", "Entrar no dojo", 32f, Color.white, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAlignmentOptions.Center).raycastTarget = false;
-
-            var status = UIText(rect, "Status", "", 24f, new Color(0.35f, 0.38f, 0.44f), new Vector2(0f, 0f), new Vector2(1f, 0.18f), new Vector2(36f, 12f), new Vector2(-36f, 0f), TextAlignmentOptions.TopLeft);
+            var status = UIText(rect, "Status", "À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.", 28f, new Color(0.35f, 0.38f, 0.44f), new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f), TextAlignmentOptions.TopLeft);
             status.textWrappingMode = TextWrappingModes.Normal;
             status.raycastTarget = false;
 
             var gate = canvas.gameObject.AddComponent<SessionGate>();
-            gate.codeField = field;
-            gate.submitButton = button;
+            gate.title = title;
             gate.status = status;
             gate.group = group;
             return gate;

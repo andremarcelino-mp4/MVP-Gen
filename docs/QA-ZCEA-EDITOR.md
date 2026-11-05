@@ -1,42 +1,37 @@
 # QA — hub ZCEA no Editor (Device Simulator)
 
-Fluxo de produto: **sala branca com mesa + pergaminho** → código da sessão → **morph gradual** no look `Zen|Cyber|Excentrico|Acolhedor`. O visitante **não escolhe casa**.
+Fluxo: **sala branca com mesa + pergaminho** → o admin escolhe a sessão no site → card **“Bem-vindo, {nome}”** → **morph** no look `Zen|Cyber|Excentrico|Acolhedor`. O visitante **não escolhe casa** e **não digita código**.
 
 ## Cena
 
-1. Abrir `Assets/Scenes/SampleScene.unity` (o root `ProfileDemo` está **activo**; `TableTokens` está desligado).
-2. Play. `ZceaHubBootstrap` cria SessionGate / morph / dissolve se o builder ainda não tiver corrido.
-3. Opcional: menu **GenJutsu / Profile Demo / Build Demo** para regenerar a hierarquia.
-4. **Game** view → Device Simulator (Quest / tablet paisagem).
+1. Abrir `Assets/Scenes/SampleScene.unity` (`ProfileDemo` activo; `TableTokens` desligado).
+2. Play. Deve haver **um único** card (não dois painéis “Código da sessão”).
+3. Sem InputField e sem botão “Entrar no dojo”.
 
-## Código válido → morph
+## Admin no site → morph
 
-1. No painel **Código da sessão**, escrever o código emitido por `https://genjutsuai.vercel.app`.
-2. **Entrar no dojo** (ou Enter).
-3. Esperado: `GET https://genjutsuai.vercel.app/api/session?code=…` → `profile_id` → luz, depois materiais, depois props (~2,6 s). Mesa e pergaminho **dissolvem**; não desaparecem num frame.
-4. Look correcto (volumes URP já existentes). Sem corvo.
+1. Abrir `https://genjutsuai.vercel.app/admin` e iniciar a sessão de um visitante.
+2. No headset/Editor, o poll `GET /api/session` (sem código) deve mostrar **Bem-vindo, {nome}**.
+3. Se `profile_id` for `Zen|Cyber|Excentrico|Acolhedor`: morph ~2,6 s (luz → materiais → props). Mesa e pergaminho dissolvem.
+4. Se `profile_id` for `null`: nome no card, **permanece no branco** (o site ainda não inferiu o look).
+5. Sem sessão no admin (`no_current_session`): “à espera do anfitrião”, branco.
 
-## Código inválido / API down
+## API down
 
-1. Código lixo, ou desligar rede.
-2. Esperado: permanece no **branco com mesa + pergaminho**, mensagem de erro, **nenhum look inventado**.
+Desligar rede: branco + mensagem. Sem look inventado.
 
-## Mock só no Editor (se a API estiver em baixo)
+## Mock só no Editor
 
-No `SessionGate`, ligar **Use Editor Mock** e escolher `editorMockProfile`. Isto **não existe** em build de device. Não é um picker de produto.
+No `SessionGate`, **Use Editor Mock**, `editorMockName` (ex. André) e `editorMockProfile`. Não existe em build de device.
 
-## Atalhos Editor (compilados fora do player)
+## Atalhos Editor
 
-`1`–`4` Zen/Cyber/Excentrico/Acolhedor, `0` volta ao branco. Só para QA.
-
-## Tokens da mesa
-
-Se existirem de um build antigo, `ProfileToken.opensHouse` fica **false**. Não abrem casa. Rebuild do demo deixa de criar tokens como seletor.
+`1`–`4` looks, `0` volta ao branco. Só QA.
 
 ## Gaze
 
-`GazePublisher` calcula yaw/pitch da cabeça; **não** envia Broadcast nesta PR (`docs/GAZE-PUBLISHER.md`).
+Stub. Ver `docs/GAZE-PUBLISHER.md`.
 
-## Sem Unity neste ambiente
+## Contrato HTTP
 
-A VM pode não ter o Editor. Entrega = C# + builder. No Mac/PC com Unity `6000.5.10f1`, correr o menu Build Demo e o loop acima.
+`docs/CONTRATO-SESSAO-QUEST.md`.

@@ -3,14 +3,16 @@ using UnityEngine;
 namespace GenJutsu.ProfileDemo
 {
     /// <summary>
-    /// Anonymous headset session: pairing code + resolved profile_id. Local only (PlayerPrefs).
+    /// Headset mirror of the admin-selected guest. Local cache only (PlayerPrefs).
     /// </summary>
     public static class GuestSession
     {
         const string CodeKey = "genjutsu.guest.code";
         const string ProfileKey = "genjutsu.guest.profile_id";
+        const string NameKey = "genjutsu.guest.display_name";
 
         public static string Code { get; private set; } = "";
+        public static string DisplayName { get; private set; } = "";
         public static ProfileId? Profile { get; private set; }
 
         public static bool HasProfile => Profile.HasValue;
@@ -18,23 +20,22 @@ namespace GenJutsu.ProfileDemo
         public static void Load()
         {
             Code = PlayerPrefs.GetString(CodeKey, "");
+            DisplayName = PlayerPrefs.GetString(NameKey, "");
             var raw = PlayerPrefs.GetString(ProfileKey, "");
             Profile = Profiles.TryParse(raw, allowEditorFallback: false, out var id) ? id : (ProfileId?)null;
         }
 
-        public static void Save(string code, ProfileId profile)
+        public static void Save(string code, string displayName, ProfileId? profile)
         {
             Code = code ?? "";
+            DisplayName = displayName ?? "";
             Profile = profile;
             PlayerPrefs.SetString(CodeKey, Code);
-            PlayerPrefs.SetString(ProfileKey, Profiles.Get(profile).Key);
-            PlayerPrefs.Save();
-        }
-
-        public static void ClearProfileKeepCode()
-        {
-            Profile = null;
-            PlayerPrefs.DeleteKey(ProfileKey);
+            PlayerPrefs.SetString(NameKey, DisplayName);
+            if (profile.HasValue)
+                PlayerPrefs.SetString(ProfileKey, Profiles.Get(profile.Value).Key);
+            else
+                PlayerPrefs.DeleteKey(ProfileKey);
             PlayerPrefs.Save();
         }
     }

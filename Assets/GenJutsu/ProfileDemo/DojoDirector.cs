@@ -47,7 +47,7 @@ namespace GenJutsu.ProfileDemo
 
         void OnProfile(ProfileId id)
         {
-            if (demo != null)
+            if (demo != null && demo.Current == ProfileDemoDirector.State.WhiteSpace)
                 demo.EnterLookFromSession(id);
             if (gaze != null && GuestSession.HasProfile)
                 gaze.StartSession(GuestSession.Code, id);
