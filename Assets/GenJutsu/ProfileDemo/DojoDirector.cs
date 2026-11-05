@@ -28,14 +28,21 @@ namespace GenJutsu.ProfileDemo
 
         void OnEnable()
         {
-            if (gate != null)
-                gate.ProfileResolved += OnProfile;
+            Bind();
         }
 
         void OnDisable()
         {
             if (gate != null)
                 gate.ProfileResolved -= OnProfile;
+        }
+
+        public void Bind()
+        {
+            if (gate == null)
+                return;
+            gate.ProfileResolved -= OnProfile;
+            gate.ProfileResolved += OnProfile;
         }
 
         void OnProfile(ProfileId id)

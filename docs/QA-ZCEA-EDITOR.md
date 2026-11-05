@@ -4,10 +4,10 @@ Fluxo de produto: **sala branca com mesa + pergaminho** → código da sessão �
 
 ## Cena
 
-1. Abrir `Assets/Scenes/SampleScene.unity`.
-2. Menu **GenJutsu / Profile Demo / Build Demo** (reescreve o root `ProfileDemo` com SessionGate + DojoShell).
-3. Confirmar na hierarquia: `JapaneseTableSet` ativo, `Scroll` ativo, `ProfileDemo/SessionGate`, `ProfileDemo/DojoShell`, `ProfileDemo/Director` com `DojoDirector` + `ProfileMorph` + `HubPropsDissolve`.
-4. **Game** view → Device Simulator (Quest / tablet paisagem). Play.
+1. Abrir `Assets/Scenes/SampleScene.unity` (o root `ProfileDemo` está **activo**; `TableTokens` está desligado).
+2. Play. `ZceaHubBootstrap` cria SessionGate / morph / dissolve se o builder ainda não tiver corrido.
+3. Opcional: menu **GenJutsu / Profile Demo / Build Demo** para regenerar a hierarquia.
+4. **Game** view → Device Simulator (Quest / tablet paisagem).
 
 ## Código válido → morph
 

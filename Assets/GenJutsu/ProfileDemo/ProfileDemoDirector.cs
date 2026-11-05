@@ -60,6 +60,7 @@ namespace GenJutsu.ProfileDemo
         void Awake()
         {
             Instance = this;
+            ZceaHubBootstrap.Ensure(this);
             if (shell != null)
                 shell.HideAllLooksImmediate();
             else
