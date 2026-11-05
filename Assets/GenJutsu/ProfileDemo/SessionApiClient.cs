@@ -78,7 +78,8 @@ namespace GenJutsu.ProfileDemo
                 TryJsonString(body, "code", out code);
 
             var hasRaw = TryExtractProfileId(body, out var raw);
-            var parsed = hasRaw && Profiles.TryParse(raw, allowEditorFallback: false, out var id);
+            ProfileId id = default;
+            var parsed = hasRaw && Profiles.TryParse(raw, allowEditorFallback: false, out id);
             done?.Invoke(new Result
             {
                 kind = parsed ? Kind.Ready : Kind.Incomplete,
