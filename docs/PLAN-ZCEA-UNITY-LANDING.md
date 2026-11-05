@@ -20,7 +20,7 @@ GenJutsu AI é uma **Smart Home Cognitiva**: o ambiente compreende, responde e e
 Regras que o runtime **não pode violar**:
 
 1. **O visitante não escolhe a casa.** Nome + questionário no site mapeiam sozinhos para Z / C / E / A. O headset lê `profile_id` estável. Não há picker de casa no Quest (nem tokens de mesa, nem teclas 1–4 em build de dispositivo).
-2. **Uma casca, quatro looks.** A jornada espacial é: sala branca (neutro) → morph no **mesmo shell de dojo** com variante de perfil. Não são quatro geometrias de casa independentes como destino final do produto (o demo atual em `ProfileDemo` ainda constrói quatro casas distintas — ver inventário e gaps).
+2. **Uma casca, quatro looks.** A jornada espacial é: sala branca (neutro) **com mesa + pergaminho** → **morph gradual** (não corte seco) no **mesmo shell de dojo** com variante de perfil. Mesa e pergaminho **dissolvem como mágica** durante o morph. Não são quatro geometrias de casa independentes como destino final do produto (o demo atual em `ProfileDemo` ainda constrói quatro casas distintas — ver inventário e gaps).
 3. **Sessão anônima + código.** O site emite um código; o Quest envia esse código a `GET /api/session` e recebe `profile_id`. Sem conta Google obrigatória no headset.
 4. **Físico ↔ digital via gaze.** O yaw/pitch da cabeça no Quest espelha a casa GLTF na landing. Canal: **Supabase Realtime Broadcast** (não Presence, não `UPDATE` Postgres a 30 Hz).
 5. **Hero Mix B2 v1 é contrato visual da landing, não commit agora.** Casa 3D orbitável **sem moldura/bezel**, **sem corvo no dojo**, órbita real Three.js/GLTF (não CSS spin de PNG). **Não subir o hero até André pedir.**
@@ -58,15 +58,15 @@ Fonte: `docs/TIME_AGENTICO.md` e `docs/ALINHAMENTO_GTI.md` em `origin/cursor/des
 | **Diretor de produto** | Corta picker de casa, hero commit, ESP32; confirma UUID e strings `profile_id`. | `gti-casa-que-aprende`, `gti-genai-prompt` |
 | **Tech lead / AI-Driven SE** | Arquitetura DojoShell / SessionGate / GazePublisher; Graphify após C#; git. | `gti-ai-driven-se`, `.agents/skills/unity-cli`, Graphify |
 | **Especialista smarthome** | Sensor (cabeça) → decisão (look) → atuador (morph + landing). MQTT só fase 2. | `gti-casa-que-aprende` |
-| **Especialista VR (Quest 3)** | Conforto do morph, URP Performance, sem `stereoTargetEye` SRP, Device Simulator. | XRI / URP skills; Meta comfort |
-| **Design de interiores** | Fidelidade visual do dojo às refs; paleta ZCEA no **mesmo shell**; labels 1,5–2 m. | WELL/IEQ |
+| **Especialista VR (Quest 3)** | Conforto do morph **gradual** (≤ ~2–3 s, sem hop de câmara, sem corte); URP Performance; Device Simulator. | XRI / URP skills; Meta comfort |
+| **Design de interiores** | Hub branco com mesa + pergaminho de orientação; fidelidade do dojo; paleta ZCEA no **mesmo shell**. | WELL/IEQ |
 | **QA** | Play com `Time.frameCount` avançando (`playmode-verification-loop.md`); SessionGate; regressão mesa. | `unity-cli` |
 | **Cybersegurança** | TLS no `GET /api/session`; anon keys só publishable; sem secrets no git; Broadcast ≠ vazamento de PII. | OWASP MASVS; recusar exploits |
 | **Dados e privacidade** | Código de sessão + `profile_id` persistidos no device; gaze **efémero** (não gravar 15 Hz). LGPD. | TIME_AGENTICO |
 | **CI/CD** | Sem GitHub Actions nesta rodada. APK: `unity command build`, nunca `unity build` de topo; bump `bundleVersion`. | `AGENTS.md` (só na branch de referência) |
 | **Knowledge / Graphify** | Se `graphify-out/` existir, `graphify query` antes de Grep em `Assets/GenJutsu`; `graphify update .` depois de C#. | `.cursor/skills/graphify` |
-| **Audio lead** | Trilha por look no morph; sem clip 3D estéreo. | `optimize-audio` |
-| **UX / pesquisa** | Jornada: código → branco → morph; sem “escolha outro objeto”. | — |
+| **Audio lead** | One-shot leve **opcional** no início do morph; trilha por look depois; sem clip 3D estéreo. | `optimize-audio` |
+| **UX / pesquisa** | Jornada: código na sala branca (mesa + pergaminho) → morph mágico; sem “escolha outro objeto”. | — |
 | **Ética de IA** | ZCEA são modos de casa, não laudo. | — |
 | **Landing (repo externo)** | Viewer GLTF, look por `profile_id`, idle vs live gaze. **Outro agente / outro repo.** | — |
 
@@ -85,10 +85,11 @@ Fluxo obrigatório em PRs de código: Diretor (escopo) → Tech lead (diff) → 
          │ HTTPS                        │ Broadcast (não Presence,
          ▼                              │ não Postgres UPDATE)
 [Quest SessionGate] ── profile_id ──► [DojoRuntime]
-  GuestSession (código, profile)         NeutralLook (branco)
+  GuestSession (código, profile)                                                  NeutralLook (branco + mesa + pergaminho)
+                                         HubPropsDissolve (mesa/scroll fade)
                                          DojoShell (mesh/estrutura única)
                                          ProfileLook Z|C|E|A (materiais, luz, props)
-                                         ProfileMorph (branco → look)
+                                         ProfileMorph (gradual: luz → mats → props)
                                          GazePublisher (head forward yaw/pitch)
                                                 │
                                                 ▼
@@ -104,14 +105,37 @@ Componentes lógicos (nomes de contrato; pastas sugeridas `Assets/GenJutsu/Dojo/
 | Componente | Responsabilidade |
 |---|---|
 | `DojoShell` | Geometria compartilhada: piso, pilares, telhado/linhas do dojo, escala humana. Uma hierarquia. Sem corvo. |
-| `NeutralLook` | Sala branca: chão/céu pálidos já explorados em `SampleScene` (`BackdropGround` / horizonte branco na PR #1). Hub antes do morph. |
+| `NeutralLook` | Sala branca: chão/céu pálidos (`BackdropGround` / horizonte branco, PR #1) **e hub com mesa + pergaminho** (orientação / SessionGate). Não é um vazio sem props. |
+| `HubProps` | Mesa japonesa existente (`JapaneseTableSet` / `TableProps`) + **pergaminho** (`Scroll` / `ScrollCanvas` em `Assets/GenJutsu/TableProps/`). Copy de sugestão, **não** seletor ZCEA. |
 | `ProfileLook` | ScriptableObject ou volume+materiais por `ProfileId`: paleta, fog, luz, props de perfil **parented ao shell**, não um segundo edifício. |
-| `ProfileMorph` | Transição temporal branco → look (e opcionalmente look → branco no fim). Reutilizar a ideia de anéis/`HouseTransition` **sobre o mesmo shell**, não spawnar 4 casas. |
-| `DojoDirector` | Substitui o loop “escolha token → EnterProfile”. Só entra no look depois de `GuestSession.profile_id` válido. |
+| `ProfileMorph` | Transição **gradual** branco → look no **mesmo shell** (nunca corte seco / `SetActive` instantâneo do destino). Sequência: **luz → materiais → props do look**. Duração total **≤ ~2–3 s**. Opcionalmente look → branco no fim, também gradual. |
+| `HubPropsDissolve` | Durante o morph, mesa e pergaminho **somem como mágica** (dissolve/fade/VFX leve). Proibido teleport, `Destroy` no frame 0, ou pop-out. |
+| `DojoDirector` | Substitui o loop “escolha token → EnterProfile”. Só dispara o morph depois de `GuestSession.profile_id` válido. |
 
 Fidelidade: Interior Design compara com **imagens de referência do dojo** (fornecer pasta `docs/refs/dojo/` quando existirem; hoje **não há** imagens de dojo versionadas neste repo). Até lá, o Zen house em `ProfileDemoHouses.cs` (tatami, papel, lanternas, bambu) é a melhor proxy **procedural**, mas é uma casa inteira, não um look.
 
-**Proibido no headset:** `ProfileToken` como seletor de destino; teclado 1–4 em player; UI “escolha sua casa”. Tokens da mesa, se existirem, viram decoração ou são desligados no build Quest.
+**Proibido no headset:** `ProfileToken` como seletor de destino; teclado 1–4 em player; UI “escolha sua casa”. Tokens da mesa, se existirem, **não** abrem casas; no hub só mesa + pergaminho de orientação.
+
+#### Contrato do morph (pedido André, 2026-11-05)
+
+Estado inicial do hub = **sala branca com mesa + pergaminho**. O pergaminho sugere o código / a jornada; a mesa ancora o espaço. Depois do SessionGate com `profile_id`:
+
+| Tempo (relativo, total ≤ ~2–3 s) | O que muda | O que **não** acontece |
+|---|---|---|
+| t0 | One-shot de áudio **leve e opcional** (whoosh/chime baixo). Câmara **fixa no XR Origin** (o jogador não é teleportado). | Hard cut para o dojo; swap de cena. |
+| ~0–30% | **Luz:** directional + ambient + fog interpolam rumo ao `ProfileLook`. Volume URP `weight` sobe. | Flash full-white; exposição que estoura. |
+| ~20–70% | **Materiais / shell:** albedo/emission do `DojoShell` revelam o look (lerp ou dissolve de superfície). | `SetActive(true)` no dojo inteiro num único frame. |
+| ~40–100% | **Props do look** (lanternas, estações, etc.) aparecem em fade/rise suave. | Spawn pop; scale bounce agressivo (`EaseOutBack` forte do demo). |
+| **Sobreposto ~0–80%** | **Mesa + pergaminho dissolvem** (alpha / dither / VFX de partículas leve). Colliders da mesa desligam quando o fade passou o ponto de não-interação (~50%). | Teleporte da mesa para (0,−99,0); `Destroy` imediato; mesa a atravessar o chão do dojo. |
+
+Critérios de pronto (QA + VR):
+
+- Um observador **não** descreve a transição como “corte” ou “a mesa sumiu de um frame para o outro”.
+- No fim, a mesa e o pergaminho **não** estão no dojo (nem invisíveis com collider).
+- Duração medida (Time) entre 2,0 e 3,0 s inclusive, salvo o Diretor afinar.
+- Áudio one-shot ausente **não** bloqueia o morph (feature flag / clip nulo).
+
+O `HouseTransition` atual (anéis de scale a partir da cabeça) pode inspirar o **rise do shell**, mas **não** substitui o dissolve da mesa nem a ordem luz → materiais → props.
 
 ### 3.2 UNITY — Secções / cenas
 
@@ -146,8 +170,8 @@ Inventário e proposta (não criar as cenas neste PR).
 
 Manter **uma cena de runtime** (`SampleScene` ou rename futuro `QuestSession.unity`) com áreas lógicas, não additive scenes no v1 (menos churn de XR Origin):
 
-1. **Hub branco** — mesa opcional, UI de código (`SessionGate` world-space uGUI — skill `.agents/skills/ui-ugui`).
-2. **Dojo shell** — inativo ou em NeutralLook até sessão válida; morph in-place.
+1. **Hub branco** — **obrigatório:** mesa + pergaminho (orientação) + UI de código (`SessionGate` world-space uGUI — skill `.agents/skills/ui-ugui`). Outros props da mesa (chá, shuriken, dragão) ficam **desligados** no hub de produto, salvo o Diretor reabrir.
+2. **Dojo shell** — presente na cena mas em NeutralLook / peso 0 até sessão válida; morph **in-place e gradual**.
 3. **Conteúdo por perfil** — children tagged do `ProfileLook`, enable por id. Reaproveitar atividades do ProfileDemo **só as do look ativo**, sem as outras três casas em memória se o budget Quest apertar (ver riscos).
 4. **Não** criar cena por letra ZCEA.
 
@@ -168,9 +192,9 @@ Additive scenes (`Hub.unity` + `Dojo.unity`) só se o Tech lead medir pico de RA
 
 1. Mostrar teclado/código world-space (uGUI + XR poke).
 2. `GET {SITE}/api/session?code={CODE}` (query exacta a **confirmar** com o repo do site; o GET sem query em 2026-11-05 devolveu HTTP 404 — esperado).
-3. Sucesso → guardar `GuestSession` → esconder gate → `DojoDirector.Morph(profile_id)`.
-4. Código inválido → mensagem, permanece no branco, **não morph**.
-5. API down / timeout → retry limitado + modo degradado: permanece NeutralLook; **não** inventar perfil; opcional “usar último `profile_id` cacheado” só se o código coincidir.
+3. Sucesso → guardar `GuestSession` → esconder gate (fade da UI) → `DojoDirector.Morph(profile_id)` **gradual** (secção 3.1). Mesa/pergaminho ainda visíveis em t0; dissolvem **durante** o morph.
+4. Código inválido → mensagem, permanece no branco **com mesa + pergaminho**, **não morph**.
+5. API down / timeout → retry limitado + modo degradado: permanece NeutralLook (mesa + pergaminho); **não** inventar perfil; opcional “usar último `profile_id` cacheado” só se o código coincidir.
 6. Sem seletor ZCEA de fallback no headset.
 
 Modelo User vs Guest: no Quest v1 existe só **Guest** (código). Não há Unity Authentication. O site pode ter Google; o headset não precisa do token Google.
@@ -272,7 +296,7 @@ ESP32 / MQTT: **fase 2** (roteiro). Não entra no APK v1 nem neste contrato.
 
 | Item | `main` | `cursor/desktop-xr-simulator-play` | Gap vs produto |
 |---|---|---|---|
-| Mesa + props | Sim | Sim + dragão mais realista | Hub ok |
+| Mesa + props | Sim (`JapaneseTableSet`, `Scroll`) | Sim + dragão mais realista | Hub **deve** usar mesa + pergaminho; dissolve no morph ainda **não existe** |
 | Horizonte branco | Sim (PR #1) | Sim | NeutralLook parcial |
 | XR Simulator desktop | Sim (PR #1) | Sim | QA no Editor |
 | ProfileDemo 4 casas | **Não** | Sim | Trazer código **sem** o picker |
@@ -304,17 +328,19 @@ Packages relevantes (`Packages/manifest.json`): URP 17.5, XRI 3.5.1, XR Hands 1.
 
 - [ ] Merge seletivo de `Assets/GenJutsu/ProfileDemo/` + docs GTI/`AGENTS.md`/`.cursor/skills` a partir de `origin/cursor/desktop-xr-simulator-play`
 - [ ] Desligar `ProfileToken` e teclas 1–4 **em player** (manter teclas só `#if UNITY_EDITOR` para QA)
-- [ ] QA: Play mode loop; mesa não desaparece; demo oculta não quebra hub
+- [ ] QA: Play mode loop; **mesa + pergaminho visíveis no hub**; demo oculta não quebra hub
 - **Pronto:** `main` compila; 4 casas ainda existem como **laboratório**, não como jornada do visitante.
 
-### Fase 2 — DojoShell + looks + morph
+### Fase 2 — DojoShell + looks + morph gradual
 
 - [ ] Extrair shell comum (começar pelo layout Zen como geometria base)
 - [ ] `ProfileLook` Z/C/E/A (volumes já em `ProfileDemo/Volumes/`)
-- [ ] `NeutralLook` = branco atual
-- [ ] `ProfileMorph` no mesmo objeto (reusar delays de `HouseTransition` se fizer sentido)
+- [ ] `NeutralLook` = branco **com mesa + pergaminho**
+- [ ] `ProfileMorph` no mesmo objeto: **luz → materiais → props**; duração ≤ ~2–3 s; **sem corte seco**
+- [ ] `HubPropsDissolve`: mesa e pergaminho fade/VFX **durante** o morph (não teleport)
+- [ ] One-shot de áudio leve **opcional** em t0
 - [ ] Sem corvo; Interior Design vs refs quando existirem
-- **Pronto:** um shell visível; quatro looks comutáveis por API **simulada** no Editor; Device Simulator sem náusea grosseira (morph ≤ ~2,6 s como o demo).
+- **Pronto:** um shell visível; quatro looks via API **simulada** no Editor; QA descreve a transição como contínua; mesa/scroll ausentes no estado InHouse; Device Simulator sem náusea (sem hop de câmara).
 
 ### Fase 3 — SessionGate
 
@@ -322,7 +348,7 @@ Packages relevantes (`Packages/manifest.json`): URP 17.5, XRI 3.5.1, XR Hands 1.
 - [ ] `UnityWebRequest` TLS para `GET /api/session`
 - [ ] `GuestSession` persistido; erros inválido / down
 - [ ] Cyber: sem secrets; URL base em config, não hardcoded token
-- **Pronto:** código válido → morph no look certo; inválido → branco + copy; API down → sem look inventado.
+- **Pronto:** código válido → morph **gradual** no look certo (mesa/scroll dissolvem); inválido → branco **com mesa + pergaminho** + copy; API down → sem look inventado.
 
 ### Fase 4 — Gaze Broadcast
 
@@ -355,7 +381,9 @@ Sensor físico / gêmeo IoT. Fora do APK até o Diretor abrir módulo. Não mist
 | Risco | Mitigação |
 |---|---|
 | 4 casas procedurais + mesa = draw calls / overdraw | Um shell; looks por material/volume; desativar looks inativos |
-| Morph com scale bounce (`EaseOutBack`) → comfort | VR review; reduzir overshoot; nada de hopping de câmara |
+| Morph com scale bounce (`EaseOutBack`) → comfort | VR review; overshoot mínimo; **nada de hopping de câmara**; preferir lerp de luz/materiais |
+| Corte seco / mesa que “pisca” | Dissolve da mesa no mesmo correio do morph; proibir `SetActive(false)` no frame 0 dos hub props |
+| Transparency sorting URP no fade da mesa | VFX lead: dither / shader fade testado em Quest; partículas leves se alpha falhar |
 | URP post em 4 volumes | Skill `urp-postprocessing`; HDR off; Performance path; não `stereoTargetEye` |
 | WebRequest + Realtime no main thread | throttle; não JSON gigante; timeout SessionGate |
 | Foco do Editor congela Play | QA usa `set_autotick` + `wait_for` frameCount (`playmode-verification-loop.md`) |
@@ -379,6 +407,9 @@ Sensor físico / gêmeo IoT. Fora do APK até o Diretor abrir módulo. Não mist
 - GitHub Actions (CI/CD só se pedido).
 - Tratar o UUID `f0ac53d5-…` como asset Unity.
 - Copiar as quatro casas ProfileDemo como quatro destinos finais.
+- **Corte seco** branco → dojo, ou **teleporte** da mesa/pergaminho (sumir num frame, mover para o void, `Destroy` imediato).
+- Hub de produto **sem** mesa e pergaminho (vazio branco só com UI).
+- Morph mais longo que ~3 s sem pedido do Diretor, ou flash de câmara.
 
 ---
 
@@ -398,7 +429,7 @@ Para o Tech lead, depois deste plano aprovado:
 ## 10. Referências verificadas neste repo
 
 - `Assets/Scenes/SampleScene.unity` — cena principal
-- `Assets/GenJutsu/AR/`, `TableProps/`, `AI_Test/` — módulos atuais em `main`
+- `Assets/GenJutsu/AR/`, `TableProps/` (`JapaneseTableBuilder`, `ScrollCanvas.cs`), `AI_Test/` — módulos atuais em `main`
 - `Packages/manifest.json` — URP, XRI, OpenXR Meta, Pipeline
 - `origin/cursor/desktop-xr-simulator-play:Assets/GenJutsu/ProfileDemo/` — demo ZCEA
 - `origin/cursor/desktop-xr-simulator-play:docs/TIME_AGENTICO.md`
