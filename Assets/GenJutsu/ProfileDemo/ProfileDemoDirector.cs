@@ -24,6 +24,10 @@ namespace GenJutsu.ProfileDemo
 
         public HouseTransition[] houses = new HouseTransition[Profiles.Count];
         public Volume[] volumes = new Volume[Profiles.Count];
+        public DojoShell shell;
+        public ProfileMorph morph;
+        public HubPropsDissolve hubDissolve;
+        public SessionGate sessionGate;
         public Renderer[] whiteSpaceRenderers;
         public GameObject[] whiteSpaceOnly;
         public ProceduralMusic music;
@@ -56,10 +60,15 @@ namespace GenJutsu.ProfileDemo
         void Awake()
         {
             Instance = this;
-            foreach (var house in houses)
+            if (shell != null)
+                shell.HideAllLooksImmediate();
+            else
             {
-                if (house != null)
-                    house.HideImmediate();
+                foreach (var house in houses)
+                {
+                    if (house != null)
+                        house.HideImmediate();
+                }
             }
 
             foreach (var volume in volumes)
@@ -114,12 +123,33 @@ namespace GenJutsu.ProfileDemo
             }
         }
 
+        public bool EnterLookFromSession(ProfileId id)
+        {
+            return EnterProfile(id);
+        }
+
         public bool EnterProfile(ProfileId id)
         {
-            if (Current != State.WhiteSpace || houses[(int)id] == null)
+            var look = ResolveLook(id);
+            if (Current != State.WhiteSpace || look == null)
                 return false;
             StartCoroutine(EnterRoutine(id));
             return true;
+        }
+
+        HouseTransition ResolveLook(ProfileId id)
+        {
+            if (shell != null)
+            {
+                var look = shell.GetLook(id);
+                if (look != null && look.transition != null)
+                    return look.transition;
+            }
+
+            var i = (int)id;
+            if (houses != null && i >= 0 && i < houses.Length)
+                return houses[i];
+            return null;
         }
 
         public bool ReturnToWhiteSpace()
@@ -145,9 +175,8 @@ namespace GenJutsu.ProfileDemo
                 caption.Show(info.Title + " / " + info.Subtitle, info.Caption, info.Accent);
             SetWhiteSpaceOnly(false);
 
-            var house = houses[(int)id];
+            var house = ResolveLook(id);
             var origin = HeadPosition();
-            DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.9f, 1f);
             SetPost(true);
             if (cam != null)
                 cam.clearFlags = CameraClearFlags.SolidColor;
@@ -155,22 +184,41 @@ namespace GenJutsu.ProfileDemo
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Exponential;
 
-            var build = StartCoroutine(house.Build(origin));
             var whiteAmbient = new Color(0.85f, 0.86f, 0.88f);
-            var t = 0f;
-            while (t < transitionDuration)
+            if (morph != null)
             {
-                t += Time.deltaTime;
-                var u = Mathf.SmoothStep(0f, 1f, t / transitionDuration);
-                ApplyEnvironment(info, u, whiteAmbient);
-                if (u > 0.55f)
-                    SetWhiteSpaceRenderers(false);
-                yield return null;
+                morph.duration = Mathf.Min(transitionDuration, 3f);
+                yield return morph.MorphIn(info, house, (inf, u) =>
+                {
+                    ApplyEnvironment(inf, u, whiteAmbient);
+                    FadeSessionGate(1f - Mathf.Clamp01(u / 0.4f));
+                    if (u > 0.55f)
+                        SetWhiteSpaceRenderers(false);
+                }, hubDissolve, origin);
+            }
+            else
+            {
+                DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.35f, 1f);
+                var build = StartCoroutine(house.Build(origin));
+                var t = 0f;
+                while (t < transitionDuration)
+                {
+                    t += Time.deltaTime;
+                    var u = Mathf.SmoothStep(0f, 1f, t / transitionDuration);
+                    ApplyEnvironment(info, u, whiteAmbient);
+                    if (u > 0.55f)
+                        SetWhiteSpaceRenderers(false);
+                    yield return null;
+                }
+
+                yield return build;
             }
 
-            yield return build;
             ApplyEnvironment(info, 1f, whiteAmbient);
             SetWhiteSpaceRenderers(false);
+            FadeSessionGate(0f);
+            if (sessionGate != null)
+                sessionGate.HideAfterMorph();
             foreach (var activity in house.GetComponentsInChildren<ProfileActivity>())
                 activity.ResetActivity();
             foreach (var pose in house.GetComponentsInChildren<ResettablePose>())
@@ -183,7 +231,12 @@ namespace GenJutsu.ProfileDemo
             Current = State.Dissolving;
             var id = Active;
             var info = Profiles.Get(id);
-            var house = houses[(int)id];
+            var house = ResolveLook(id);
+            if (house == null)
+            {
+                Current = State.WhiteSpace;
+                yield break;
+            }
 
             foreach (var activity in house.GetComponentsInChildren<ProfileActivity>())
                 activity.OnHouseExit();
@@ -199,7 +252,7 @@ namespace GenJutsu.ProfileDemo
             if (music != null)
                 music.Stop();
             if (caption != null)
-                caption.Show("Ambiente branco", "Escolha outro objeto na mesa para visitar uma nova casa.", new Color(0.35f, 0.4f, 0.48f));
+                caption.Show("Ambiente branco", "O espaço volta ao neutro. Use o código da sessão se precisar de um novo look.", new Color(0.35f, 0.4f, 0.48f));
 
             var origin = HeadPosition();
             DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.8f, 0.8f);
@@ -217,6 +270,10 @@ namespace GenJutsu.ProfileDemo
             yield return dissolve;
             RestoreBaseline();
             SetWhiteSpaceOnly(true);
+            if (hubDissolve != null)
+                hubDissolve.RestoreImmediate();
+            if (sessionGate != null)
+                sessionGate.ShowOnWhite();
             if (results != null)
                 results.Refresh();
             Current = State.WhiteSpace;
@@ -286,6 +343,13 @@ namespace GenJutsu.ProfileDemo
             }
         }
 
+        void FadeSessionGate(float alpha)
+        {
+            if (sessionGate == null || sessionGate.group == null)
+                return;
+            sessionGate.group.alpha = alpha;
+        }
+
         void SetWhiteSpaceOnly(bool visible)
         {
             if (whiteSpaceOnly == null)
@@ -305,11 +369,11 @@ namespace GenJutsu.ProfileDemo
 
         void Update()
         {
-            if (!Application.isEditor)
-                return;
+#if UNITY_EDITOR
             var kb = Keyboard.current;
             if (kb == null)
                 return;
+            // QA only — not a product house picker. Device builds compile this out.
             if (kb.digit1Key.wasPressedThisFrame)
                 EnterProfile(ProfileId.Zen);
             else if (kb.digit2Key.wasPressedThisFrame)
@@ -320,6 +384,7 @@ namespace GenJutsu.ProfileDemo
                 EnterProfile(ProfileId.Acolhedor);
             else if (kb.digit0Key.wasPressedThisFrame)
                 ReturnToWhiteSpace();
+#endif
         }
     }
 }

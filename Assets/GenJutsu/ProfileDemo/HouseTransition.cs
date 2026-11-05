@@ -14,6 +14,7 @@ namespace GenJutsu.ProfileDemo
         public GameObject interactivesRoot;
         public float duration = 2.4f;
         public float riseDepth = 0.8f;
+        public bool comfortEase = true;
 
         struct Piece
         {
@@ -113,7 +114,7 @@ namespace GenJutsu.ProfileDemo
             var piece = pieces[i];
             if (piece.transform == null)
                 return;
-            var grow = EaseOutBack(u);
+            var grow = comfortEase ? Mathf.SmoothStep(0f, 1f, u) : EaseOutBack(u);
             var rise = 1f - (1f - u) * (1f - u);
             piece.transform.localScale = piece.scale * Mathf.Max(0f, grow);
             piece.transform.localPosition = piece.position - Vector3.up * (riseDepth * (1f - rise));

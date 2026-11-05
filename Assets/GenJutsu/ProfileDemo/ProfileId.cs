@@ -71,5 +71,50 @@ namespace GenJutsu.ProfileDemo
         {
             return All[(int)id];
         }
+
+        /// <summary>
+        /// API strings are case-sensitive: Zen, Cyber, Excentrico, Acolhedor.
+        /// Editor fallback (Z/C/E/A, ignore-case) is opt-in and never used on device.
+        /// </summary>
+        public static bool TryParse(string raw, bool allowEditorFallback, out ProfileId id)
+        {
+            id = ProfileId.Zen;
+            if (string.IsNullOrWhiteSpace(raw))
+                return false;
+            raw = raw.Trim();
+            for (var i = 0; i < All.Length; i++)
+            {
+                if (All[i].Key == raw)
+                {
+                    id = All[i].Id;
+                    return true;
+                }
+            }
+
+            if (!allowEditorFallback)
+                return false;
+            switch (raw.ToUpperInvariant())
+            {
+                case "Z":
+                case "ZEN":
+                    id = ProfileId.Zen;
+                    return true;
+                case "C":
+                case "CYBER":
+                    id = ProfileId.Cyber;
+                    return true;
+                case "E":
+                case "EXCENTRICO":
+                case "EXCÊNTRICO":
+                    id = ProfileId.Excentrico;
+                    return true;
+                case "A":
+                case "ACOLHEDOR":
+                    id = ProfileId.Acolhedor;
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

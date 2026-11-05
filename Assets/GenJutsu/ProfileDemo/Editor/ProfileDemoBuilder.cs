@@ -25,7 +25,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
         const string MaterialFolder = Folder + "/Materials";
         const string VolumeFolder = Folder + "/Volumes";
 
-        static readonly string[] LegacyProps = { "Scroll", "Teapot", "TeaCup_1", "TeaCup_2", "Shuriken", "Brush", "JadeDragon", "FloatingTarget" };
+        static readonly string[] LegacyProps = { "Teapot", "TeaCup_1", "TeaCup_2", "Shuriken", "Brush", "JadeDragon", "FloatingTarget" };
 
         // House-local frame: the table sits at the origin and the user stands at about (0, -0.77) facing +Z.
         static readonly Vector3 Viewer = new Vector3(0f, 1.5f, -0.6f);
@@ -104,25 +104,60 @@ namespace GenJutsu.ProfileDemo.EditorTools
             var music = new GameObject("Music").AddComponent<ProceduralMusic>();
             music.transform.SetParent(root.transform, false);
 
-            BuildTokens(root.transform);
             var caption = BuildCaption(root.transform);
             var results = BuildResultsBoard(root.transform);
             var volumes = BuildVolumes(root.transform);
+            var gate = BuildSessionGate(root.transform);
 
-            var housesRoot = new GameObject("Houses").transform;
-            housesRoot.SetParent(root.transform, false);
+            var shellGo = new GameObject("DojoShell");
+            shellGo.transform.SetParent(root.transform, false);
+            var shell = shellGo.AddComponent<DojoShell>();
+            var looks = new ProfileLook[Profiles.Count];
             var houses = new HouseTransition[Profiles.Count];
-            houses[(int)ProfileId.Zen] = BuildZenHouse(housesRoot);
-            houses[(int)ProfileId.Cyber] = BuildCyberHouse(housesRoot);
-            houses[(int)ProfileId.Excentrico] = BuildEccentricHouse(housesRoot);
-            houses[(int)ProfileId.Acolhedor] = BuildCozyHouse(housesRoot);
-            foreach (var house in houses)
+            houses[(int)ProfileId.Zen] = BuildZenHouse(shellGo.transform);
+            houses[(int)ProfileId.Cyber] = BuildCyberHouse(shellGo.transform);
+            houses[(int)ProfileId.Excentrico] = BuildEccentricHouse(shellGo.transform);
+            houses[(int)ProfileId.Acolhedor] = BuildCozyHouse(shellGo.transform);
+            for (var i = 0; i < Profiles.Count; i++)
+            {
+                var house = houses[i];
                 house.gameObject.SetActive(false);
+                house.comfortEase = true;
+                var look = house.gameObject.AddComponent<ProfileLook>();
+                look.profile = (ProfileId)i;
+                look.transition = house;
+                look.volume = volumes[i];
+                looks[i] = look;
+            }
 
-            var director = new GameObject("Director").AddComponent<ProfileDemoDirector>();
-            director.transform.SetParent(root.transform, false);
+            shell.looks = looks;
+
+            var directorGo = new GameObject("Director");
+            directorGo.transform.SetParent(root.transform, false);
+            var director = directorGo.AddComponent<ProfileDemoDirector>();
+            var morph = directorGo.AddComponent<ProfileMorph>();
+            morph.duration = 2.6f;
+            var api = directorGo.AddComponent<SessionApiClient>();
+            gate.client = api;
+            var hub = directorGo.AddComponent<HubPropsDissolve>();
+            hub.duration = 1.35f;
+            hub.roots = CollectHubRoots(scene, tableSet);
+            hub.sparkles = BuildHubSparkles(root.transform);
+            var gaze = directorGo.AddComponent<GazePublisher>();
+            var dojo = directorGo.AddComponent<DojoDirector>();
+            dojo.demo = director;
+            dojo.gate = gate;
+            dojo.shell = shell;
+            dojo.morph = morph;
+            dojo.hubDissolve = hub;
+            dojo.gaze = gaze;
+
             director.houses = houses;
             director.volumes = volumes;
+            director.shell = shell;
+            director.morph = morph;
+            director.hubDissolve = hub;
+            director.sessionGate = gate;
             director.music = music;
             director.caption = caption;
             director.results = results;
@@ -142,7 +177,8 @@ namespace GenJutsu.ProfileDemo.EditorTools
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            return "Built ProfileDemo: 4 tokens, 4 houses, " + volumes.Length + " volumes, white-space renderers " +
+            return "Built ProfileDemo ZCEA hub: SessionGate + DojoShell + 4 looks, mesa/pergaminho dissolve, volumes " +
+                   volumes.Length + ", white-space renderers " +
                    director.whiteSpaceRenderers.Length + ", main light " + (director.mainLight != null ? director.mainLight.name : "none") +
                    ", " + cameraNote;
         }
@@ -155,6 +191,103 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 if (go != null)
                     go.SetActive(visible);
             }
+        }
+
+        static GameObject[] CollectHubRoots(Scene scene, GameObject tableSet)
+        {
+            var list = new List<GameObject>();
+            if (tableSet != null)
+                list.Add(tableSet);
+            var scroll = FindInScene(scene, "Scroll");
+            if (scroll != null)
+            {
+                scroll.SetActive(true);
+                list.Add(scroll);
+            }
+
+            var hanging = FindInScene(scene, "HangingScroll");
+            if (hanging != null)
+                list.Add(hanging);
+            return list.ToArray();
+        }
+
+        static ParticleSystem BuildHubSparkles(Transform root)
+        {
+            var mat = ParticleMat("HubDissolveSpark", new Color(0.95f, 0.92f, 0.8f, 0.9f), true);
+            var ps = Particles(root, "HubDissolveVfx", new Vector3(0f, 0.7f, 0f), Quaternion.Euler(-90f, 0f, 0f), mat);
+            var main = ps.main;
+            main.duration = 1.4f;
+            main.loop = false;
+            main.startLifetime = 0.9f;
+            main.startSpeed = 0.25f;
+            main.startSize = 0.04f;
+            main.maxParticles = 40;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var emission = ps.emission;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 28) });
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = new Vector3(0.9f, 0.2f, 0.6f);
+            return ps;
+        }
+
+        static SessionGate BuildSessionGate(Transform root)
+        {
+            var canvas = WorldCanvas("SessionGate", root, new Vector2(920f, 520f), 0.00115f);
+            canvas.transform.localPosition = new Vector3(0f, 1.15f, 0.55f);
+            canvas.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            var xrRay = System.Type.GetType("UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster, Unity.XR.Interaction.Toolkit");
+            if (xrRay != null)
+                canvas.gameObject.AddComponent(xrRay);
+
+            var group = canvas.gameObject.AddComponent<CanvasGroup>();
+            var rect = (RectTransform)canvas.transform;
+            UIImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var title = UIText(rect, "Title", "Código da sessão", 48f, new Color(0.16f, 0.18f, 0.22f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -88f), new Vector2(-36f, -20f), TextAlignmentOptions.BottomLeft);
+            title.fontStyle = FontStyles.Bold;
+            UIText(rect, "Hint", "O questionário no site escolhe o look. Aqui só entra o código — sem escolher casa.", 26f, new Color(0.4f, 0.43f, 0.48f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -150f), new Vector2(-36f, -92f), TextAlignmentOptions.TopLeft).textWrappingMode = TextWrappingModes.Normal;
+
+            var inputGo = new GameObject("Code", typeof(RectTransform));
+            inputGo.transform.SetParent(rect, false);
+            var inputRect = (RectTransform)inputGo.transform;
+            inputRect.anchorMin = new Vector2(0f, 0.38f);
+            inputRect.anchorMax = new Vector2(1f, 0.52f);
+            inputRect.offsetMin = new Vector2(36f, 0f);
+            inputRect.offsetMax = new Vector2(-36f, 0f);
+            var inputBg = inputGo.AddComponent<UnityEngine.UI.Image>();
+            inputBg.color = new Color(0.92f, 0.93f, 0.95f, 1f);
+            var field = inputGo.AddComponent<TMP_InputField>();
+            var inputText = UIText(inputRect, "Text", "", 34f, new Color(0.12f, 0.14f, 0.18f), Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f), TextAlignmentOptions.MidlineLeft);
+            inputText.raycastTarget = true;
+            var placeholder = UIText(inputRect, "Placeholder", "ABCD-1234", 34f, new Color(0.55f, 0.58f, 0.62f), Vector2.zero, Vector2.one, new Vector2(16f, 4f), new Vector2(-16f, -4f), TextAlignmentOptions.MidlineLeft);
+            field.textViewport = inputRect;
+            field.textComponent = inputText;
+            field.placeholder = placeholder;
+            field.lineType = TMP_InputField.LineType.SingleLine;
+            field.characterLimit = 24;
+
+            var buttonGo = new GameObject("Submit", typeof(RectTransform));
+            buttonGo.transform.SetParent(rect, false);
+            var buttonRect = (RectTransform)buttonGo.transform;
+            buttonRect.anchorMin = new Vector2(0f, 0.18f);
+            buttonRect.anchorMax = new Vector2(1f, 0.34f);
+            buttonRect.offsetMin = new Vector2(36f, 0f);
+            buttonRect.offsetMax = new Vector2(-36f, 0f);
+            buttonGo.AddComponent<UnityEngine.UI.Image>().color = new Color(0.18f, 0.22f, 0.28f);
+            var button = buttonGo.AddComponent<UnityEngine.UI.Button>();
+            UIText(buttonRect, "Label", "Entrar no dojo", 32f, Color.white, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAlignmentOptions.Center).raycastTarget = false;
+
+            var status = UIText(rect, "Status", "", 24f, new Color(0.35f, 0.38f, 0.44f), new Vector2(0f, 0f), new Vector2(1f, 0.18f), new Vector2(36f, 12f), new Vector2(-36f, 0f), TextAlignmentOptions.TopLeft);
+            status.textWrappingMode = TextWrappingModes.Normal;
+            status.raycastTarget = false;
+
+            var gate = canvas.gameObject.AddComponent<SessionGate>();
+            gate.codeField = field;
+            gate.submitButton = button;
+            gate.status = status;
+            gate.group = group;
+            return gate;
         }
 
         static Renderer[] CollectWhiteSpaceRenderers(Scene scene)
@@ -235,7 +368,9 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 var body = token.GetComponent<Rigidbody>();
                 body.isKinematic = true;
                 body.useGravity = false;
-                token.AddComponent<ProfileToken>().profile = id;
+                var tokenComp = token.AddComponent<ProfileToken>();
+                tokenComp.profile = id;
+                tokenComp.opensHouse = false;
 
                 var plaque = Prim(PrimitiveType.Cube, "Plaque_" + info.Letter, tokens, new Vector3(xs[i], 0.665f, -0.24f), new Vector3(0.09f, 0.012f, 0.045f), Mat("PlaqueWhite", new Color(0.98f, 0.98f, 0.98f), 0.6f));
                 plaque.transform.localRotation = Quaternion.Euler(-12f, 0f, 0f);
@@ -344,7 +479,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
             UIImage(rect, "TopBar", new Color(0.2f, 0.24f, 0.3f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -10f), Vector2.zero);
             var title = UIText(rect, "Title", "Sua jornada começa aqui", 56f, new Color(0.14f, 0.16f, 0.2f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(44f, -120f), new Vector2(-44f, -24f), TextAlignmentOptions.BottomLeft);
             title.fontStyle = FontStyles.Bold;
-            var hint = UIText(rect, "Hint", "Pegue um objeto da mesa para entrar numa casa. Pegue o cubo branco para voltar.", 28f, new Color(0.4f, 0.43f, 0.48f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(44f, -200f), new Vector2(-44f, -124f), TextAlignmentOptions.TopLeft);
+            var hint = UIText(rect, "Hint", "A mesa e o pergaminho orientam. Digite o código da sessão — o dojo assume o look Z, C, E ou A. Cubo branco: voltar ao neutro.", 28f, new Color(0.4f, 0.43f, 0.48f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(44f, -200f), new Vector2(-44f, -124f), TextAlignmentOptions.TopLeft);
             hint.textWrappingMode = TextWrappingModes.Normal;
             var body = UIText(rect, "Body", "", 34f, new Color(0.18f, 0.2f, 0.24f), new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(44f, 80f), new Vector2(-44f, -215f), TextAlignmentOptions.TopLeft);
             body.textWrappingMode = TextWrappingModes.Normal;

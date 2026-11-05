@@ -12,6 +12,8 @@ namespace GenJutsu.ProfileDemo
     public class ProfileToken : MonoBehaviour
     {
         public ProfileId profile;
+        [Tooltip("Product flow never opens a house from the token. Leave false on device builds.")]
+        public bool opensHouse;
         public float returnDuration = 0.8f;
         public float idleSpin = 16f;
         public float idleBob = 0.006f;
@@ -59,6 +61,8 @@ namespace GenJutsu.ProfileDemo
 
             atHome = false;
             DemoSfx.Play(DemoSfx.Kind.Chime, transform.position, 0.8f, 1f + (int)profile * 0.12f);
+            if (!opensHouse)
+                return;
             var director = ProfileDemoDirector.Instance;
             if (director != null)
                 director.EnterProfile(profile);
