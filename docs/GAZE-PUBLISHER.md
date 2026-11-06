@@ -18,7 +18,7 @@ O APK envia UDP se `sendUdpLan` estiver ligado (predefinição).
 - Falha de rede: um warning, o jogo continua
 
 Firmware: `Hardware/esp32-gaze-servo/esp32-gaze-servo.ino`  
-SSID/senha e IP só no ESP32. No Unity, põe o IP do ESP32 (ex. `192.168.1.80`).
+SSID/senha e IP só no ESP32. No Unity o default é `192.168.137.121:9000` (`GazePublisher.udpHost` / `udpPort`).
 
 Fonte 5–6 V no MG996R, GND comum. Quest e ESP32 no **mesmo Wi‑Fi 2.4 GHz**, sem isolamento de AP.
 

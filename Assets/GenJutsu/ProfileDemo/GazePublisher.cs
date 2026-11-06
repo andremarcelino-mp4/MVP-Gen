@@ -28,7 +28,7 @@ namespace GenJutsu.ProfileDemo
         public bool sendUdpLan = true;
         [Tooltip("If true, UDP starts in Play even before a session code.")]
         public bool sendBeforeSession = true;
-        public string udpHost = "192.168.1.80";
+        public string udpHost = "192.168.137.121";
         public int udpPort = 9000;
         public bool invertYaw;
         [Range(0.2f, 1.6f)]

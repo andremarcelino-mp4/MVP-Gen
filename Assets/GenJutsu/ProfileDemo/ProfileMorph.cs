@@ -57,5 +57,44 @@ namespace GenJutsu.ProfileDemo
             if (hubCo != null)
                 yield return hubCo;
         }
+
+        /// <summary>
+        /// Reverse of <see cref="MorphIn"/>: the dojo folds away and the white hub fades back. No hard cut.
+        /// </summary>
+        public IEnumerator MorphOut(
+            ProfileInfo info,
+            HouseTransition look,
+            Action<ProfileInfo, float> applyEnvironment,
+            HubPropsDissolve hub,
+            Vector3 origin)
+        {
+            var t = 0f;
+            var span = Mathf.Clamp(duration, 0.4f, 3f);
+            if (playWhoosh)
+                DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.8f, 0.8f);
+
+            Coroutine dissolve = null;
+            if (look != null)
+                dissolve = StartCoroutine(look.Dissolve(origin));
+
+            Coroutine appear = null;
+            while (t < span)
+            {
+                t += Time.deltaTime;
+                var u = Mathf.Clamp01(t / span);
+                applyEnvironment?.Invoke(info, 1f - Mathf.SmoothStep(0f, 1f, u));
+                if (appear == null && hub != null && u >= 0.28f)
+                    appear = StartCoroutine(hub.Appear());
+                yield return null;
+            }
+
+            applyEnvironment?.Invoke(info, 0f);
+            if (dissolve != null)
+                yield return dissolve;
+            if (appear != null)
+                yield return appear;
+            else if (hub != null)
+                hub.RestoreImmediate();
+        }
     }
 }

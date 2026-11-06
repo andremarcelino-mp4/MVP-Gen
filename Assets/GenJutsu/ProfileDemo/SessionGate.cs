@@ -8,6 +8,8 @@ namespace GenJutsu.ProfileDemo
 {
     /// <summary>
     /// Welcome card. Polls the admin-selected session; the visitor never types a code.
+    /// A new visit is a new session id/code, even when the profile letter stays the same.
+    /// When the admin ends the visit, <see cref="SessionEnded"/> fires and polling continues.
     /// </summary>
     public class SessionGate : MonoBehaviour
     {
@@ -17,13 +19,21 @@ namespace GenJutsu.ProfileDemo
         public CanvasGroup group;
         public float pollSeconds = 2f;
 
+        /// <summary>Shot rig and tests skip the network and push JSON through <see cref="Ingest"/>.</summary>
+        public bool suppressNetworkPoll;
+
         [HideInInspector] public TMP_InputField codeField;
         [HideInInspector] public Button submitButton;
 
         public event Action<ProfileId> ProfileResolved;
+        public event Action SessionEnded;
+
+        public bool HasSession { get; private set; }
+        public string ActiveSessionKey { get; private set; }
+        public ProfileId ActiveProfile { get; private set; }
 
         bool applied;
-        ProfileId appliedId;
+        string appliedKey;
         Coroutine poll;
 
         void Awake()
@@ -31,6 +41,10 @@ namespace GenJutsu.ProfileDemo
             GuestSession.Load();
             StripCodeControls();
             ShowWaiting();
+#if UNITY_EDITOR
+            if (System.IO.File.Exists("Temp/dojo-shots.marker"))
+                suppressNetworkPoll = true;
+#endif
         }
 
         void OnEnable()
@@ -48,18 +62,18 @@ namespace GenJutsu.ProfileDemo
             }
         }
 
+        /// <summary>Keeps the welcome card on screen. The dojo does not replace it with a profile panel.</summary>
         public void HideAfterMorph()
         {
-            if (group != null)
-            {
-                group.interactable = false;
-                group.blocksRaycasts = false;
-            }
-
-            gameObject.SetActive(false);
+            EnsureVisible();
         }
 
         public void ShowOnWhite()
+        {
+            EnsureVisible();
+        }
+
+        public void EnsureVisible()
         {
             gameObject.SetActive(true);
             if (group != null)
@@ -69,10 +83,16 @@ namespace GenJutsu.ProfileDemo
                 group.blocksRaycasts = false;
             }
 
-            applied = false;
-            ShowWaiting();
+            if (!applied)
+                ShowWaiting();
             if (isActiveAndEnabled && poll == null)
                 poll = StartCoroutine(PollRoutine());
+        }
+
+        /// <summary>Same path the poll uses. httpSuccess false is a transport failure.</summary>
+        public void Ingest(string body, long httpStatus, bool httpSuccess)
+        {
+            ApplyResult(SessionApiClient.Parse(body, httpStatus, httpSuccess));
         }
 
         IEnumerator PollRoutine()
@@ -82,16 +102,23 @@ namespace GenJutsu.ProfileDemo
             {
                 var mockName = string.IsNullOrWhiteSpace(editorMockName) ? "Visitante" : editorMockName.Trim();
                 GuestSession.Save("EDITOR", mockName, editorMockProfile);
-                ShowWelcome(mockName, Profiles.Get(editorMockProfile).Title);
-                Notify(editorMockProfile);
+                ShowWelcome(mockName);
+                Notify(editorMockProfile, "EDITOR");
                 yield break;
             }
 #endif
             while (enabled)
             {
+                if (suppressNetworkPoll)
+                {
+                    yield return new WaitForSecondsRealtime(Mathf.Max(1f, pollSeconds));
+                    continue;
+                }
+
                 if (client == null)
                 {
-                    SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
+                    if (!applied)
+                        SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
                     yield return new WaitForSecondsRealtime(pollSeconds);
                     continue;
                 }
@@ -108,7 +135,10 @@ namespace GenJutsu.ProfileDemo
             switch (result.kind)
             {
                 case SessionApiClient.Kind.WaitingForAdmin:
-                    if (!applied)
+                case SessionApiClient.Kind.Ended:
+                    if (applied)
+                        ClearSession();
+                    else
                         ShowWaiting();
                     return;
                 case SessionApiClient.Kind.Down:
@@ -116,42 +146,66 @@ namespace GenJutsu.ProfileDemo
                         SetStatus(result.error, new Color(0.65f, 0.22f, 0.22f));
                     return;
                 case SessionApiClient.Kind.Incomplete:
+                    if (applied && !SameVisit(result.sessionKey))
+                        ClearSession();
                     GuestSession.Save(result.sessionCode, result.displayName, null);
-                    ShowWelcome(result.displayName, null);
-                    SetStatus("A casa ainda não tem perfil ZCEA. Permaneça no branco.", new Color(0.45f, 0.38f, 0.22f));
+                    ShowWelcome(result.displayName);
                     return;
                 case SessionApiClient.Kind.Ready:
                     GuestSession.Save(result.sessionCode, result.displayName, result.profile);
-                    ShowWelcome(result.displayName, Profiles.Get(result.profile).Title);
-                    Notify(result.profile);
+                    ShowWelcome(result.displayName);
+                    Notify(result.profile, result.sessionKey);
                     return;
             }
         }
 
-        void Notify(ProfileId id)
+        bool SameVisit(string key)
         {
-            if (applied && appliedId == id)
+            return !string.IsNullOrEmpty(appliedKey) && appliedKey == key;
+        }
+
+        void Notify(ProfileId id, string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                key = id.ToString();
+            if (applied && appliedKey == key)
                 return;
             applied = true;
-            appliedId = id;
+            appliedKey = key;
+            HasSession = true;
+            ActiveSessionKey = key;
+            ActiveProfile = id;
             ProfileResolved?.Invoke(id);
+        }
+
+        void ClearSession()
+        {
+            applied = false;
+            appliedKey = null;
+            HasSession = false;
+            ActiveSessionKey = null;
+            ShowWaiting();
+            SessionEnded?.Invoke();
         }
 
         void ShowWaiting()
         {
             SetTitle("Bem-vindo");
+            if (status != null)
+                status.gameObject.SetActive(true);
             SetStatus("À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.",
                 new Color(0.28f, 0.32f, 0.38f));
         }
 
-        void ShowWelcome(string rawName, string lookTitle)
+        void ShowWelcome(string rawName)
         {
             var name = string.IsNullOrWhiteSpace(rawName) ? "visitante" : rawName.Trim();
             SetTitle("Bem-vindo, " + name);
-            if (!string.IsNullOrEmpty(lookTitle))
-                SetStatus("Olá, " + name + ". A casa assume o look " + lookTitle + ".", new Color(0.28f, 0.32f, 0.38f));
-            else
-                SetStatus("Olá, " + name + ".", new Color(0.28f, 0.32f, 0.38f));
+            if (status != null)
+            {
+                status.text = "";
+                status.gameObject.SetActive(false);
+            }
         }
 
         void SetTitle(string text)
@@ -164,6 +218,7 @@ namespace GenJutsu.ProfileDemo
         {
             if (status == null)
                 return;
+            status.gameObject.SetActive(true);
             status.text = text;
             status.color = color;
         }

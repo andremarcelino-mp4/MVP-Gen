@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ namespace GenJutsu.ProfileDemo
                 root.gameObject.SetActive(true);
 
             DisableHousePicker(root);
+            DisableHeadsetChrome(root);
             EnsureHubVisible();
 
             if (director.morph == null)
@@ -66,6 +68,45 @@ namespace GenJutsu.ProfileDemo
             var tokens = profileRoot.Find("TableTokens");
             if (tokens != null)
                 tokens.gameObject.SetActive(false);
+        }
+
+        static void DisableHeadsetChrome(Transform profileRoot)
+        {
+            foreach (var caption in Object.FindObjectsByType<ProfileCaption>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (caption != null)
+                    caption.gameObject.SetActive(false);
+            }
+
+            foreach (var board in Object.FindObjectsByType<ResultsBoard>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (board != null)
+                    board.gameObject.SetActive(false);
+            }
+
+            var transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                var t = transforms[i];
+                if (t == null)
+                    continue;
+                var name = t.name;
+                if (name == "Jump" || name == "HousePlaque" || name == "ProfileCaption" ||
+                    name.StartsWith("Affordance Callouts", StringComparison.Ordinal))
+                    t.gameObject.SetActive(false);
+            }
+
+            foreach (var behaviour in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (behaviour == null)
+                    continue;
+                var typeName = behaviour.GetType().Name;
+                if (typeName == "JumpProvider" || typeName.EndsWith("JumpProvider", StringComparison.Ordinal))
+                {
+                    behaviour.enabled = false;
+                    behaviour.gameObject.SetActive(false);
+                }
+            }
         }
 
         static void EnsureHubVisible()

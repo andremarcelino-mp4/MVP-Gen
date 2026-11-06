@@ -90,6 +90,31 @@ namespace GenJutsu.ProfileDemo
             dissolved = true;
         }
 
+        public IEnumerator Appear()
+        {
+            if (roots != null)
+            {
+                foreach (var root in roots)
+                {
+                    if (root != null)
+                        root.SetActive(true);
+                }
+            }
+
+            Cache();
+            var t = 0f;
+            var span = Mathf.Max(0.35f, duration);
+            while (t < span)
+            {
+                t += Time.deltaTime;
+                Apply(Mathf.SmoothStep(0f, 1f, t / span));
+                yield return null;
+            }
+
+            Apply(1f);
+            dissolved = false;
+        }
+
         public void RestoreImmediate()
         {
             if (roots != null)

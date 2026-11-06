@@ -63,9 +63,9 @@ namespace GenJutsu.ProfileDemo
             ComputeDelays(origin);
             yield return Animate(false);
 
+            gameObject.SetActive(false);
             for (var i = 0; i < pieces.Count; i++)
                 Apply(i, 1f);
-            gameObject.SetActive(false);
         }
 
         public void HideImmediate()
