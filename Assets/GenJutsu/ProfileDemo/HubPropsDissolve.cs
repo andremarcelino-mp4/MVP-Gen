@@ -21,7 +21,16 @@ namespace GenJutsu.ProfileDemo
             public Collider[] colliders;
         }
 
+        struct BodyHome
+        {
+            public Rigidbody body;
+            public Vector3 localPosition;
+            public Quaternion localRotation;
+            public bool wasKinematic;
+        }
+
         Slot[] slots;
+        BodyHome[] homes;
         bool dissolved;
 
         void Cache()
@@ -58,6 +67,74 @@ namespace GenJutsu.ProfileDemo
             }
 
             slots = list.ToArray();
+            CacheHomes();
+        }
+
+        void CacheHomes()
+        {
+            if (homes != null || roots == null)
+                return;
+            var list = new List<BodyHome>();
+            foreach (var root in roots)
+            {
+                if (root == null)
+                    continue;
+                foreach (var body in root.GetComponentsInChildren<Rigidbody>(true))
+                {
+                    if (body == null)
+                        continue;
+                    list.Add(new BodyHome
+                    {
+                        body = body,
+                        localPosition = body.transform.localPosition,
+                        localRotation = body.transform.localRotation,
+                        wasKinematic = body.isKinematic
+                    });
+                }
+            }
+
+            homes = list.ToArray();
+        }
+
+        void PinBodies()
+        {
+            if (homes == null)
+                return;
+            foreach (var home in homes)
+            {
+                var body = home.body;
+                if (body == null)
+                    continue;
+                if (!body.isKinematic)
+                {
+                    body.linearVelocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
+                }
+
+                body.isKinematic = true;
+                body.transform.localPosition = home.localPosition;
+                body.transform.localRotation = home.localRotation;
+            }
+        }
+
+        void ReleaseBodies()
+        {
+            if (homes == null)
+                return;
+            foreach (var home in homes)
+            {
+                var body = home.body;
+                if (body == null)
+                    continue;
+                body.transform.localPosition = home.localPosition;
+                body.transform.localRotation = home.localRotation;
+                body.isKinematic = home.wasKinematic;
+                if (!body.isKinematic)
+                {
+                    body.linearVelocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
+                }
+            }
         }
 
         public IEnumerator Dissolve()
@@ -65,6 +142,7 @@ namespace GenJutsu.ProfileDemo
             if (dissolved)
                 yield break;
             Cache();
+            PinBodies();
             if (sparkles != null)
                 sparkles.Play();
 
@@ -102,6 +180,7 @@ namespace GenJutsu.ProfileDemo
             }
 
             Cache();
+            PinBodies();
             var t = 0f;
             var span = Mathf.Max(0.35f, duration);
             while (t < span)
@@ -112,6 +191,7 @@ namespace GenJutsu.ProfileDemo
             }
 
             Apply(1f);
+            ReleaseBodies();
             dissolved = false;
         }
 
@@ -127,7 +207,9 @@ namespace GenJutsu.ProfileDemo
             }
 
             Cache();
+            PinBodies();
             Apply(1f);
+            ReleaseBodies();
             dissolved = false;
         }
 

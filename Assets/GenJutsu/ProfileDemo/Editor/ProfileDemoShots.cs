@@ -24,9 +24,17 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 EditorApplication.update += Tick;
         }
 
+        static string ShotFolder()
+        {
+            const string cloud = "/opt/cursor/artifacts";
+            if (Directory.Exists(cloud))
+                return cloud;
+            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "artifacts"));
+        }
+
         public static void Capture()
         {
-            var folder = "/opt/cursor/artifacts";
+            var folder = ShotFolder();
             Directory.CreateDirectory(folder);
             EditorPrefs.SetString(FolderKey, folder);
             EditorPrefs.SetInt(PhaseKey, 1);
@@ -180,13 +188,13 @@ namespace GenJutsu.ProfileDemo.EditorTools
             if (gate.group != null)
                 gate.group.alpha = 1f;
             var card = gate.transform;
-            var from = card.position + card.forward * 1.15f + Vector3.up * 0.02f;
-            Save(from, card.position, 32f, file);
+            var from = card.position - card.forward * 1.9f;
+            Save(from, card.position, 28f, file);
         }
 
         static void Save(Vector3 from, Vector3 look, float fov, string file)
         {
-            var folder = EditorPrefs.GetString(FolderKey, "/opt/cursor/artifacts");
+            var folder = EditorPrefs.GetString(FolderKey, ShotFolder());
             Directory.CreateDirectory(folder);
             var path = Path.Combine(folder, file);
             var go = new GameObject("DojoShotCam");
