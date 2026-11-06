@@ -1,5 +1,4 @@
 using System.Collections;
-using GenJutsu.AR;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -69,7 +68,7 @@ namespace GenJutsu.TableProps
                 returnRoutine = null;
             }
             returning = false;
-            if (body != null && !IsGhosted())
+            if (body != null)
                 body.isKinematic = false;
         }
 
@@ -97,16 +96,8 @@ namespace GenJutsu.TableProps
                 return;
             if (grab != null && grab.isSelected)
                 return;
-            if (IsGhosted())
-                return;
             returning = true;
             returnRoutine = StartCoroutine(ReturnRoutine());
-        }
-
-        bool IsGhosted()
-        {
-            var ghost = GetComponent<GhostObject>();
-            return ghost != null && ghost.State != GhostObject.GhostState.Solid;
         }
 
         IEnumerator ReturnRoutine()
@@ -154,12 +145,9 @@ namespace GenJutsu.TableProps
                 return;
             body.position = homePosition;
             body.rotation = homeRotation;
-            if (!IsGhosted())
-            {
-                body.isKinematic = false;
-                body.linearVelocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
-            }
+            body.isKinematic = false;
+            body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
         }
     }
 }

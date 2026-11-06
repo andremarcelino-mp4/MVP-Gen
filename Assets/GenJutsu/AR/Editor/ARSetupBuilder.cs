@@ -12,7 +12,6 @@ namespace GenJutsu.EditorTools
     public static class ARSetupBuilder
     {
         const string k_MaterialFolder = "Assets/GenJutsu/AR/Materials";
-        const string k_GhostMatPath = k_MaterialFolder + "/GhostStructure.mat";
         const string k_RoomMatPath = k_MaterialFolder + "/ARRoom.mat";
 
         [MenuItem("GenJutsu/Setup AR Experience")]
@@ -29,13 +28,11 @@ namespace GenJutsu.EditorTools
             EnablePassthroughFeature();
             EnsureCameraClear();
             EnsureFolders();
-            Material ghostMat = EnsureGhostMaterial();
             Material roomMat = EnsureRoomMaterial();
             GameObject session = EnsureARSession();
             ARCameraManager cameraManager = EnsureCameraManager();
             ARRoomController room = EnsureRoom(roomMat);
-            GhostSystem ghostSystem;
-            ARModeController modeController = EnsureSystems(ghostMat, room, cameraManager, out ghostSystem);
+            ARModeController modeController = EnsureSystems(room, cameraManager);
 
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
@@ -44,7 +41,6 @@ namespace GenJutsu.EditorTools
                 + ", session=" + (session != null)
                 + ", cameraManager=" + (cameraManager != null)
                 + ", room=" + (room != null)
-                + ", ghostSystem=" + (ghostSystem != null)
                 + ", modeController=" + (modeController != null));
         }
 
@@ -111,36 +107,6 @@ namespace GenJutsu.EditorTools
                 AssetDatabase.CreateFolder("Assets/GenJutsu", "AR");
             if (!AssetDatabase.IsValidFolder(k_MaterialFolder))
                 AssetDatabase.CreateFolder("Assets/GenJutsu/AR", "Materials");
-        }
-
-        static Material EnsureGhostMaterial()
-        {
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(k_GhostMatPath);
-            var shader = Shader.Find("GenJutsu/GhostStructure");
-            if (shader == null)
-            {
-                Debug.LogError("[GenJutsu] GhostStructure shader not found.");
-                return existing;
-            }
-            Material mat;
-            if (existing != null)
-            {
-                mat = existing;
-            }
-            else
-            {
-                mat = new Material(shader);
-                AssetDatabase.CreateAsset(mat, k_GhostMatPath);
-            }
-            mat.SetColor("_BaseTint", Color.white);
-            mat.SetColor("_GhostTint", new Color(0.3f, 0.8f, 1f, 1f));
-            mat.SetFloat("_SolidMix", 0f);
-            mat.SetColor("_RimColor", new Color(0.55f, 0.95f, 1f, 1f));
-            mat.SetFloat("_RimPower", 3f);
-            mat.SetFloat("_FillAlpha", 0.22f);
-            EditorUtility.SetDirty(mat);
-            AssetDatabase.SaveAssets();
-            return mat;
         }
 
         static Material EnsureRoomMaterial()
@@ -242,23 +208,14 @@ namespace GenJutsu.EditorTools
             return quad;
         }
 
-        static ARModeController EnsureSystems(Material ghostMat, ARRoomController room, ARCameraManager cameraManager, out GhostSystem ghostSystem)
+        static ARModeController EnsureSystems(ARRoomController room, ARCameraManager cameraManager)
         {
-            ghostSystem = null;
             var systems = GameObject.Find("AR Systems");
             if (systems == null)
             {
                 systems = new GameObject("AR Systems");
                 Undo.RegisterCreatedObjectUndo(systems, "Create AR Systems");
             }
-
-            ghostSystem = systems.GetComponent<GhostSystem>();
-            if (ghostSystem == null)
-                ghostSystem = Undo.AddComponent<GhostSystem>(systems);
-            var ghostSo = new SerializedObject(ghostSystem);
-            ghostSo.FindProperty("ghostMaterial").objectReferenceValue = ghostMat;
-            ghostSo.FindProperty("tableSetRoot").objectReferenceValue = GameObject.Find("JapaneseTableSet")?.transform;
-            ghostSo.ApplyModifiedPropertiesWithoutUndo();
 
             var modeController = systems.GetComponent<ARModeController>();
             if (modeController == null)
@@ -277,7 +234,6 @@ namespace GenJutsu.EditorTools
             var modeSo = new SerializedObject(modeController);
             modeSo.FindProperty("targetCamera").objectReferenceValue = Camera.main;
             modeSo.FindProperty("cameraManager").objectReferenceValue = cameraManager;
-            modeSo.FindProperty("ghostSystem").objectReferenceValue = ghostSystem;
             modeSo.FindProperty("roomController").objectReferenceValue = room;
             modeSo.FindProperty("gravityProvider").objectReferenceValue = gravity;
             modeSo.FindProperty("startInAR").boolValue = false;

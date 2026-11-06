@@ -117,3 +117,6 @@ InitTestScene*.unity*
 Assets/GenJutsu/AI_Test/groq.local.json
 Assets/GenJutsu/AI_Test/groq.local.json.meta
 Assets/GenJutsu/AI_Test/VoiceModel/*.onnx
+
+# Graphify local knowledge graph
+graphify-out/

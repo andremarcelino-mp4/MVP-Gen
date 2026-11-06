@@ -1,0 +1,14 @@
+---
+description: Papéis do time agentico GenJutsu e skills GTI — assumir função antes de implementar
+alwaysApply: true
+---
+
+# Time agentico
+
+Antes de implementar, assuma o papel certo em [docs/TIME_AGENTICO.md](docs/TIME_AGENTICO.md).
+
+- Norte do produto: Smart Home Cognitiva (compreender, aprender, responder; módulos evolutivos). Texto verbatim e papéis (diretor → QA, cyber, CI/CD, Graphify) estão nesse arquivo.
+- Skills de disciplina: `.cursor/skills/gti-nlp`, `gti-ml-dl`, `gti-genai-prompt`, `gti-ai-driven-se`, `gti-casa-que-aprende` (`SKILL.md` + `reference.md` nas quatro aulas).
+- Código Unity: skills em `.agents/skills/` + `AGENTS.md` (APK).
+- Se `graphify-out/` existir, consulte Graphify antes de Grep/Read em massa em `Assets/GenJutsu`.
+- Cyber recusa exploits. CI/CD não usa `unity build` de topo.
