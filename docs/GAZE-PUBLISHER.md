@@ -1,17 +1,27 @@
-# GazePublisher (stub nesta PR)
+# GazePublisher — cabeça Quest → maquete Wi‑Fi
 
-Contrato alvo (fase 4 do plano ZCEA):
+Contrato de pose (Y-up, yaw 0 ≈ +Z da câmara):
 
-- Canal Supabase Realtime **Broadcast** `gaze:{SESSION_CODE}`
-- Evento `pose` a 10–15 Hz
-- Hello uma vez com `profile_id`
-- Coordenadas: yaw/pitch do `Camera.main.transform.forward` (XR head), Y-up, yaw 0 ≈ +Z da câmara convertida com `Atan2(x,z)`
-- Sem Presence, sem `UPDATE` Postgres, sem eye-tracking
+- yaw = `Atan2(forward.x, forward.z)`
+- pitch = `Asin(forward.y)`
+- 10–15 Hz
+- Sem eye-tracking, sem Presence, sem `UPDATE` Postgres
 
-Nesta PR o componente `GazePublisher`:
+## LAN UDP (maquete ESP32 + MG996R) — nesta PR
 
-- Guarda `code`, `profile`, `channel`
-- Actualiza `yaw` / `pitch` em `Update`
-- **Não** abre websocket nem envia JSON (não há SDK Supabase no `Packages/manifest.json`)
+O APK envia UDP se `sendUdpLan` estiver ligado (predefinição).
 
-Ligar Broadcast completo sem bloquear o morph: próximo PR, após SessionGate estável.
+- Destino Inspector: `udpHost` (IPv4) + `udpPort` (9000)
+- Linha ASCII: `Y,<yaw>,P,<pitch>,S,<servo>\n` (cultura invariante)
+- `S` = yaw mapeado 30–150° (±60° de cabeça)
+- `sendBeforeSession`: envia em Play mesmo sem código (útil para calibrar a base)
+- Falha de rede: um warning, o jogo continua
+
+Firmware: `Hardware/esp32-gaze-servo/esp32-gaze-servo.ino`  
+SSID/senha e IP só no ESP32. No Unity, põe o IP do ESP32 (ex. `192.168.1.80`).
+
+Fonte 5–6 V no MG996R, GND comum. Quest e ESP32 no **mesmo Wi‑Fi 2.4 GHz**, sem isolamento de AP.
+
+## Supabase Broadcast (ainda stub)
+
+Canal alvo `gaze:{SESSION_CODE}`, evento `pose`, hello com `profile_id`. Sem SDK no `Packages/manifest.json`. O UDP local não espera por esse canal.
