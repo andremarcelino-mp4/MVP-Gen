@@ -55,7 +55,7 @@ namespace GenJutsu.ProfileDemo
 
         static void DisableHousePicker(Transform profileRoot)
         {
-            foreach (var token in Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var token in UnityEngine.Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include))
             {
                 token.opensHouse = false;
                 var grab = token.GetComponent<XRGrabInteractable>();
@@ -72,19 +72,19 @@ namespace GenJutsu.ProfileDemo
 
         static void DisableHeadsetChrome(Transform profileRoot)
         {
-            foreach (var caption in Object.FindObjectsByType<ProfileCaption>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var caption in UnityEngine.Object.FindObjectsByType<ProfileCaption>(FindObjectsInactive.Include))
             {
                 if (caption != null)
                     caption.gameObject.SetActive(false);
             }
 
-            foreach (var board in Object.FindObjectsByType<ResultsBoard>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var board in UnityEngine.Object.FindObjectsByType<ResultsBoard>(FindObjectsInactive.Include))
             {
                 if (board != null)
                     board.gameObject.SetActive(false);
             }
 
-            var transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var transforms = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
             for (var i = 0; i < transforms.Length; i++)
             {
                 var t = transforms[i];
@@ -96,7 +96,7 @@ namespace GenJutsu.ProfileDemo
                     t.gameObject.SetActive(false);
             }
 
-            foreach (var behaviour in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var behaviour in UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include))
             {
                 if (behaviour == null)
                     continue;
@@ -172,7 +172,7 @@ namespace GenJutsu.ProfileDemo
 
         static SessionGate DedupAndEnsureGate(SessionGate preferred, Transform parent, SessionApiClient api)
         {
-            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include);
             SessionGate keep = preferred;
             if (keep == null)
             {
