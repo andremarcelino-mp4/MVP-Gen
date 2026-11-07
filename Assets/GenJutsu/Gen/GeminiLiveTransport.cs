@@ -99,6 +99,7 @@ namespace GenJutsu.Gen
                     ticket != null ? ticket.Model : null,
                     ticket != null ? ticket.SystemInstructionRaw : null,
                     ticket != null ? ticket.ToolsRaw : null);
+                GenVoiceLog.Info("setup bytes=" + setup.Length + " voiceInSetup=" + (setup.IndexOf("voiceName", StringComparison.Ordinal) >= 0));
                 await SendOne(ws, setup, token).ConfigureAwait(false);
                 var pump = PumpSend(ws, token);
                 await PumpRecv(ws, onMessage, token).ConfigureAwait(false);
@@ -128,6 +129,14 @@ namespace GenJutsu.Gen
                 if (ws != null)
                     ws.Dispose();
             }
+        }
+
+        static string Head(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+            var t = text.Length > 160 ? text.Substring(0, 160) : text;
+            return GeminiLiveMessages.Scrub(t).Replace("\n", " ").Replace("\r", " ");
         }
 
         static string Describe(Exception e)
@@ -175,12 +184,28 @@ namespace GenJutsu.Gen
                     GenVoiceLog.Warn("socket close: " + GeminiLiveMessages.Scrub(why));
                     throw new InvalidOperationException(string.IsNullOrWhiteSpace(why) ? "Gemini fechou o socket." : why);
                 }
+
+                // Text and Binary are both UTF-8 JSON. setupComplete often arrives as Binary.
+                if (result.MessageType != WebSocketMessageType.Text && result.MessageType != WebSocketMessageType.Binary)
+                {
+                    GenVoiceLog.Warn("frame ignored type=" + result.MessageType);
+                    continue;
+                }
+
                 msg.Write(buffer, 0, result.Count);
                 if (!result.EndOfMessage)
                     continue;
-                var text = Encoding.UTF8.GetString(msg.GetBuffer(), 0, (int)msg.Length);
+                var raw = msg.GetBuffer();
+                var count = (int)msg.Length;
+                var text = GeminiLiveMessages.DecodeServerFrame(raw, count);
+                var kind = result.MessageType.ToString();
                 msg.SetLength(0);
-                if (GeminiLiveMessages.TryReadServer(text, out var ev) && ev.SetupComplete)
+                var setup = GeminiLiveMessages.TryReadServer(text, out var ev) && ev.SetupComplete;
+                if (!setup && text.IndexOf("\"setupComplete\"", StringComparison.Ordinal) >= 0)
+                    setup = true;
+                if (count <= 400 || setup)
+                    GenVoiceLog.Info("frame " + kind + " bytes=" + count + " " + Head(text));
+                if (setup)
                 {
                     IsReady = true;
                     IsConnecting = false;

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using GenJutsu.GenCore;
 using GenJutsu.ProfileDemo;
@@ -204,8 +205,20 @@ namespace GenJutsu.Gen
         {
             if (connecting || NetworkSuppressed())
                 return;
+            if (GenVoiceSessionClient.CoolingDown(out var wait))
+            {
+                GenVoiceLog.Warn("voice-session cooling down " + wait + "s");
+                OnFailed("voice-session HTTP 429");
+                return;
+            }
+
             connecting = true;
-            GenVoiceSessionClient.Request(baseUrl, SessionId(), OnTicket, OnFailed);
+            StartCoroutine(ConnectRoutine());
+        }
+
+        IEnumerator ConnectRoutine()
+        {
+            yield return GenVoiceSessionClient.Post(baseUrl, SessionId(), OnTicket, OnFailed);
         }
 
         void OnTicket(VoiceSessionTicket ticket)
@@ -218,7 +231,9 @@ namespace GenJutsu.Gen
             var q = host.IndexOf('?', System.StringComparison.Ordinal);
             if (q >= 0)
                 host = host.Substring(0, q);
-            GenVoiceLog.Info("ticket model=" + (ticket != null ? ticket.Model : "") + " ws=" + host);
+            GenVoiceLog.Info("ticket model=" + (ticket != null ? ticket.Model : "")
+                + " voice=" + (ticket != null ? ticket.VoiceName : "")
+                + " ws=" + host);
             gemini.Connect(ticket, HandleSocketMessage, OnFailed);
         }
 
@@ -309,6 +324,13 @@ namespace GenJutsu.Gen
             LastFailure = GeminiLiveMessages.Scrub(message);
             GenVoiceLog.Warn("failed: " + LastFailure);
             reply = Short(LastFailure);
+            if (LastFailure.IndexOf("429", System.StringComparison.Ordinal) >= 0)
+            {
+                Phase = GenVoicePhases.AfterFailure();
+                Show();
+                return;
+            }
+
             if (endPending || Phase == GenVoicePhase.Thinking)
             {
                 endPending = false;

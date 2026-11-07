@@ -101,8 +101,8 @@ namespace GenJutsu.GenCore.Tests
 
             StringAssert.Contains("models/gemini-3.8-live", setup);
             StringAssert.Contains("\"responseModalities\":[\"AUDIO\"]", setup);
-            StringAssert.Contains("\"voiceName\":\"Charon\"", setup);
             StringAssert.Contains("\"languageCode\":\"pt-BR\"", setup);
+            StringAssert.DoesNotContain("voiceName", setup);
             StringAssert.Contains("functionDeclarations", setup);
             StringAssert.Contains("set_lights", setup);
             StringAssert.DoesNotContain("additionalProperties", setup);
@@ -117,6 +117,27 @@ namespace GenJutsu.GenCore.Tests
             StringAssert.DoesNotContain("mediaChunks", chunk);
             Assert.AreEqual("{\"realtimeInput\":{\"audioStreamEnd\":true}}", GeminiLiveMessages.AudioStreamEnd());
             Assert.AreEqual(24000, GeminiLiveMessages.RateFromMime("audio/pcm;rate=24000"));
+        }
+
+        [Test]
+        public void BinarySetupComplete_DecodesAsUtf8Json()
+        {
+            var json = "{\"setupComplete\":{}}";
+            var payload = System.Text.Encoding.UTF8.GetBytes(json);
+            var frame = new byte[payload.Length + 4];
+            frame[0] = 0xEF;
+            frame[1] = 0xBB;
+            frame[2] = 0xBF;
+            System.Buffer.BlockCopy(payload, 0, frame, 3, payload.Length);
+            var text = GeminiLiveMessages.DecodeServerFrame(frame, frame.Length);
+            Assert.IsTrue(GeminiLiveMessages.TryReadServer(text, out var ev));
+            Assert.IsTrue(ev.SetupComplete);
+
+            Assert.IsTrue(GeminiLiveMessages.TryParseTicket(
+                "{\"provider\":\"gemini\",\"model\":\"gemini-3.8-live\",\"token\":\"ya29.x\",\"wsUrl\":\"wss://example/ws?access_token=abc\",\"voiceName\":\"Charon\"}",
+                out var ticket));
+            Assert.AreEqual("Charon", ticket.VoiceName);
+            Assert.AreEqual("wss://example/ws?access_token=abc", GeminiLiveMessages.ResolveWs(ticket.WsUrl, ticket.Token));
         }
 
         [Test]

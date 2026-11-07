@@ -13,6 +13,7 @@ namespace GenJutsu.GenCore
         public string WsUrl = "";
         public string SystemInstructionRaw = "";
         public string ToolsRaw = "";
+        public string VoiceName = "";
         public string BaseUrl = "";
         public string SessionId = "";
     }
@@ -52,8 +53,6 @@ namespace GenJutsu.GenCore
         public const string DefaultWs =
             "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
 
-        public const string VoiceName = "Charon";
-
         public static bool TryParseTicket(string json, out VoiceSessionTicket ticket)
         {
             ticket = null;
@@ -65,6 +64,7 @@ namespace GenJutsu.GenCore
             ticket.Token = obj.Str("token") ?? "";
             ticket.ExpiresAt = obj.Str("expiresAt") ?? obj.Str("expires_at") ?? "";
             ticket.WsUrl = obj.Str("wsUrl") ?? obj.Str("ws_url") ?? "";
+            ticket.VoiceName = obj.Str("voiceName") ?? obj.Str("voice_name") ?? "";
             if (obj.TryGet("systemInstruction", out var si) || obj.TryGet("system_instruction", out si))
                 ticket.SystemInstructionRaw = si.Raw ?? "";
             if (obj.TryGet("tools", out var tools))
@@ -91,8 +91,8 @@ namespace GenJutsu.GenCore
                 modelName = "models/" + modelName;
             var sb = new StringBuilder(256);
             sb.Append("{\"setup\":{\"model\":\"").Append(GenJson.Escape(modelName)).Append("\"");
-            sb.Append(",\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"languageCode\":\"pt-BR\",\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"")
-                .Append(GenJson.Escape(VoiceName)).Append("\"}}}}");
+            // voiceName is locked into the ephemeral token (Charon). Sending it again is unnecessary.
+            sb.Append(",\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"languageCode\":\"pt-BR\"}}");
             var instruction = EmbedInstruction(systemInstructionRaw);
             if (instruction != null)
                 sb.Append(",\"systemInstruction\":").Append(instruction);
@@ -144,6 +144,32 @@ namespace GenJutsu.GenCore
             if (string.IsNullOrWhiteSpace(argsJson))
                 argsJson = "{}";
             return "{\"tool\":\"" + GenJson.Escape(tool ?? "") + "\",\"args\":" + argsJson + "}";
+        }
+
+        /// <summary>
+        /// Gemini sometimes delivers JSON, including <c>setupComplete</c>, as a binary WebSocket frame.
+        /// Those bytes are UTF-8. A BOM or trailing NULs must not hide the object.
+        /// </summary>
+        public static string DecodeServerFrame(byte[] buffer, int count)
+        {
+            if (buffer == null || count <= 0)
+                return "";
+            var start = 0;
+            var end = count > buffer.Length ? buffer.Length : count;
+            if (end >= 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF)
+                start = 3;
+            while (start < end && (buffer[start] == 0 || IsFrameSpace(buffer[start])))
+                start++;
+            while (end > start && (buffer[end - 1] == 0 || IsFrameSpace(buffer[end - 1])))
+                end--;
+            if (end <= start)
+                return "";
+            return Encoding.UTF8.GetString(buffer, start, end - start);
+        }
+
+        static bool IsFrameSpace(byte b)
+        {
+            return b == (byte)' ' || b == (byte)'\n' || b == (byte)'\r' || b == (byte)'\t';
         }
 
         public static bool TryReadServer(string json, out GeminiServerEvent ev)
