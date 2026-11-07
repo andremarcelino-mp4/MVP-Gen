@@ -101,6 +101,8 @@ namespace GenJutsu.GenCore.Tests
 
             StringAssert.Contains("models/gemini-3.8-live", setup);
             StringAssert.Contains("\"responseModalities\":[\"AUDIO\"]", setup);
+            StringAssert.Contains("\"voiceName\":\"Charon\"", setup);
+            StringAssert.Contains("\"languageCode\":\"pt-BR\"", setup);
             StringAssert.Contains("functionDeclarations", setup);
             StringAssert.Contains("set_lights", setup);
             StringAssert.DoesNotContain("additionalProperties", setup);

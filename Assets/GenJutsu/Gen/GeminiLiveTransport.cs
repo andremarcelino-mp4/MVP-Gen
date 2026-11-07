@@ -91,8 +91,10 @@ namespace GenJutsu.Gen
                 ws = new ClientWebSocket();
                 socket = ws;
                 var url = GeminiLiveMessages.ResolveWs(ticket != null ? ticket.WsUrl : null, ticket != null ? ticket.Token : null);
+                GenVoiceLog.Info("socket connect " + GeminiLiveMessages.Scrub(url) + " model=" + (ticket != null ? ticket.Model : ""));
                 await ws.ConnectAsync(new Uri(url), token).ConfigureAwait(false);
                 IsLive = true;
+                GenVoiceLog.Info("socket open");
                 var setup = GeminiLiveMessages.BuildSetup(
                     ticket != null ? ticket.Model : null,
                     ticket != null ? ticket.SystemInstructionRaw : null,
@@ -112,7 +114,7 @@ namespace GenJutsu.Gen
                 var why = GeminiLiveMessages.Scrub(e.Message);
                 if (string.IsNullOrWhiteSpace(why))
                     why = e.GetType().Name;
-                Debug.LogWarning("Gemini Live failed: " + why);
+                GenVoiceLog.Warn("socket failed: " + why);
                 IsConnecting = false;
                 MainThread.Post(() =>
                 {
@@ -162,6 +164,7 @@ namespace GenJutsu.Gen
                     var why = ws.CloseStatusDescription;
                     if (string.IsNullOrWhiteSpace(why))
                         why = result.CloseStatus.ToString();
+                    GenVoiceLog.Warn("socket close: " + why);
                     throw new InvalidOperationException(string.IsNullOrWhiteSpace(why) ? "Gemini fechou o socket." : why);
                 }
                 msg.Write(buffer, 0, result.Count);
@@ -173,6 +176,7 @@ namespace GenJutsu.Gen
                 {
                     IsReady = true;
                     IsConnecting = false;
+                    GenVoiceLog.Info("setupComplete");
                 }
                 var delivered = text;
                 MainThread.Post(() =>

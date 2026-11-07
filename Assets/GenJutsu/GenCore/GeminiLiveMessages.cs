@@ -52,6 +52,8 @@ namespace GenJutsu.GenCore
         public const string DefaultWs =
             "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
 
+        public const string VoiceName = "Charon";
+
         public static bool TryParseTicket(string json, out VoiceSessionTicket ticket)
         {
             ticket = null;
@@ -89,7 +91,8 @@ namespace GenJutsu.GenCore
                 modelName = "models/" + modelName;
             var sb = new StringBuilder(256);
             sb.Append("{\"setup\":{\"model\":\"").Append(GenJson.Escape(modelName)).Append("\"");
-            sb.Append(",\"generationConfig\":{\"responseModalities\":[\"AUDIO\"]}");
+            sb.Append(",\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"languageCode\":\"pt-BR\",\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"")
+                .Append(GenJson.Escape(VoiceName)).Append("\"}}}}");
             var instruction = EmbedInstruction(systemInstructionRaw);
             if (instruction != null)
                 sb.Append(",\"systemInstruction\":").Append(instruction);

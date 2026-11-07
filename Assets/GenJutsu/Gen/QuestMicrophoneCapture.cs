@@ -31,6 +31,7 @@ namespace GenJutsu.Gen
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             HasPermission = UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Microphone);
+            GenVoiceLog.Info("RECORD_AUDIO granted=" + HasPermission);
             if (!HasPermission)
                 UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.Microphone);
 #else

@@ -21,8 +21,10 @@ namespace GenJutsu.Gen
             {
                 try
                 {
+                    GenVoiceLog.Info("POST " + url);
                     var content = new StringContent(payload, Encoding.UTF8, "application/json");
                     var response = Http.PostAsync(url, content).GetAwaiter().GetResult();
+                    GenVoiceLog.Info("voice-session HTTP " + (int)response.StatusCode);
                     var body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     if (!response.IsSuccessStatusCode)
                     {
@@ -53,7 +55,7 @@ namespace GenJutsu.Gen
                 catch (Exception e)
                 {
                     var why = GeminiLiveMessages.Scrub(e.GetType().Name + ": " + e.Message);
-                    Debug.LogWarning("Gen voice-session: " + why);
+                    GenVoiceLog.Warn("voice-session: " + why);
                     Fail(onFailed, why);
                 }
             });
