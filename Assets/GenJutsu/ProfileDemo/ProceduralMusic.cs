@@ -18,6 +18,16 @@ namespace GenJutsu.ProfileDemo
         int current = -1;
         readonly AudioClip[] clips = new AudioClip[Profiles.Count];
 
+        public bool IsPlaying => current >= 0;
+
+        public void SetLevel(float volume)
+        {
+            musicVolume = Mathf.Clamp01(volume);
+            if (sources == null || current < 0)
+                return;
+            FadeTo(current, musicVolume, false);
+        }
+
         void Awake()
         {
             sources = new AudioSource[2];
