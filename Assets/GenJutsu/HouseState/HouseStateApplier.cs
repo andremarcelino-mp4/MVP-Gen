@@ -73,14 +73,25 @@ namespace GenJutsu.HouseState
                 director.mainLight.intensity = Mathf.Lerp(director.mainLight.intensity, intensity, k);
             }
 
-            if (!ambientCaptured)
+            if (LightmapSettings.lightmaps != null && LightmapSettings.lightmaps.Length > 0)
             {
-                ambientFrom = RenderSettings.ambientLight;
-                ambientCaptured = true;
+                RenderSettings.ambientIntensity = Mathf.Lerp(
+                    RenderSettings.ambientIntensity,
+                    0.55f + plan.MainIntensity * 0.45f,
+                    k);
+            }
+            else
+            {
+                if (!ambientCaptured)
+                {
+                    ambientFrom = RenderSettings.ambientLight;
+                    ambientCaptured = true;
+                }
+
+                var targetAmbient = Color.Lerp(new Color(0.04f, 0.04f, 0.04f), plan.MainColor, 0.92f);
+                RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, targetAmbient, k);
             }
 
-            var targetAmbient = Color.Lerp(new Color(0.04f, 0.04f, 0.04f), plan.MainColor, 0.92f);
-            RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, targetAmbient, k);
             if (RenderSettings.fog)
                 RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, plan.MainColor, k);
         }

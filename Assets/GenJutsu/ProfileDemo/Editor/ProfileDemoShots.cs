@@ -153,6 +153,9 @@ namespace GenJutsu.ProfileDemo.EditorTools
 
         static bool WaitHouse(ProfileDemoDirector director, string file)
         {
+            var dojo = Object.FindFirstObjectByType<DojoDirector>();
+            if (dojo != null && director.Current == ProfileDemoDirector.State.WhiteSpace)
+                dojo.TryBeginVisit();
             if (director.Current == ProfileDemoDirector.State.InHouse && Elapsed() > 0.4f)
             {
                 SaveRoom(director, file, false);

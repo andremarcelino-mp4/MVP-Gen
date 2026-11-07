@@ -164,6 +164,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
             light.intensity = intensity;
             light.range = range;
             light.shadows = LightShadows.None;
+            light.lightmapBakeType = LightmapBakeType.Mixed;
         }
 
         static void ZenAccents(House h, Shell shell)
