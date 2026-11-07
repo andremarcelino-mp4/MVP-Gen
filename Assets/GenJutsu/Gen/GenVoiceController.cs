@@ -43,6 +43,8 @@ namespace GenJutsu.Gen
         float nextControllerLog;
         int bytesSent;
         string pttSource = "";
+        string pendingWelcome;
+        string welcomeLine;
         byte[] pendingPcm;
         string reply = "";
 
@@ -195,6 +197,33 @@ namespace GenJutsu.Gen
             Connect();
         }
 
+        public void SpeakWelcome(string visitorName)
+        {
+            var name = string.IsNullOrWhiteSpace(visitorName) ? "visitante" : visitorName.Trim();
+            welcomeLine = "Bem-vindo, " + name + ".";
+            pendingWelcome = "Fale apenas esta frase, em português do Brasil, tom calmo e breve: " + welcomeLine;
+            GenVoiceLog.Info("welcome " + welcomeLine);
+            GenHistoryClient.Note(baseUrl, "gen", welcomeLine, "welcome");
+            if (gemini != null && gemini.IsReady)
+            {
+                FlushWelcome();
+                return;
+            }
+
+            liveFailed = false;
+            Connect();
+        }
+
+        void FlushWelcome()
+        {
+            if (string.IsNullOrEmpty(pendingWelcome) || gemini == null || !gemini.IsReady)
+                return;
+            gemini.SendRaw(GeminiLiveMessages.ClientTurn(pendingWelcome));
+            pendingWelcome = null;
+            Phase = GenVoicePhase.Thinking;
+            Show();
+        }
+
         public void SendText(string text)
         {
             if (gemini == null || !gemini.IsLive || string.IsNullOrWhiteSpace(text))
@@ -285,6 +314,10 @@ namespace GenJutsu.Gen
                 Phase = GenVoicePhases.AfterTurnComplete(Phase, ptt);
             if (ev.SetupComplete && endPending)
                 FlushUtterance();
+            if (ev.SetupComplete)
+                FlushWelcome();
+            if (!string.IsNullOrEmpty(ev.Text))
+                GenHistoryClient.Note(baseUrl, "gen", ev.Text, "voice");
             if (ev.GoAway && gemini != null)
                 gemini.Close();
             Show();
@@ -315,6 +348,8 @@ namespace GenJutsu.Gen
             if (chat == null)
                 return;
             reply = string.IsNullOrEmpty(chat.ReplyText) ? chat.Transcript : chat.ReplyText;
+            if (!string.IsNullOrEmpty(reply))
+                GenHistoryClient.Note(baseUrl, "gen", reply, "chat");
             if (speaker != null && !string.IsNullOrEmpty(chat.ReplyText))
                 speaker.Speak(chat.ReplyText);
             if (!string.IsNullOrEmpty(chat.StateRaw))
@@ -347,6 +382,16 @@ namespace GenJutsu.Gen
             LastFailure = GeminiLiveMessages.Scrub(message);
             GenVoiceLog.Warn("failed: " + LastFailure);
             reply = Short(LastFailure);
+            if (!string.IsNullOrEmpty(pendingWelcome) || !string.IsNullOrEmpty(welcomeLine))
+            {
+                var line = string.IsNullOrEmpty(welcomeLine) ? "Bem-vindo." : welcomeLine;
+                pendingWelcome = null;
+                welcomeLine = null;
+                if (speaker != null)
+                    speaker.Speak(line);
+                GenVoiceLog.Warn("welcome fallback TTS after " + LastFailure);
+            }
+
             if (LastFailure.IndexOf("429", System.StringComparison.Ordinal) >= 0)
             {
                 Phase = GenVoicePhases.AfterFailure();

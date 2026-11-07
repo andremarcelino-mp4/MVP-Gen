@@ -27,6 +27,9 @@ namespace GenJutsu.ProfileDemo
 
         public event Action<ProfileId> ProfileResolved;
         public event Action SessionEnded;
+        public event Action<string> NamedWelcome;
+
+        public string VisitorName { get; private set; }
 
         public bool HasSession { get; private set; }
         public string ActiveSessionKey { get; private set; }
@@ -34,12 +37,14 @@ namespace GenJutsu.ProfileDemo
 
         bool applied;
         string appliedKey;
+        string shownWelcome;
         Coroutine poll;
 
         void Awake()
         {
             GuestSession.Load();
             StripCodeControls();
+            CompactCard();
             ShowWaiting();
 #if UNITY_EDITOR
             if (System.IO.File.Exists("Temp/dojo-shots.marker"))
@@ -188,24 +193,49 @@ namespace GenJutsu.ProfileDemo
             SessionEnded?.Invoke();
         }
 
+        public static string TitleFor(string rawName)
+        {
+            if (string.IsNullOrWhiteSpace(rawName))
+                return "Bem-vindo";
+            return "Bem-vindo, " + rawName.Trim();
+        }
+
         void ShowWaiting()
         {
-            SetTitle("Bem-vindo");
-            if (status != null)
-                status.gameObject.SetActive(true);
-            SetStatus("À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.",
-                new Color(0.28f, 0.32f, 0.38f));
+            VisitorName = "";
+            shownWelcome = null;
+            SetTitle(TitleFor(null));
+            HideStatus();
         }
 
         void ShowWelcome(string rawName)
         {
             var name = string.IsNullOrWhiteSpace(rawName) ? "visitante" : rawName.Trim();
-            SetTitle("Bem-vindo, " + name);
-            if (status != null)
+            VisitorName = name;
+            SetTitle(TitleFor(name));
+            HideStatus();
+            if (shownWelcome == name)
+                return;
+            shownWelcome = name;
+            NamedWelcome?.Invoke(name);
+        }
+
+        void CompactCard()
+        {
+            var rect = transform as RectTransform;
+            if (rect != null && rect.sizeDelta.y > 160f)
             {
-                status.text = "";
-                status.gameObject.SetActive(false);
+                rect.sizeDelta = new Vector2(720f, 140f);
+                transform.localPosition += Vector3.up * 0.22f;
             }
+        }
+
+        void HideStatus()
+        {
+            if (status == null)
+                return;
+            status.text = "";
+            status.gameObject.SetActive(false);
         }
 
         void SetTitle(string text)

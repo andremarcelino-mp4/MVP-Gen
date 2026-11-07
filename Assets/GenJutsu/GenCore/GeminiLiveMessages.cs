@@ -120,6 +120,21 @@ namespace GenJutsu.GenCore
             return "{\"realtimeInput\":{\"text\":\"" + GenJson.Escape(text ?? "") + "\"}}";
         }
 
+        public static string ClientTurn(string text)
+        {
+            return "{\"clientContent\":{\"turns\":[{\"role\":\"user\",\"parts\":[{\"text\":\""
+                + GenJson.Escape(text ?? "") + "\"}]}],\"turnComplete\":true}}";
+        }
+
+        public static string HistoryBody(string sessionId, string role, string text, string kind)
+        {
+            return "{\"session_id\":\"" + GenJson.Escape(sessionId ?? "")
+                + "\",\"role\":\"" + GenJson.Escape(string.IsNullOrEmpty(role) ? "quest" : role)
+                + "\",\"text\":\"" + GenJson.Escape(text ?? "")
+                + "\",\"kind\":\"" + GenJson.Escape(string.IsNullOrEmpty(kind) ? "note" : kind)
+                + "\",\"source\":\"quest\"}";
+        }
+
         public static string BuildToolResponse(IList<GeminiToolCall> calls)
         {
             var sb = new StringBuilder();

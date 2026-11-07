@@ -46,7 +46,7 @@ Consulta com `?code=` de uma visita já encerrada (o poll sem query não devolve
 
 ## Fim de sessão
 
-O Quest volta ao hub branco (morph reverso, sem corte seco) e o card regressa a “Bem-vindo” / à espera. O poll continua. O card **“Bem-vindo, {nome}”** permanece durante a visita; o que sai são os painéis de explicação do perfil.
+O Quest volta ao hub branco (morph reverso, sem corte seco) e o card regressa a “Bem-vindo”. O poll continua. O card **“Bem-vindo, {nome}”** permanece durante a visita; o que sai são os painéis de explicação do perfil.
 
 1. **`{ "session": null }`** em HTTP 200. É o sinal do poll quando não há visita ou o admin finalizou.
 2. **Objecto `session` com visita encerrada** (`status` / `state` / `session_status` / `lifecycle` em `ended`, `encerrado`, `encerrada`, `closed`, `finished`, `complete`, `completed`, `cancelled`, `canceled`, `inactive`, `finalizado`, `finalizada`, `terminado`, `terminada`), ou `ended: true`, `active: false`, `ended_at` com data. `status: "active"` não encerra.
@@ -61,9 +61,9 @@ Chave = `session.id`. O mesmo perfil com outro `id` é outra visita e o morph co
 ## O que o Unity faz
 
 1. Poll `GET https://genjutsuai.vercel.app/api/session` a ~2 s, no hub e dentro do dojo.
-2. `session: null` → card “Bem-vindo” e a frase de espera. Branco + mesa + pergaminho.
+2. `session: null` → card só com “Bem-vindo”. Sem a frase de espera. Branco + mesa, pincel, pergaminho, bule, alvo e a placa COMEÇAR.
 3. `display_name` com `status: "active"` → a UI do óculos é o card **“Bem-vindo, {nome}”**. Sem painel “Acolhedor / Empático” nem callouts de controle.
-4. `profile_id` válido e `id` novo → morph gradual. Mesa e pergaminho dissolvem. O card de boas-vindas fica.
+4. `profile_id` válido e `id` novo → a visita fica pronta. O morph só começa quando o visitante toca a placa 始 / COMEÇAR. Mesa, pincel, pergaminho, bule e alvo dissolvem. O card de boas-vindas fica.
 5. `profile_id` ausente → nome no card, fica no branco.
 6. Fim (casos acima) → morph reverso ~2,6 s até o hub, pronto para outra visita.
 7. Rede em baixo no hub → mensagem, sem look inventado. Rede em baixo no dojo → permanece.

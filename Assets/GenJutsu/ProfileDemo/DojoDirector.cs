@@ -32,7 +32,7 @@ namespace GenJutsu.ProfileDemo
         }
 
         ProfileId pendingId;
-        bool pendingEnter;
+        bool readyToStart;
         bool leaveAfterEnter;
 
         void OnDisable()
@@ -64,35 +64,35 @@ namespace GenJutsu.ProfileDemo
                 demo.ReturnToWhiteSpace();
             }
 
-            if (pendingEnter && demo.Current == ProfileDemoDirector.State.WhiteSpace)
-            {
-                pendingEnter = false;
-                demo.EnterLookFromSession(pendingId);
-            }
+        }
+
+        /// <summary>The visit is known, but the morph waits for the table plaque.</summary>
+        public bool ReadyToStart => readyToStart;
+
+        public bool TryBeginVisit()
+        {
+            if (!readyToStart || demo == null || leaveAfterEnter)
+                return false;
+            if (demo.Current != ProfileDemoDirector.State.WhiteSpace)
+                return false;
+            return demo.EnterLookFromSession(pendingId);
         }
 
         void OnProfile(ProfileId id)
         {
+            pendingId = id;
+            readyToStart = true;
             if (gaze != null && GuestSession.HasProfile)
                 gaze.StartSession(GuestSession.Code, id);
-            if (demo == null)
-                return;
-            if (demo.Current == ProfileDemoDirector.State.WhiteSpace && !leaveAfterEnter)
-            {
-                demo.EnterLookFromSession(id);
-                return;
-            }
-
-            pendingId = id;
-            pendingEnter = true;
-            RequestWhite();
+            if (demo != null && demo.Current != ProfileDemoDirector.State.WhiteSpace)
+                RequestWhite();
         }
 
         void OnSessionEnded()
         {
             if (gaze != null)
                 gaze.StopSession();
-            pendingEnter = false;
+            readyToStart = false;
             RequestWhite();
         }
 

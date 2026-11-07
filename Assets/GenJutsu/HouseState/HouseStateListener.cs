@@ -66,7 +66,10 @@ namespace GenJutsu.HouseState
             if (!cursor.Offer(json, expected))
                 return;
             if (applier != null && cursor.HasPlan)
+            {
                 applier.ApplyPlan(cursor.Plan);
+                Gen.GenHistoryClient.Note(baseUrl, "quest", "house version " + cursor.Version, "house");
+            }
         }
 
         IEnumerator Poll()

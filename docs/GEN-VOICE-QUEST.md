@@ -61,7 +61,7 @@ Estados: `idle`, `listening`, `thinking`, `speaking`, `offline`. Carregar para f
 
 Push-to-talk: **botão secundário do comando direito (B)** (`CommonUsages.secondaryButton`, só a mão direita). Não é o botão primário A/X (o salto antigo do rig, já desligado), nem o gatilho, nem o grip — esses continuam a servir para agarrar props. No Editor, segurar **V**.
 
-Indicador pequeno à frente da cabeça, por baixo da linha do olhar: `Gen · a ouvir` e a legenda. O cartão único `Bem-vindo, {nome}` mantém-se. Não há cartões de explicação de perfil.
+Indicador pequeno à frente da cabeça, por baixo da linha do olhar: `Gen · a ouvir` e a legenda. O cartão único `Bem-vindo, {nome}` mantém-se, sem a linha “à espera do anfitrião”. Quando o nome chega, a Gen diz essa frase em voz (Charon no Live; TTS Android se o socket falhar). O morph da visita só começa na placa da mesa (`始` / COMEÇAR). Cada fala, ferramenta e mudança de casa vai em `POST /api/gen/history` (`session_id`, `role`, `text`, `kind`, `source: quest`), sem chave no APK.
 
 O microfone pede `android.permission.RECORD_AUDIO` em Android (`Permission.Microphone` e o library manifest `Assets/Plugins/Android/GenVoice.androidlib`). O `Microphone` da Unity lê na thread principal; o WebSocket e o HTTP correm fora dela e voltam por `MainThread`. O playback é um `AudioClip` em stream, mono, `spatialBlend` 0, 24 kHz, lido na thread de áudio.
 

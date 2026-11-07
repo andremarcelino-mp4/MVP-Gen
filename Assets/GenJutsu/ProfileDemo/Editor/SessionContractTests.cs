@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using GenJutsu.ProfileDemo;
 
 namespace GenJutsu.ProfileDemo.EditorTools
 {
@@ -93,6 +94,15 @@ namespace GenJutsu.ProfileDemo.EditorTools
         {
             var result = SessionApiClient.Parse("", 0, false);
             Assert.AreEqual(SessionApiClient.Kind.Down, result.kind);
+        }
+
+        [Test]
+        public void WelcomeTitle_UsesTheName_AndNeverTheWaitingLine()
+        {
+            Assert.AreEqual("Bem-vindo", SessionGate.TitleFor(null));
+            Assert.AreEqual("Bem-vindo", SessionGate.TitleFor("  "));
+            Assert.AreEqual("Bem-vindo, Lina", SessionGate.TitleFor(" Lina "));
+            StringAssert.DoesNotContain("anfitri", SessionGate.TitleFor("Lina").ToLowerInvariant());
         }
 
         [Test]

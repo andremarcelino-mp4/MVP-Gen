@@ -45,6 +45,9 @@ namespace GenJutsu.Gen
                             return "{\"ok\":false,\"error\":\"command_failed\"}";
                         if (GenJson.TryParse(text, out var root) && root is JObj obj && obj.TryGet("state", out var state) && !(state is JNull))
                             house = text;
+                        var notedTool = tool;
+                        var notedArgs = args;
+                        MainThread.Post(() => GenHistoryClient.Note(baseUrl, "quest", notedTool + " " + notedArgs, "tool"));
                         return text;
                     }
                     catch (Exception e)

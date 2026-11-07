@@ -141,6 +141,17 @@ namespace GenJutsu.GenCore.Tests
         }
 
         [Test]
+        public void HistoryBody_CarriesSessionRoleAndKind()
+        {
+            var body = GeminiLiveMessages.HistoryBody("YP8PFF", "gen", "Bem-vindo, Ana.", "welcome");
+            StringAssert.Contains("\"session_id\":\"YP8PFF\"", body);
+            StringAssert.Contains("\"role\":\"gen\"", body);
+            StringAssert.Contains("\"kind\":\"welcome\"", body);
+            StringAssert.Contains("Bem-vindo, Ana.", body);
+            StringAssert.Contains("\"source\":\"quest\"", body);
+        }
+
+        [Test]
         public void InterruptedFlag_IsReadFromServerContent()
         {
             Assert.IsTrue(GeminiLiveMessages.TryReadServer("{\"serverContent\":{\"interrupted\":true}}", out var ev));

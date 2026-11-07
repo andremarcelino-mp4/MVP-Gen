@@ -52,6 +52,13 @@ namespace GenJutsu.ProfileDemo
             dojo.gaze = gaze;
             dojo.Bind();
             GenJutsu.Gen.GenBootstrap.Ensure(director);
+            WhiteRoomSetup.Ensure(dojo);
+            var voice = director.GetComponent<GenJutsu.Gen.GenVoiceController>();
+            if (director.sessionGate != null && voice != null)
+            {
+                director.sessionGate.NamedWelcome -= voice.SpeakWelcome;
+                director.sessionGate.NamedWelcome += voice.SpeakWelcome;
+            }
         }
 
         static void DisableHousePicker(Transform profileRoot)
@@ -224,23 +231,23 @@ namespace GenJutsu.ProfileDemo
         {
             var canvasGo = new GameObject("SessionGate", typeof(RectTransform));
             canvasGo.transform.SetParent(parent, false);
-            canvasGo.transform.localPosition = new Vector3(0f, 1.15f, 0.55f);
+            canvasGo.transform.localPosition = new Vector3(0f, 1.42f, 0.55f);
             canvasGo.transform.localScale = Vector3.one * 0.00115f;
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
             canvasGo.AddComponent<CanvasScaler>().dynamicPixelsPerUnit = 4f;
             canvasGo.AddComponent<GraphicRaycaster>();
             var rect = (RectTransform)canvasGo.transform;
-            rect.sizeDelta = new Vector2(920f, 360f);
+            rect.sizeDelta = new Vector2(720f, 140f);
 
             var group = canvasGo.AddComponent<CanvasGroup>();
             group.interactable = false;
             group.blocksRaycasts = false;
             FullImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f));
-            var title = Tmp(rect, "Title", "Bem-vindo", 48f, new Color(0.16f, 0.18f, 0.22f),
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -100f), new Vector2(-36f, -24f));
+            var title = Tmp(rect, "Title", "Bem-vindo", 52f, new Color(0.16f, 0.18f, 0.22f),
+                new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(24f, 12f), new Vector2(-24f, -12f));
             title.fontStyle = FontStyles.Bold;
-            var status = Tmp(rect, "Status", "À espera que o anfitrião escolha a sessão no admin.",
+            var status = Tmp(rect, "Status", "",
                 28f, new Color(0.35f, 0.38f, 0.44f),
                 new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f));
             status.textWrappingMode = TextWrappingModes.Normal;

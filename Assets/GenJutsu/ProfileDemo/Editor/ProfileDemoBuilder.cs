@@ -248,7 +248,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
             UIImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             var title = UIText(rect, "Title", "Bem-vindo", 48f, new Color(0.16f, 0.18f, 0.22f), new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -100f), new Vector2(-36f, -24f), TextAlignmentOptions.BottomLeft);
             title.fontStyle = FontStyles.Bold;
-            var status = UIText(rect, "Status", "À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.", 28f, new Color(0.35f, 0.38f, 0.44f), new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f), TextAlignmentOptions.TopLeft);
+            var status = UIText(rect, "Status", "", 28f, new Color(0.35f, 0.38f, 0.44f), new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f), TextAlignmentOptions.TopLeft);
             status.textWrappingMode = TextWrappingModes.Normal;
             status.raycastTarget = false;
 

@@ -89,9 +89,7 @@ namespace GenJutsu.ProfileDemo
             {
                 kind = Kind.WaitingForAdmin,
                 httpStatus = httpStatus,
-                error = err == "no_current_session"
-                    ? "À espera que o anfitrião escolha a sessão no admin."
-                    : "Nenhuma sessão activa."
+                error = "Nenhuma sessão activa."
             };
         }
 

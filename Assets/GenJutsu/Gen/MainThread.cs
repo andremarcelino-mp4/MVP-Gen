@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace GenJutsu.Gen
     public sealed class MainThread : MonoBehaviour
     {
         static readonly ConcurrentQueue<Action> Queue = new ConcurrentQueue<Action>();
+        static MainThread host;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Boot()
@@ -21,10 +23,32 @@ namespace GenJutsu.Gen
             go.AddComponent<MainThread>();
         }
 
+        void Awake()
+        {
+            host = this;
+        }
+
+        void OnDestroy()
+        {
+            if (host == this)
+                host = null;
+        }
+
         public static void Post(Action action)
         {
             if (action != null)
                 Queue.Enqueue(action);
+        }
+
+        public static void Run(IEnumerator routine)
+        {
+            if (routine == null)
+                return;
+            Post(() =>
+            {
+                if (host != null)
+                    host.StartCoroutine(routine);
+            });
         }
 
         void Update()
