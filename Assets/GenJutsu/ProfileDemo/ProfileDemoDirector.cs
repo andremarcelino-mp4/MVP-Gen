@@ -153,6 +153,57 @@ namespace GenJutsu.ProfileDemo
             return null;
         }
 
+        public HouseTransition VisualHouse
+        {
+            get
+            {
+                if (Current == State.WhiteSpace || Current == State.Dissolving)
+                    return null;
+                return ResolveLook(Active);
+            }
+        }
+
+        Coroutine visualSwitch;
+
+        /// <summary>
+        /// Magic morph into another dojo look. Visual only: GuestSession and the visit profile stay as they are.
+        /// </summary>
+        public bool SwitchVisualDojo(ProfileId id)
+        {
+            if (Current != State.InHouse || id == Active || visualSwitch != null)
+                return false;
+            visualSwitch = StartCoroutine(SwitchVisualRoutine(id));
+            return true;
+        }
+
+        IEnumerator SwitchVisualRoutine(ProfileId next)
+        {
+            Current = State.Transforming;
+            var from = ResolveLook(Active);
+            var info = Profiles.Get(next);
+            var to = ResolveLook(next);
+            var origin = HeadPosition();
+            if (from != null)
+                yield return from.Dissolve(origin);
+            Active = next;
+            var whiteAmbient = new Color(0.85f, 0.86f, 0.88f);
+            if (morph != null && to != null)
+            {
+                morph.duration = Mathf.Min(transitionDuration, 3f);
+                yield return morph.MorphIn(info, to, (inf, u) => ApplyEnvironment(inf, u, whiteAmbient), null, origin);
+            }
+            else if (to != null)
+            {
+                yield return to.Build(origin);
+                ApplyEnvironment(info, 1f, whiteAmbient);
+            }
+
+            if (sessionGate != null)
+                sessionGate.EnsureVisible();
+            Current = State.InHouse;
+            visualSwitch = null;
+        }
+
         public bool ReturnToWhiteSpace()
         {
             if (Current != State.InHouse)

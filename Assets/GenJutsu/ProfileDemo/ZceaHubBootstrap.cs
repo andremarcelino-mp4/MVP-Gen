@@ -51,6 +51,7 @@ namespace GenJutsu.ProfileDemo
             dojo.hubDissolve = director.hubDissolve;
             dojo.gaze = gaze;
             dojo.Bind();
+            GenJutsu.Gen.GenBootstrap.Ensure(director);
         }
 
         static void DisableHousePicker(Transform profileRoot)

@@ -1,4 +1,7 @@
 using System.IO;
+using GenJutsu.Gen;
+using GenJutsu.GenCore;
+using GenJutsu.HouseState;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -128,6 +131,21 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 case 13:
                     if (!WaitHouse(director, "dojo-a.png"))
                         return;
+                    PushHouse(WarmState());
+                    SetPhase(14);
+                    break;
+                case 14:
+                    if (Elapsed() < 1.6f)
+                        return;
+                    SaveRoom(director, "dojo-warm-lights.png", false);
+                    PushHouse(CoolState());
+                    SetPhase(15);
+                    break;
+                case 15:
+                    if (Elapsed() < 1.6f)
+                        return;
+                    SaveRoom(director, "dojo-cool-lights.png", false);
+                    SaveVoice(director, "gen-voice-status.png");
                     Finish();
                     break;
             }
@@ -174,11 +192,16 @@ namespace GenJutsu.ProfileDemo.EditorTools
             var gate = Object.FindFirstObjectByType<SessionGate>();
             if (gate != null && gate.group != null)
                 gate.group.alpha = showCard ? 1f : 0f;
+            var voice = Object.FindFirstObjectByType<GenStatusView>();
+            if (voice != null)
+                voice.gameObject.SetActive(false);
             var focus = director.transform.root.position + Vector3.up * 0.7f;
             var from = focus + new Vector3(5.1f, 4.35f, -5.1f);
             Save(from, focus, 36f, file);
             if (gate != null && gate.group != null)
                 gate.group.alpha = 1f;
+            if (voice != null)
+                voice.gameObject.SetActive(true);
         }
 
         static void SaveCard(SessionGate gate, string file)
@@ -224,6 +247,45 @@ namespace GenJutsu.ProfileDemo.EditorTools
             Object.Destroy(rt);
             Object.Destroy(go);
             Debug.Log("[DojoShots] wrote " + path + " (" + new FileInfo(path).Length + " bytes)");
+        }
+
+        static void PushHouse(string json)
+        {
+            var listener = Object.FindFirstObjectByType<HouseStateListener>();
+            if (listener != null)
+                listener.Ingest(json);
+        }
+
+        static string WarmState()
+        {
+            return "{\"state\":{\"session_id\":\"ACO004\",\"version\":1,\"mode\":\"dojo\",\"dojo\":\"Acolhedor\"," +
+                   "\"lights\":{\"main\":{\"intensity\":1.35,\"color\":\"#FFB15A\"},\"lanterns\":{\"intensity\":1.6,\"color\":\"#FF6A1A\"}}," +
+                   "\"ambience\":{\"preset\":\"soft\",\"volume\":0.34}}}";
+        }
+
+        static string CoolState()
+        {
+            return "{\"state\":{\"session_id\":\"ACO004\",\"version\":2,\"mode\":\"dojo\",\"dojo\":\"Acolhedor\"," +
+                   "\"lights\":{\"main\":{\"intensity\":0.22,\"color\":\"#6E8CFF\"},\"lanterns\":{\"intensity\":0.7,\"color\":\"#2E45FF\"}}," +
+                   "\"ambience\":{\"preset\":\"night\",\"volume\":0.12}}}";
+        }
+
+        static void SaveVoice(ProfileDemoDirector director, string file)
+        {
+            var view = Object.FindFirstObjectByType<GenStatusView>();
+            if (view == null)
+            {
+                Debug.LogWarning("[DojoShots] voice status missing");
+                return;
+            }
+
+            view.FollowHead = false;
+            view.Show(GenVoicePhase.Listening, "A casa ouviu. Luz mais quente?");
+            var anchor = director.transform.root.position + new Vector3(0f, 1.35f, 0.2f);
+            var from = anchor + new Vector3(0.2f, 0.08f, -1.25f);
+            view.transform.position = anchor;
+            view.transform.rotation = Quaternion.LookRotation(from - anchor, Vector3.up);
+            Save(from, anchor, 32f, file);
         }
 
         static string Body(string code, string name, string profile)
