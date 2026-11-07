@@ -54,7 +54,10 @@ namespace GenJutsu.Gen
                 }
                 catch (Exception e)
                 {
-                    var why = GeminiLiveMessages.Scrub(e.GetType().Name + ": " + e.Message);
+                    var why = e.GetType().Name + ": " + e.Message;
+                    if (e.InnerException != null && !string.IsNullOrEmpty(e.InnerException.Message))
+                        why += " | " + e.InnerException.GetType().Name + ": " + e.InnerException.Message;
+                    why = GeminiLiveMessages.Scrub(why);
                     GenVoiceLog.Warn("voice-session: " + why);
                     Fail(onFailed, why);
                 }

@@ -111,9 +111,7 @@ namespace GenJutsu.Gen
             }
             catch (Exception e)
             {
-                var why = GeminiLiveMessages.Scrub(e.Message);
-                if (string.IsNullOrWhiteSpace(why))
-                    why = e.GetType().Name;
+                var why = Describe(e);
                 GenVoiceLog.Warn("socket failed: " + why);
                 IsConnecting = false;
                 MainThread.Post(() =>
@@ -130,6 +128,16 @@ namespace GenJutsu.Gen
                 if (ws != null)
                     ws.Dispose();
             }
+        }
+
+        static string Describe(Exception e)
+        {
+            var why = e.GetType().Name + ": " + e.Message;
+            var inner = e.InnerException;
+            if (inner != null && !string.IsNullOrEmpty(inner.Message))
+                why += " | " + inner.GetType().Name + ": " + inner.Message;
+            why = GeminiLiveMessages.Scrub(why);
+            return string.IsNullOrWhiteSpace(why) ? e.GetType().Name : why;
         }
 
         async Task PumpSend(ClientWebSocket ws, CancellationToken token)
@@ -164,7 +172,7 @@ namespace GenJutsu.Gen
                     var why = ws.CloseStatusDescription;
                     if (string.IsNullOrWhiteSpace(why))
                         why = result.CloseStatus.ToString();
-                    GenVoiceLog.Warn("socket close: " + why);
+                    GenVoiceLog.Warn("socket close: " + GeminiLiveMessages.Scrub(why));
                     throw new InvalidOperationException(string.IsNullOrWhiteSpace(why) ? "Gemini fechou o socket." : why);
                 }
                 msg.Write(buffer, 0, result.Count);

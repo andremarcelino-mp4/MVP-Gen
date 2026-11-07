@@ -48,6 +48,7 @@ namespace GenJutsu.Gen
                 return false;
             End();
             device = Microphone.devices[0];
+            GenVoiceLog.Info("mic start device=" + device + " count=" + Microphone.devices.Length);
             clip = Microphone.Start(device, true, 8, TargetRate);
             if (clip == null)
                 return false;

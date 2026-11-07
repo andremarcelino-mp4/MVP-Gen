@@ -35,6 +35,7 @@ namespace GenJutsu.Gen
         bool endPending;
         bool streamedLive;
         bool liveFailed;
+        float adbPulseUntil;
         byte[] pendingPcm;
         string reply = "";
 
@@ -85,7 +86,8 @@ namespace GenJutsu.Gen
 
         void Update()
         {
-            var down = ReadPtt();
+            PollAdbPulse();
+            var down = ReadPtt() || Time.unscaledTime < adbPulseUntil;
             if (down && !ptt)
                 Press();
             else if (!down && ptt)
@@ -361,6 +363,37 @@ namespace GenJutsu.Gen
         {
             if (view != null)
                 view.Show(Phase, reply);
+        }
+
+        void PollAdbPulse()
+        {
+            var path = System.IO.Path.Combine(Application.persistentDataPath, "gen-ptt.pulse");
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return;
+            }
+            catch (System.Exception)
+            {
+                return;
+            }
+
+            var holdMs = 2500;
+            try
+            {
+                var raw = System.IO.File.ReadAllText(path).Trim();
+                if (int.TryParse(raw, out var parsed) && parsed >= 200 && parsed <= 8000)
+                    holdMs = parsed;
+                System.IO.File.Delete(path);
+            }
+            catch (System.Exception e)
+            {
+                GenVoiceLog.Warn("adb pulse read: " + e.Message);
+                return;
+            }
+
+            adbPulseUntil = Time.unscaledTime + holdMs / 1000f;
+            GenVoiceLog.Info("adb pulse hold=" + holdMs + "ms");
         }
 
         bool ReadPtt()

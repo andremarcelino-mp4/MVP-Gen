@@ -142,7 +142,7 @@ namespace GenJutsu.Gen
 
             public void onInit(int status)
             {
-                owner.OnReady(status);
+                MainThread.Post(() => owner.OnReady(status));
             }
         }
 #else
