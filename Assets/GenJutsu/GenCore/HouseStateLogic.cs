@@ -1,0 +1,319 @@
+using System;
+using System.Globalization;
+using UnityEngine;
+
+namespace GenJutsu.GenCore
+{
+    public struct HouseSnapshot
+    {
+        public string SessionId;
+        public int Version;
+        public string Mode;
+        public string Dojo;
+        public bool HasLights;
+        public bool HasMain;
+        public bool HasLanterns;
+        public Color MainColor;
+        public float MainIntensity;
+        public Color LanternColor;
+        public float LanternIntensity;
+        public bool HasAmbience;
+        public string Preset;
+        public float Volume;
+    }
+
+    public readonly struct HouseApplyPlan
+    {
+        public readonly bool HasLights;
+        public readonly bool HasMain;
+        public readonly bool HasLanterns;
+        public readonly Color MainColor;
+        public readonly float MainIntensity;
+        public readonly Color LanternColor;
+        public readonly float LanternIntensity;
+        public readonly bool HasAmbience;
+        public readonly string Preset;
+        public readonly float Volume;
+        public readonly bool SwitchDojo;
+        public readonly string Dojo;
+
+        public HouseApplyPlan(HouseSnapshot snap)
+        {
+            HasLights = snap.HasLights;
+            HasMain = snap.HasMain;
+            HasLanterns = snap.HasLanterns;
+            MainColor = snap.MainColor;
+            MainIntensity = snap.MainIntensity;
+            LanternColor = snap.LanternColor;
+            LanternIntensity = snap.LanternIntensity;
+            HasAmbience = snap.HasAmbience;
+            Preset = snap.Preset ?? "";
+            Volume = snap.Volume;
+            SwitchDojo = !string.IsNullOrEmpty(snap.Dojo);
+            Dojo = snap.Dojo ?? "";
+        }
+
+        /// <summary>House commands change the room. They never rewrite the visit profile.</summary>
+        public bool ChangesSessionProfile => false;
+    }
+
+    public static class HouseStateLogic
+    {
+        public static bool IsNewer(int appliedVersion, int incomingVersion)
+        {
+            return incomingVersion > appliedVersion;
+        }
+
+        public static bool TryParse(string json, out HouseSnapshot snap, out bool stateNull)
+        {
+            snap = default;
+            stateNull = false;
+            if (!GenJson.TryParse(json, out var root) || !(root is JObj obj))
+                return false;
+            if (obj.TryGet("state", out var stateVal))
+            {
+                if (stateVal is JNull)
+                {
+                    stateNull = true;
+                    return true;
+                }
+
+                var state = stateVal as JObj;
+                if (state == null)
+                    return false;
+                snap = Read(state);
+                return snap.Version != int.MinValue;
+            }
+
+            if (!obj.TryGet("version", out _))
+                return false;
+            snap = Read(obj);
+            return snap.Version != int.MinValue;
+        }
+
+        public static HouseApplyPlan Map(HouseSnapshot snap)
+        {
+            return new HouseApplyPlan(snap);
+        }
+
+        static HouseSnapshot Read(JObj state)
+        {
+            var snap = new HouseSnapshot
+            {
+                SessionId = state.Str("session_id") ?? state.Str("sessionId") ?? "",
+                Mode = state.Str("mode") ?? "",
+                Dojo = state.Str("dojo") ?? "",
+                Version = int.MinValue,
+                MainColor = Color.white,
+                LanternColor = Color.white,
+                Volume = 0.55f
+            };
+            if (!state.Num("version", out var version))
+                return snap;
+            snap.Version = (int)Math.Round(version);
+
+            var lights = state.Obj("lights");
+            if (lights != null)
+            {
+                var main = lights.Obj("main");
+                var lanterns = lights.Obj("lanterns");
+                snap.HasMain = main != null;
+                snap.HasLanterns = lanterns != null;
+                snap.HasLights = snap.HasMain || snap.HasLanterns;
+                if (main != null)
+                {
+                    snap.MainIntensity = Intensity(main, 1f);
+                    snap.MainColor = ColorOf(main, Color.white);
+                }
+
+                if (lanterns != null)
+                {
+                    snap.LanternIntensity = Intensity(lanterns, 0.6f);
+                    snap.LanternColor = ColorOf(lanterns, new Color(1f, 0.72f, 0.42f));
+                }
+            }
+
+            var ambience = state.Obj("ambience");
+            if (ambience != null)
+            {
+                snap.HasAmbience = true;
+                snap.Preset = ambience.Str("preset") ?? "";
+                snap.Volume = Intensity(ambience, snap.Volume);
+                if (ambience.Num("volume", out var vol))
+                    snap.Volume = (float)vol;
+            }
+
+            if (string.IsNullOrEmpty(snap.Dojo) && string.Equals(snap.Mode, "switch_dojo", StringComparison.Ordinal))
+                snap.Dojo = state.Str("profile_id") ?? "";
+            return snap;
+        }
+
+        static float Intensity(JObj obj, float fallback)
+        {
+            if (obj != null && obj.Num("intensity", out var n))
+                return (float)n;
+            return fallback;
+        }
+
+        public static bool TryColor(JVal value, out Color color)
+        {
+            color = Color.white;
+            if (value is JStr s)
+                return TryHex(s.Value, out color);
+            var obj = value as JObj;
+            if (obj == null)
+                return false;
+            if (!obj.Num("r", out var r) || !obj.Num("g", out var g) || !obj.Num("b", out var b))
+                return false;
+            if (r > 1.0 || g > 1.0 || b > 1.0)
+            {
+                r /= 255.0;
+                g /= 255.0;
+                b /= 255.0;
+            }
+
+            color = new Color(Mathf.Clamp01((float)r), Mathf.Clamp01((float)g), Mathf.Clamp01((float)b), 1f);
+            return true;
+        }
+
+        public static bool TryHex(string text, out Color color)
+        {
+            color = Color.white;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+            var hex = text.Trim();
+            if (hex.StartsWith("#", StringComparison.Ordinal))
+                hex = hex.Substring(1);
+            if (hex.Length == 3)
+            {
+                hex = string.Concat(
+                    hex[0], hex[0],
+                    hex[1], hex[1],
+                    hex[2], hex[2]);
+            }
+
+            if (hex.Length != 6 && hex.Length != 8)
+                return false;
+            if (!byte.TryParse(hex.Substring(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var r))
+                return false;
+            if (!byte.TryParse(hex.Substring(2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var g))
+                return false;
+            if (!byte.TryParse(hex.Substring(4, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var b))
+                return false;
+            color = new Color(r / 255f, g / 255f, b / 255f, 1f);
+            return true;
+        }
+
+        static Color ColorOf(JObj obj, Color fallback)
+        {
+            if (obj != null && obj.TryGet("color", out var c) && TryColor(c, out var parsed))
+                return parsed;
+            return fallback;
+        }
+    }
+
+    /// <summary>Applies only a strictly newer house version, and only for the visit that is open.</summary>
+    public sealed class HouseStateCursor
+    {
+        public int Version { get; private set; } = -1;
+        public HouseApplyPlan Plan { get; private set; }
+        public bool HasPlan { get; private set; }
+
+        public void Reset()
+        {
+            Version = -1;
+            HasPlan = false;
+            Plan = default;
+        }
+
+        public bool Offer(string json, string expectedSessionId)
+        {
+            if (!HouseStateLogic.TryParse(json, out var snap, out var stateNull) || stateNull)
+                return false;
+            if (!string.IsNullOrEmpty(snap.SessionId) && !string.IsNullOrEmpty(expectedSessionId)
+                && !string.Equals(snap.SessionId, expectedSessionId, StringComparison.Ordinal))
+                return false;
+            if (!HouseStateLogic.IsNewer(Version, snap.Version))
+                return false;
+            Version = snap.Version;
+            Plan = HouseStateLogic.Map(snap);
+            HasPlan = true;
+            return true;
+        }
+    }
+
+    public sealed class ChatAction
+    {
+        public string Tool = "";
+        public string ArgsJson = "{}";
+        public string Dojo = "";
+    }
+
+    public sealed class ChatReply
+    {
+        public string Transcript = "";
+        public string ReplyText = "";
+        public string StateRaw = "";
+        public ChatAction[] Actions = Array.Empty<ChatAction>();
+        public bool IsChat;
+    }
+
+    public static class ChatReplyParser
+    {
+        public static bool TryParse(string json, out ChatReply reply)
+        {
+            reply = null;
+            if (!GenJson.TryParse(json, out var root) || !(root is JObj obj))
+                return false;
+            if (obj.TryGet("toolCall", out _) || obj.TryGet("serverContent", out _) || obj.TryGet("setupComplete", out _))
+                return false;
+            var hasReply = obj.TryGet("reply_text", out _) || obj.TryGet("replyText", out _) || obj.TryGet("transcript", out _);
+            var hasActions = obj.TryGet("actions", out _);
+            var hasState = obj.TryGet("state", out _);
+            if (!hasReply && !hasActions && !hasState)
+                return false;
+            reply = new ChatReply
+            {
+                Transcript = obj.Str("transcript") ?? "",
+                ReplyText = obj.Str("reply_text") ?? obj.Str("replyText") ?? "",
+                IsChat = true
+            };
+            if (obj.TryGet("state", out var state))
+                reply.StateRaw = state is JNull ? "" : state.Raw ?? "";
+            if (obj.TryGet("actions", out var actions) && actions is JArr arr)
+            {
+                var list = new ChatAction[arr.Items.Count];
+                var n = 0;
+                for (var i = 0; i < arr.Items.Count; i++)
+                {
+                    var item = arr.Items[i] as JObj;
+                    if (item == null)
+                        continue;
+                    var tool = item.Str("tool") ?? item.Str("name") ?? "";
+                    var args = "{}";
+                    string dojo = "";
+                    if (item.TryGet("args", out var argsVal))
+                    {
+                        args = string.IsNullOrEmpty(argsVal.Raw) ? "{}" : argsVal.Raw;
+                        var argsObj = argsVal as JObj;
+                        if (argsObj != null)
+                            dojo = argsObj.Str("dojo") ?? argsObj.Str("profile_id") ?? argsObj.Str("target") ?? "";
+                    }
+
+                    list[n++] = new ChatAction { Tool = tool, ArgsJson = args, Dojo = dojo };
+                }
+
+                if (n != list.Length)
+                {
+                    var trimmed = new ChatAction[n];
+                    Array.Copy(list, trimmed, n);
+                    list = trimmed;
+                }
+
+                reply.Actions = list;
+            }
+
+            return true;
+        }
+    }
+}

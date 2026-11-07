@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ namespace GenJutsu.ProfileDemo
                 root.gameObject.SetActive(true);
 
             DisableHousePicker(root);
+            DisableHeadsetChrome(root);
             EnsureHubVisible();
 
             if (director.morph == null)
@@ -49,11 +51,12 @@ namespace GenJutsu.ProfileDemo
             dojo.hubDissolve = director.hubDissolve;
             dojo.gaze = gaze;
             dojo.Bind();
+            GenJutsu.Gen.GenBootstrap.Ensure(director);
         }
 
         static void DisableHousePicker(Transform profileRoot)
         {
-            foreach (var token in Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var token in UnityEngine.Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include))
             {
                 token.opensHouse = false;
                 var grab = token.GetComponent<XRGrabInteractable>();
@@ -66,6 +69,45 @@ namespace GenJutsu.ProfileDemo
             var tokens = profileRoot.Find("TableTokens");
             if (tokens != null)
                 tokens.gameObject.SetActive(false);
+        }
+
+        static void DisableHeadsetChrome(Transform profileRoot)
+        {
+            foreach (var caption in UnityEngine.Object.FindObjectsByType<ProfileCaption>(FindObjectsInactive.Include))
+            {
+                if (caption != null)
+                    caption.gameObject.SetActive(false);
+            }
+
+            foreach (var board in UnityEngine.Object.FindObjectsByType<ResultsBoard>(FindObjectsInactive.Include))
+            {
+                if (board != null)
+                    board.gameObject.SetActive(false);
+            }
+
+            var transforms = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                var t = transforms[i];
+                if (t == null)
+                    continue;
+                var name = t.name;
+                if (name == "Jump" || name == "HousePlaque" || name == "ProfileCaption" ||
+                    name.StartsWith("Affordance Callouts", StringComparison.Ordinal))
+                    t.gameObject.SetActive(false);
+            }
+
+            foreach (var behaviour in UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include))
+            {
+                if (behaviour == null)
+                    continue;
+                var typeName = behaviour.GetType().Name;
+                if (typeName == "JumpProvider" || typeName.EndsWith("JumpProvider", StringComparison.Ordinal))
+                {
+                    behaviour.enabled = false;
+                    behaviour.gameObject.SetActive(false);
+                }
+            }
         }
 
         static void EnsureHubVisible()
@@ -131,7 +173,7 @@ namespace GenJutsu.ProfileDemo
 
         static SessionGate DedupAndEnsureGate(SessionGate preferred, Transform parent, SessionApiClient api)
         {
-            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include);
             SessionGate keep = preferred;
             if (keep == null)
             {

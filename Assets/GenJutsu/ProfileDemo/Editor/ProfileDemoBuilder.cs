@@ -104,8 +104,8 @@ namespace GenJutsu.ProfileDemo.EditorTools
             var music = new GameObject("Music").AddComponent<ProceduralMusic>();
             music.transform.SetParent(root.transform, false);
 
-            var caption = BuildCaption(root.transform);
             var results = BuildResultsBoard(root.transform);
+            results.gameObject.SetActive(false);
             var volumes = BuildVolumes(root.transform);
             var gate = BuildSessionGate(root.transform);
 
@@ -159,11 +159,11 @@ namespace GenJutsu.ProfileDemo.EditorTools
             director.hubDissolve = hub;
             director.sessionGate = gate;
             director.music = music;
-            director.caption = caption;
+            director.caption = null;
             director.results = results;
             director.recorder = recorder;
             director.whiteSpaceRenderers = CollectWhiteSpaceRenderers(scene);
-            director.whiteSpaceOnly = new[] { results.gameObject };
+            director.whiteSpaceOnly = System.Array.Empty<GameObject>();
             director.mainLight = FindMainLight();
             var tableGroup = tableSet.transform.Find("TableGroup");
             if (tableGroup != null)
@@ -909,6 +909,9 @@ namespace GenJutsu.ProfileDemo.EditorTools
         {
             var go = Prim(type, name, parent, localPos, localScale, mat);
             go.transform.localRotation = Quaternion.Euler(euler);
+            var renderer = go.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             StripColliders(go);
             return go;
         }

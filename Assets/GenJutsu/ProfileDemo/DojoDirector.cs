@@ -31,10 +31,17 @@ namespace GenJutsu.ProfileDemo
             Bind();
         }
 
+        ProfileId pendingId;
+        bool pendingEnter;
+        bool leaveAfterEnter;
+
         void OnDisable()
         {
             if (gate != null)
+            {
                 gate.ProfileResolved -= OnProfile;
+                gate.SessionEnded -= OnSessionEnded;
+            }
         }
 
         public void Bind()
@@ -43,14 +50,60 @@ namespace GenJutsu.ProfileDemo
                 return;
             gate.ProfileResolved -= OnProfile;
             gate.ProfileResolved += OnProfile;
+            gate.SessionEnded -= OnSessionEnded;
+            gate.SessionEnded += OnSessionEnded;
+        }
+
+        void Update()
+        {
+            if (demo == null)
+                return;
+            if (leaveAfterEnter && demo.Current == ProfileDemoDirector.State.InHouse)
+            {
+                leaveAfterEnter = false;
+                demo.ReturnToWhiteSpace();
+            }
+
+            if (pendingEnter && demo.Current == ProfileDemoDirector.State.WhiteSpace)
+            {
+                pendingEnter = false;
+                demo.EnterLookFromSession(pendingId);
+            }
         }
 
         void OnProfile(ProfileId id)
         {
-            if (demo != null && demo.Current == ProfileDemoDirector.State.WhiteSpace)
-                demo.EnterLookFromSession(id);
             if (gaze != null && GuestSession.HasProfile)
                 gaze.StartSession(GuestSession.Code, id);
+            if (demo == null)
+                return;
+            if (demo.Current == ProfileDemoDirector.State.WhiteSpace && !leaveAfterEnter)
+            {
+                demo.EnterLookFromSession(id);
+                return;
+            }
+
+            pendingId = id;
+            pendingEnter = true;
+            RequestWhite();
+        }
+
+        void OnSessionEnded()
+        {
+            if (gaze != null)
+                gaze.StopSession();
+            pendingEnter = false;
+            RequestWhite();
+        }
+
+        void RequestWhite()
+        {
+            if (demo == null)
+                return;
+            if (demo.Current == ProfileDemoDirector.State.InHouse)
+                demo.ReturnToWhiteSpace();
+            else if (demo.Current == ProfileDemoDirector.State.Transforming)
+                leaveAfterEnter = true;
         }
     }
 }

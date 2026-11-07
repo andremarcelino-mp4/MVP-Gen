@@ -14,7 +14,9 @@ Fluxo: **sala branca com mesa + pergaminho** → o admin escolhe a sessão no si
 2. No headset/Editor, o poll `GET /api/session` (sem código) deve mostrar **Bem-vindo, {nome}**.
 3. Se `profile_id` for `Zen|Cyber|Excentrico|Acolhedor`: morph ~2,6 s (luz → materiais → props). Mesa e pergaminho dissolvem.
 4. Se `profile_id` for `null`: nome no card, **permanece no branco** (o site ainda não inferiu o look).
-5. Sem sessão no admin (`no_current_session`): “à espera do anfitrião”, branco.
+5. Sem sessão no admin (`no_current_session` ou corpo com `status` `ended`/`encerrado`): morph reverso até o hub branco. O poll continua. Outra visita do mesmo perfil entra de novo se o `session_code` (ou id) mudou.
+6. No dojo a única UI é **Bem-vindo, {nome}**. Sem placa de perfil e sem callouts Move/Turn/Blink/Grab/UI Press.
+7. O botão A / Jump do rig não faz o visitante pular.
 
 ## API down
 
