@@ -40,6 +40,10 @@ Setup (primeira mensagem), áudio de microfone e fim de fala:
 
 O servidor manda áudio em `serverContent.modelTurn.parts[].inlineData` (`audio/pcm;rate=24000`). `serverContent.interrupted` corta a fala local. `serverContent.turnComplete` fecha o turno.
 
+O `wsUrl` de produção já traz `access_token` e aponta para `BidiGenerateContentConstrained`. O setup usa `models/gemini-3.8-live`, `responseModalities: ["AUDIO"]`, a `systemInstruction` e as tools dentro de `functionDeclarations`. O schema do backend inclui `additionalProperties`; o Gemini Live fecha o socket com `InvalidPayloadData` se esse campo for reenviado, por isso o cliente tira-o antes do setup. A reserva `/api/gen/chat` só corre depois de uma falha real do Live. O motivo fica no chip e em `Debug.LogWarning`.
+
+Os presets `quiet`, `rain`, `bamboo` e `night` tocam laços sintetizados. Não há clips gravados no projeto.
+
 Tool call e resposta:
 
 ```json

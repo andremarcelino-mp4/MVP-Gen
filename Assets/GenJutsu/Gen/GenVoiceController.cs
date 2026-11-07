@@ -32,7 +32,14 @@ namespace GenJutsu.Gen
         GenToolBridge tools;
         bool ptt;
         bool connecting;
+        bool endPending;
+        bool streamedLive;
+        bool liveFailed;
+        byte[] pendingPcm;
         string reply = "";
+
+        public bool IsLiveReady => gemini != null && gemini.IsReady;
+        public string LastFailure { get; private set; }
         readonly byte[] chunk = new byte[8000];
         readonly List<UnityEngine.XR.InputDevice> devices = new List<UnityEngine.XR.InputDevice>();
 
@@ -110,6 +117,8 @@ namespace GenJutsu.Gen
                 return;
             }
 
+            streamedLive = false;
+            liveFailed = false;
             if (gemini == null || !gemini.IsReady)
                 Connect();
         }
@@ -118,7 +127,7 @@ namespace GenJutsu.Gen
         {
             if (mic != null && mic.IsCapturing)
                 mic.PullPcm16(chunk);
-            var wav = mic != null ? mic.TakeWav() : null;
+            pendingPcm = mic != null ? mic.CopyPcm() : null;
             if (mic != null)
                 mic.End();
             Phase = GenVoicePhases.AfterPttReleased(Phase);
@@ -130,13 +139,47 @@ namespace GenJutsu.Gen
                 return;
             }
 
-            if (gemini != null && gemini.IsReady)
+            if (LiveCanFinish())
             {
-                gemini.EndUtterance();
+                endPending = true;
+                FlushUtterance();
                 return;
             }
 
-            fallback.Submit(baseUrl, SessionId(), wav, OnChat, OnFailed);
+            if (liveFailed)
+                FallbackChat(LastFailure);
+        }
+
+        bool LiveCanFinish()
+        {
+            if (gemini == null || liveFailed)
+                return false;
+            return gemini.IsReady || gemini.IsLive || gemini.IsConnecting || connecting;
+        }
+
+        void FlushUtterance()
+        {
+            if (gemini == null || !gemini.IsReady)
+                return;
+            if (!streamedLive && pendingPcm != null && pendingPcm.Length > 0)
+                gemini.SendAudio(pendingPcm, pendingPcm.Length);
+            gemini.EndUtterance();
+            endPending = false;
+        }
+
+        public void ConnectLive()
+        {
+            liveFailed = false;
+            Connect();
+        }
+
+        public void SendText(string text)
+        {
+            if (gemini == null || !gemini.IsLive || string.IsNullOrWhiteSpace(text))
+                return;
+            gemini.SendRaw(GeminiLiveMessages.TextTurn(text));
+            Phase = GenVoicePhase.Thinking;
+            Show();
         }
 
         void Pump()
@@ -144,8 +187,11 @@ namespace GenJutsu.Gen
             if (mic == null || !mic.IsCapturing || gemini == null)
                 return;
             var n = mic.PullPcm16(chunk);
-            if (n > 0)
+            if (n > 0 && gemini.IsLive)
+            {
                 gemini.SendAudio(chunk, n);
+                streamedLive = true;
+            }
         }
 
         void Connect()
@@ -187,6 +233,8 @@ namespace GenJutsu.Gen
                 reply = ev.Text;
             if (ev.TurnComplete && (player == null || !player.IsAudible))
                 Phase = GenVoicePhases.AfterTurnComplete(Phase, ptt);
+            if (ev.SetupComplete && endPending)
+                FlushUtterance();
             if (ev.GoAway && gemini != null)
                 gemini.Close();
             Show();
@@ -242,16 +290,48 @@ namespace GenJutsu.Gen
         void OnFailed(string message)
         {
             connecting = false;
+            liveFailed = true;
+            LastFailure = GeminiLiveMessages.Scrub(message);
+            Debug.LogWarning("Gen Live: " + LastFailure);
+            reply = Short(LastFailure);
+            if (endPending || Phase == GenVoicePhase.Thinking)
+            {
+                endPending = false;
+                FallbackChat(LastFailure);
+                return;
+            }
+
             if (Phase == GenVoicePhase.Listening && mic != null && mic.IsCapturing)
             {
-                reply = "A usar o pedido de reserva ao soltar o botão.";
                 Show();
                 return;
             }
 
             Phase = GenVoicePhases.AfterFailure();
-            reply = message ?? "Gen offline.";
             Show();
+        }
+
+        void FallbackChat(string why)
+        {
+            var wav = pendingPcm != null && pendingPcm.Length > 0
+                ? GenJutsu.GenCore.WavEncoder.FromPcm16(pendingPcm, pendingPcm.Length, QuestMicrophoneCapture.TargetRate)
+                : null;
+            Debug.LogWarning("Gen Live caiu para /api/gen/chat. " + why);
+            fallback.Submit(baseUrl, SessionId(), wav, OnChat, chatFailed =>
+            {
+                Phase = GenVoicePhases.AfterFailure();
+                reply = Short(why + " " + chatFailed);
+                LastFailure = reply;
+                Debug.LogWarning("Gen chat: " + reply);
+                Show();
+            });
+        }
+
+        static string Short(string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return "Gen offline.";
+            return message.Length > 140 ? message.Substring(0, 140) : message;
         }
 
         bool NetworkSuppressed()

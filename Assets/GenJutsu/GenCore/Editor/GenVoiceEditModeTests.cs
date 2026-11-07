@@ -69,6 +69,44 @@ namespace GenJutsu.GenCore.Tests
         }
 
         [Test]
+        public void WarmAndCoolLights_MapColorTransitionAndVisibleDrive()
+        {
+            const string warm = "{\"state\":{\"session_id\":\"YP8PFF\",\"version\":4,\"lights\":{\"main\":{\"color\":\"#FFAA00\",\"intensity\":0.8,\"transition_ms\":800},\"lanterns\":{\"color\":\"#FF1A1A\",\"intensity\":0.2,\"transition_ms\":800}},\"ambience\":{\"preset\":\"bamboo\",\"volume\":0.3,\"transition_ms\":500}}}";
+            const string cool = "{\"state\":{\"session_id\":\"YP8PFF\",\"version\":5,\"lights\":{\"main\":{\"color\":\"#00BFFF\",\"intensity\":0.4,\"transition_ms\":300}}}}";
+
+            Assert.IsTrue(HouseStateLogic.TryParse(warm, out var warmSnap, out _));
+            var warmPlan = HouseStateLogic.Map(warmSnap);
+            Assert.IsTrue(HouseStateLogic.TryHex("#FFAA00", out var warmColor));
+            Assert.AreEqual(warmColor.r, warmPlan.MainColor.r, 0.01f);
+            Assert.AreEqual(warmColor.g, warmPlan.MainColor.g, 0.01f);
+            Assert.AreEqual(0.8f, warmPlan.MainIntensity, 0.001f);
+            Assert.AreEqual(800, warmPlan.MainTransitionMs);
+            Assert.AreEqual("bamboo", warmPlan.Preset);
+            Assert.AreEqual(500, warmPlan.AmbienceTransitionMs);
+            Assert.IsFalse(warmPlan.ChangesSessionProfile);
+
+            Assert.IsTrue(HouseStateLogic.TryParse(cool, out var coolSnap, out _));
+            var coolPlan = HouseStateLogic.Map(coolSnap);
+            Assert.IsTrue(HouseStateLogic.TryHex("#00BFFF", out var coolColor));
+            Assert.AreEqual(coolColor.b, coolPlan.MainColor.b, 0.01f);
+            Assert.Less(coolPlan.MainColor.r, 0.05f);
+            Assert.Greater(HouseStateLogic.DriveIntensity(0.8f, false), HouseStateLogic.DriveIntensity(0.4f, false));
+        }
+
+        [Test]
+        public void LiveSetup_StripsAdditionalProperties_AndUsesGemini38()
+        {
+            const string tools = "[{\"name\":\"set_lights\",\"parameters\":{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"color\":{\"type\":\"string\"}}}}]";
+            var setup = GeminiLiveMessages.BuildSetup("gemini-3.8-live", "Fale português.", tools);
+
+            StringAssert.Contains("models/gemini-3.8-live", setup);
+            StringAssert.Contains("\"responseModalities\":[\"AUDIO\"]", setup);
+            StringAssert.Contains("functionDeclarations", setup);
+            StringAssert.Contains("set_lights", setup);
+            StringAssert.DoesNotContain("additionalProperties", setup);
+        }
+
+        [Test]
         public void GeminiAudio_UsesPcm16Rate_AndStreamEnd()
         {
             var chunk = GeminiLiveMessages.AudioChunk(new byte[] { 0, 1, 2, 3 }, 16000);

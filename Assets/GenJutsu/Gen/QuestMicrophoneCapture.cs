@@ -137,6 +137,11 @@ namespace GenJutsu.Gen
             return copy;
         }
 
+        public byte[] CopyPcm()
+        {
+            return utterance.ToArray();
+        }
+
         public byte[] TakeWav()
         {
             var pcm = utterance.ToArray();

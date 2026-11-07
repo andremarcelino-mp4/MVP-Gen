@@ -112,6 +112,11 @@ namespace GenJutsu.GenCore
             return "{\"realtimeInput\":{\"audioStreamEnd\":true}}";
         }
 
+        public static string TextTurn(string text)
+        {
+            return "{\"realtimeInput\":{\"text\":\"" + GenJson.Escape(text ?? "") + "\"}}";
+        }
+
         public static string BuildToolResponse(IList<GeminiToolCall> calls)
         {
             var sb = new StringBuilder();
@@ -261,12 +266,30 @@ namespace GenJutsu.GenCore
         {
             if (string.IsNullOrWhiteSpace(raw) || raw.Trim() == "null")
                 return null;
-            var t = raw.Trim();
+            var t = GenJson.OmitKeys(raw.Trim(), "additionalProperties");
+            if (string.IsNullOrWhiteSpace(t))
+                return null;
+            if (t.IndexOf("\"functionDeclarations\"", StringComparison.Ordinal) >= 0)
+                return t.StartsWith("[", StringComparison.Ordinal) ? t : "[" + t + "]";
             if (t.StartsWith("[", StringComparison.Ordinal))
-                return t;
+                return "[{\"functionDeclarations\":" + t + "}]";
             if (t.StartsWith("{", StringComparison.Ordinal))
-                return "[" + t + "]";
+                return "[{\"functionDeclarations\":[" + t + "]}]";
             return null;
+        }
+
+        /// <summary>Removes access_token values so a socket error can be shown without leaking the ephemeral token.</summary>
+        public static string Scrub(string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return "";
+            var i = message.IndexOf("access_token=", StringComparison.Ordinal);
+            if (i < 0)
+                return message;
+            var end = i + "access_token=".Length;
+            while (end < message.Length && message[end] != '&' && message[end] != '"' && message[end] != ' ')
+                end++;
+            return message.Substring(0, i) + "access_token=…" + message.Substring(end);
         }
     }
 
