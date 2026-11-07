@@ -13,19 +13,37 @@ namespace GenJutsu.Gen
             "Android TextToSpeech on the Quest player. Editor and other players show the caption only.";
 
 #if UNITY_ANDROID && !UNITY_EDITOR
+        const string GoogleEngine = "com.google.android.tts";
         AndroidJavaObject tts;
+        AndroidJavaObject activity;
         bool ready;
+        bool triedEngine;
         string pending;
+        string engineName = "default";
         InitProxy proxy;
 
         void Awake()
         {
             proxy = new InitProxy(this);
             using (var unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                activity = unity.GetStatic<AndroidJavaObject>("currentActivity");
+            OpenEngine(null);
+        }
+
+        void OpenEngine(string engine)
+        {
+            engineName = string.IsNullOrEmpty(engine) ? "default" : engine;
+            GenVoiceLog.Info("TTS create engine=" + engineName);
+            if (tts != null)
             {
-                var activity = unity.GetStatic<AndroidJavaObject>("currentActivity");
-                tts = new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, proxy);
+                try { tts.Call("shutdown"); }
+                catch (System.Exception) { /* replacing a failed engine */ }
+                tts.Dispose();
             }
+
+            tts = string.IsNullOrEmpty(engine)
+                ? new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, proxy)
+                : new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, proxy, engine);
         }
 
         public void Speak(string text)
@@ -43,15 +61,63 @@ namespace GenJutsu.Gen
 
         void OnReady(int status)
         {
-            GenVoiceLog.Info("TTS onInit status=" + status);
-            ready = status == 0;
-            if (ready)
-                ChooseMaleVoice();
-            if (ready && !string.IsNullOrEmpty(pending))
+            GenVoiceLog.Info("TTS onInit status=" + status + " engine=" + engineName);
+            if (status != 0)
+            {
+                ready = false;
+                var next = triedEngine ? null : PickEngine();
+                triedEngine = true;
+                if (!string.IsNullOrEmpty(next) && next != engineName)
+                {
+                    GenVoiceLog.Warn("TTS status=" + status + ", retry engine=" + next);
+                    OpenEngine(next);
+                    return;
+                }
+
+                GenVoiceLog.Warn("TTS unavailable status=" + status + ". Captions and Gemini audio only.");
+                return;
+            }
+
+            ready = true;
+            ChooseMaleVoice();
+            if (!string.IsNullOrEmpty(pending))
             {
                 var text = pending;
                 pending = null;
                 Speak(text);
+            }
+        }
+
+        string PickEngine()
+        {
+            try
+            {
+                var engines = tts != null ? tts.Call<AndroidJavaObject>("getEngines") : null;
+                string first = null;
+                string google = null;
+                if (engines != null)
+                {
+                    var it = engines.Call<AndroidJavaObject>("iterator");
+                    while (it.Call<bool>("hasNext"))
+                    {
+                        var info = it.Call<AndroidJavaObject>("next");
+                        var name = info.Get<string>("name");
+                        GenVoiceLog.Info("TTS engine " + name);
+                        if (first == null)
+                            first = name;
+                        if (name == GoogleEngine)
+                            google = name;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(google))
+                    return google;
+                return first;
+            }
+            catch (System.Exception e)
+            {
+                GenVoiceLog.Warn("TTS engines: " + e.Message);
+                return null;
             }
         }
 

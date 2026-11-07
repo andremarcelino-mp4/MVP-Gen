@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GenJutsu.GenCore;
 using GenJutsu.ProfileDemo;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.XR.OpenXR.Features.Interactions;
 
 namespace GenJutsu.Gen
 {
@@ -37,6 +40,9 @@ namespace GenJutsu.Gen
         bool streamedLive;
         bool liveFailed;
         float adbPulseUntil;
+        float nextControllerLog;
+        int bytesSent;
+        string pttSource = "";
         byte[] pendingPcm;
         string reply = "";
 
@@ -65,6 +71,7 @@ namespace GenJutsu.Gen
 
             view.EnsureVisual();
             mic = GetComponent<QuestMicrophoneCapture>() ?? gameObject.AddComponent<QuestMicrophoneCapture>();
+            mic.EnsurePermission();
             player = GetComponent<StreamingAudioPlayer>() ?? gameObject.AddComponent<StreamingAudioPlayer>();
             speaker = GetComponent<AndroidCaptionSpeaker>() ?? gameObject.AddComponent<AndroidCaptionSpeaker>();
             gemini = new GeminiLiveTransport();
@@ -88,9 +95,15 @@ namespace GenJutsu.Gen
         void Update()
         {
             PollAdbPulse();
-            var down = ReadPtt() || Time.unscaledTime < adbPulseUntil;
+            LogControllers();
+            var button = ReadPtt(out var source);
+            var pulse = Time.unscaledTime < adbPulseUntil;
+            var down = button || pulse;
             if (down && !ptt)
+            {
+                pttSource = button ? source : "adb-pulse";
                 Press();
+            }
             else if (!down && ptt)
                 Release();
             ptt = down;
@@ -112,7 +125,8 @@ namespace GenJutsu.Gen
             Show();
             if (NetworkSuppressed())
                 return;
-            GenVoiceLog.Info("ptt down");
+            GenVoiceLog.Info("B down via " + pttSource);
+            bytesSent = 0;
             if (mic == null || !mic.Begin())
             {
                 Phase = GenVoicePhases.AfterFailure();
@@ -132,6 +146,7 @@ namespace GenJutsu.Gen
 
         void Release()
         {
+            GenVoiceLog.Info("B up via " + pttSource + " bytesSent=" + bytesSent);
             if (mic != null && mic.IsCapturing)
                 mic.PullPcm16(chunk);
             pendingPcm = mic != null ? mic.CopyPcm() : null;
@@ -194,11 +209,19 @@ namespace GenJutsu.Gen
             if (mic == null || !mic.IsCapturing || gemini == null)
                 return;
             var n = mic.PullPcm16(chunk);
-            if (n > 0 && gemini.IsLive)
+            if (view != null)
+                view.SetLevel(mic.LastRms);
+            if (n <= 0)
+                return;
+            if (gemini.IsLive)
             {
                 gemini.SendAudio(chunk, n);
                 streamedLive = true;
+                bytesSent += n;
+                GenVoiceLog.Info("bytes sent=" + n + " total=" + bytesSent);
             }
+            else
+                GenVoiceLog.Info("mic bytes=" + n + " held live=" + gemini.IsLive + " ready=" + gemini.IsReady);
         }
 
         void Connect()
@@ -418,23 +441,95 @@ namespace GenJutsu.Gen
             GenVoiceLog.Info("adb pulse hold=" + holdMs + "ms");
         }
 
-        bool ReadPtt()
+        void LogControllers()
         {
+            if (Time.unscaledTime < nextControllerLog)
+                return;
+            nextControllerLog = Time.unscaledTime + 2f;
+            var xr = 0;
+            var xrB = false;
+            devices.Clear();
+            UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(
+                UnityEngine.XR.InputDeviceCharacteristics.Right | UnityEngine.XR.InputDeviceCharacteristics.Controller, devices);
+            xr = devices.Count;
+            for (var i = 0; i < devices.Count; i++)
+            {
+                if (devices[i].TryGetFeatureValue(UnityEngine.XR.CommonUsages.secondaryButton, out var pressed) && pressed)
+                    xrB = true;
+            }
+
+            var ovr = 0;
+            var ovrB = false;
+            foreach (var device in InputSystem.devices)
+            {
+                if (!IsRightHand(device))
+                    continue;
+                ovr++;
+                if (OculusB(device))
+                    ovrB = true;
+            }
+
+            GenVoiceLog.Info("controllers xr=" + xr + " xrB=" + (xrB ? 1 : 0) + " ovr=" + ovr + " ovrB=" + (ovrB ? 1 : 0));
+        }
+
+        bool ReadPtt(out string source)
+        {
+            source = "";
             devices.Clear();
             UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(
                 UnityEngine.XR.InputDeviceCharacteristics.Right | UnityEngine.XR.InputDeviceCharacteristics.Controller, devices);
             for (var i = 0; i < devices.Count; i++)
             {
                 if (devices[i].TryGetFeatureValue(UnityEngine.XR.CommonUsages.secondaryButton, out var pressed) && pressed)
+                {
+                    source = "xr-secondary";
                     return true;
+                }
+            }
+
+            foreach (var device in InputSystem.devices)
+            {
+                if (!IsRightHand(device) || !OculusB(device))
+                    continue;
+                source = "oculus-b";
+                return true;
             }
 
 #if UNITY_EDITOR
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.vKey.isPressed)
+            {
+                source = "editor-v";
                 return true;
+            }
 #endif
             return false;
+        }
+
+        static bool IsRightHand(InputDevice device)
+        {
+            if (device == null)
+                return false;
+            var usages = device.usages;
+            for (var i = 0; i < usages.Count; i++)
+            {
+                if (usages[i] == UnityEngine.InputSystem.CommonUsages.RightHand)
+                    return true;
+            }
+
+            var name = device.name ?? "";
+            return name.IndexOf("Right", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        static bool OculusB(InputDevice device)
+        {
+            var touch = device as OculusTouchControllerProfile.OculusTouchController;
+            ButtonControl button = null;
+            if (touch != null)
+                button = touch.secondaryButton;
+            if (button == null)
+                button = device.TryGetChildControl<ButtonControl>("secondaryButton");
+            return button != null && button.isPressed;
         }
     }
 }
