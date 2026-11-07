@@ -15,11 +15,14 @@ namespace GenJutsu.GenCore
         public bool HasLanterns;
         public Color MainColor;
         public float MainIntensity;
+        public int MainTransitionMs;
         public Color LanternColor;
         public float LanternIntensity;
+        public int LanternTransitionMs;
         public bool HasAmbience;
         public string Preset;
         public float Volume;
+        public int AmbienceTransitionMs;
     }
 
     public readonly struct HouseApplyPlan
@@ -29,11 +32,14 @@ namespace GenJutsu.GenCore
         public readonly bool HasLanterns;
         public readonly Color MainColor;
         public readonly float MainIntensity;
+        public readonly int MainTransitionMs;
         public readonly Color LanternColor;
         public readonly float LanternIntensity;
+        public readonly int LanternTransitionMs;
         public readonly bool HasAmbience;
         public readonly string Preset;
         public readonly float Volume;
+        public readonly int AmbienceTransitionMs;
         public readonly bool SwitchDojo;
         public readonly string Dojo;
 
@@ -44,11 +50,14 @@ namespace GenJutsu.GenCore
             HasLanterns = snap.HasLanterns;
             MainColor = snap.MainColor;
             MainIntensity = snap.MainIntensity;
+            MainTransitionMs = snap.MainTransitionMs;
             LanternColor = snap.LanternColor;
             LanternIntensity = snap.LanternIntensity;
+            LanternTransitionMs = snap.LanternTransitionMs;
             HasAmbience = snap.HasAmbience;
             Preset = snap.Preset ?? "";
             Volume = snap.Volume;
+            AmbienceTransitionMs = snap.AmbienceTransitionMs;
             SwitchDojo = !string.IsNullOrEmpty(snap.Dojo);
             Dojo = snap.Dojo ?? "";
         }
@@ -124,12 +133,14 @@ namespace GenJutsu.GenCore
                 {
                     snap.MainIntensity = Intensity(main, 1f);
                     snap.MainColor = ColorOf(main, Color.white);
+                    snap.MainTransitionMs = Milliseconds(main);
                 }
 
                 if (lanterns != null)
                 {
                     snap.LanternIntensity = Intensity(lanterns, 0.6f);
                     snap.LanternColor = ColorOf(lanterns, new Color(1f, 0.72f, 0.42f));
+                    snap.LanternTransitionMs = Milliseconds(lanterns);
                 }
             }
 
@@ -141,6 +152,7 @@ namespace GenJutsu.GenCore
                 snap.Volume = Intensity(ambience, snap.Volume);
                 if (ambience.Num("volume", out var vol))
                     snap.Volume = (float)vol;
+                snap.AmbienceTransitionMs = Milliseconds(ambience);
             }
 
             if (string.IsNullOrEmpty(snap.Dojo) && string.Equals(snap.Mode, "switch_dojo", StringComparison.Ordinal))
@@ -153,6 +165,25 @@ namespace GenJutsu.GenCore
             if (obj != null && obj.Num("intensity", out var n))
                 return (float)n;
             return fallback;
+        }
+
+        static int Milliseconds(JObj obj)
+        {
+            if (obj != null && obj.Num("transition_ms", out var n) && n > 0)
+                return (int)Math.Round(n);
+            return 0;
+        }
+
+        /// <summary>
+        /// API intensity is 0–1. Unity lights in this dojo need a wider range or a color change stays subtle.
+        /// Values already above 1 are left alone so older tests keep their raw intensity.
+        /// </summary>
+        public static float DriveIntensity(float api, bool pointLight)
+        {
+            if (api > 1.01f)
+                return api;
+            var u = api < 0f ? 0f : (api > 1f ? 1f : api);
+            return pointLight ? 0.15f + u * 2.8f : 0.35f + u * 2.2f;
         }
 
         public static bool TryColor(JVal value, out Color color)

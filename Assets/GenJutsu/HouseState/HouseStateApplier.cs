@@ -11,6 +11,7 @@ namespace GenJutsu.HouseState
     {
         public ProfileDemoDirector director;
         public ProceduralMusic music;
+        public AmbienceBed ambience;
         public float blendSeconds = 0.7f;
 
         bool hasPlan;
@@ -18,6 +19,9 @@ namespace GenJutsu.HouseState
         string switchedDojo;
         string appliedPreset;
         float appliedVolume = -1f;
+        Color ambientFrom;
+        bool ambientCaptured;
+        readonly System.Collections.Generic.Dictionary<Renderer, Color> surfaceBase = new System.Collections.Generic.Dictionary<Renderer, Color>();
 
         public void ApplyPlan(HouseApplyPlan next)
         {
@@ -48,15 +52,37 @@ namespace GenJutsu.HouseState
             ApplyAmbience();
             if (!plan.HasLights)
                 return;
-            var k = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.05f, blendSeconds));
-            if (plan.HasMain && director.mainLight != null)
+            var ms = plan.MainTransitionMs > 0 ? plan.MainTransitionMs : plan.LanternTransitionMs;
+            var seconds = ms > 0 ? ms / 1000f : blendSeconds;
+            var k = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.05f, seconds * 0.45f));
+            if (plan.HasMain)
             {
-                director.mainLight.color = Color.Lerp(director.mainLight.color, plan.MainColor, k);
-                director.mainLight.intensity = Mathf.Lerp(director.mainLight.intensity, plan.MainIntensity, k);
+                TintMain(k);
+                TintLargeSurfaces(k);
             }
-
             if (plan.HasLanterns)
                 TintLanterns(k);
+        }
+
+        void TintMain(float k)
+        {
+            var intensity = HouseStateLogic.DriveIntensity(plan.MainIntensity, false);
+            if (director.mainLight != null)
+            {
+                director.mainLight.color = Color.Lerp(director.mainLight.color, plan.MainColor, k);
+                director.mainLight.intensity = Mathf.Lerp(director.mainLight.intensity, intensity, k);
+            }
+
+            if (!ambientCaptured)
+            {
+                ambientFrom = RenderSettings.ambientLight;
+                ambientCaptured = true;
+            }
+
+            var targetAmbient = Color.Lerp(new Color(0.04f, 0.04f, 0.04f), plan.MainColor, 0.92f);
+            RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, targetAmbient, k);
+            if (RenderSettings.fog)
+                RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, plan.MainColor, k);
         }
 
         void TrySwitch()
@@ -86,21 +112,40 @@ namespace GenJutsu.HouseState
             appliedPreset = plan.Preset ?? "";
             appliedVolume = plan.Volume;
             var preset = appliedPreset.Trim().ToLowerInvariant();
-            if (preset == "off" || preset == "silence" || preset == "mute")
-            {
-                music.Stop();
-                return;
-            }
+            if (ambience == null)
+                ambience = GetComponent<AmbienceBed>() ?? gameObject.AddComponent<AmbienceBed>();
+            var fade = plan.AmbienceTransitionMs > 0 ? plan.AmbienceTransitionMs / 1000f : 0.8f;
+            if (music != null && preset != "off" && preset != "silence" && preset != "mute")
+                music.SetLevel(0f);
+            ambience.Play(preset, plan.Volume, fade);
+        }
 
-            var level = Mathf.Clamp01(plan.Volume);
-            if (!music.IsPlaying && director.Current == ProfileDemoDirector.State.InHouse)
-            {
-                music.musicVolume = level;
-                music.Play(director.Active);
+        void TintLargeSurfaces(float k)
+        {
+            var house = director.VisualHouse;
+            if (house == null)
                 return;
-            }
+            var renderers = house.GetComponentsInChildren<Renderer>(true);
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                var renderer = renderers[i];
+                if (renderer == null)
+                    continue;
+                var name = renderer.name;
+                if (name != "PaperL" && name != "PaperR" && name != "Tatami" && name != "TatamiField")
+                    continue;
+                var mat = renderer.material;
+                if (!mat.HasProperty("_BaseColor"))
+                    continue;
+                if (!surfaceBase.TryGetValue(renderer, out var original))
+                {
+                    original = mat.GetColor("_BaseColor");
+                    surfaceBase[renderer] = original;
+                }
 
-            music.SetLevel(level);
+                var target = Color.Lerp(original, plan.MainColor, 0.62f);
+                mat.SetColor("_BaseColor", Color.Lerp(mat.GetColor("_BaseColor"), target, k));
+            }
         }
 
         void TintLanterns(float k)
@@ -115,10 +160,10 @@ namespace GenJutsu.HouseState
                 if (light == null || light.type != LightType.Point)
                     continue;
                 light.color = Color.Lerp(light.color, plan.LanternColor, k);
-                light.intensity = Mathf.Lerp(light.intensity, plan.LanternIntensity, k);
+                light.intensity = Mathf.Lerp(light.intensity, HouseStateLogic.DriveIntensity(plan.LanternIntensity, true), k);
             }
 
-            var emission = plan.LanternColor * Mathf.Max(0.2f, plan.LanternIntensity);
+            var emission = plan.LanternColor * Mathf.Max(0.35f, plan.LanternIntensity * 3.2f);
             var renderers = house.GetComponentsInChildren<Renderer>(true);
             for (var i = 0; i < renderers.Length; i++)
             {

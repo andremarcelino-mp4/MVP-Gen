@@ -120,6 +120,83 @@ namespace GenJutsu.GenCore
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Rewrites JSON without the named keys. Gemini Live's Schema proto rejects
+        /// <c>additionalProperties</c> and closes the socket if a tool declaration includes it.
+        /// </summary>
+        public static string OmitKeys(string json, params string[] keys)
+        {
+            if (string.IsNullOrWhiteSpace(json) || keys == null || keys.Length == 0)
+                return json;
+            if (!TryParse(json, out var value))
+                return json;
+            var skip = new System.Collections.Generic.HashSet<string>(keys);
+            var sb = new StringBuilder(json.Length);
+            Write(value, sb, skip);
+            return sb.ToString();
+        }
+
+        static void Write(JVal value, StringBuilder sb, System.Collections.Generic.HashSet<string> skip)
+        {
+            var obj = value as JObj;
+            if (obj != null)
+            {
+                sb.Append('{');
+                var first = true;
+                for (var i = 0; i < obj.Items.Count; i++)
+                {
+                    if (skip.Contains(obj.Items[i].Key))
+                        continue;
+                    if (!first)
+                        sb.Append(',');
+                    first = false;
+                    sb.Append('"').Append(Escape(obj.Items[i].Key)).Append("\":");
+                    Write(obj.Items[i].Value, sb, skip);
+                }
+
+                sb.Append('}');
+                return;
+            }
+
+            var arr = value as JArr;
+            if (arr != null)
+            {
+                sb.Append('[');
+                for (var i = 0; i < arr.Items.Count; i++)
+                {
+                    if (i > 0)
+                        sb.Append(',');
+                    Write(arr.Items[i], sb, skip);
+                }
+
+                sb.Append(']');
+                return;
+            }
+
+            var str = value as JStr;
+            if (str != null)
+            {
+                sb.Append('"').Append(Escape(str.Value)).Append('"');
+                return;
+            }
+
+            var num = value as JNum;
+            if (num != null)
+            {
+                sb.Append(num.Value.ToString("R", CultureInfo.InvariantCulture));
+                return;
+            }
+
+            var boolean = value as JBool;
+            if (boolean != null)
+            {
+                sb.Append(boolean.Value ? "true" : "false");
+                return;
+            }
+
+            sb.Append("null");
+        }
+
         /// <summary>Gemini function responses must be a JSON object.</summary>
         public static string AsObject(string json)
         {

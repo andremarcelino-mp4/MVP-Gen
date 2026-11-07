@@ -24,9 +24,15 @@ namespace GenJutsu.Gen
                     var content = new StringContent(payload, Encoding.UTF8, "application/json");
                     var response = Http.PostAsync(url, content).GetAwaiter().GetResult();
                     var body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    if (!response.IsSuccessStatusCode || !GeminiLiveMessages.TryParseTicket(body, out var ticket) || string.IsNullOrEmpty(ticket.Token))
+                    if (!response.IsSuccessStatusCode)
                     {
-                        Fail(onFailed);
+                        Fail(onFailed, "voice-session HTTP " + (int)response.StatusCode);
+                        return;
+                    }
+
+                    if (!GeminiLiveMessages.TryParseTicket(body, out var ticket) || string.IsNullOrEmpty(ticket.Token))
+                    {
+                        Fail(onFailed, "voice-session sem token efémero.");
                         return;
                     }
 
@@ -34,7 +40,7 @@ namespace GenJutsu.Gen
                     ticket.SessionId = sessionId ?? "";
                     if (!string.IsNullOrEmpty(ticket.Provider) && !string.Equals(ticket.Provider, "gemini", StringComparison.OrdinalIgnoreCase))
                     {
-                        Fail(onFailed);
+                        Fail(onFailed, "voice-session provider " + ticket.Provider);
                         return;
                     }
 
@@ -46,18 +52,20 @@ namespace GenJutsu.Gen
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning("Gen voice-session: " + e.GetType().Name);
-                    Fail(onFailed);
+                    var why = GeminiLiveMessages.Scrub(e.GetType().Name + ": " + e.Message);
+                    Debug.LogWarning("Gen voice-session: " + why);
+                    Fail(onFailed, why);
                 }
             });
         }
 
-        static void Fail(Action<string> onFailed)
+        static void Fail(Action<string> onFailed, string why)
         {
+            var message = string.IsNullOrWhiteSpace(why) ? "Sessão de voz indisponível." : why;
             MainThread.Post(() =>
             {
                 if (onFailed != null)
-                    onFailed("Sessão de voz indisponível.");
+                    onFailed(message);
             });
         }
 

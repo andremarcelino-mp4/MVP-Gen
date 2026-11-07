@@ -21,10 +21,12 @@ namespace GenJutsu.Gen
         CancellationTokenSource cts;
         public bool IsLive { get; private set; }
         public bool IsReady { get; private set; }
+        public bool IsConnecting { get; private set; }
 
         public void Connect(VoiceSessionTicket ticket, Action<string> onMessage, Action<string> onFailed)
         {
             Close();
+            IsConnecting = true;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             Task.Run(() => Run(ticket, onMessage, onFailed, token));
@@ -55,6 +57,7 @@ namespace GenJutsu.Gen
         {
             IsLive = false;
             IsReady = false;
+            IsConnecting = false;
             var local = cts;
             cts = null;
             if (local != null)
@@ -106,17 +109,22 @@ namespace GenJutsu.Gen
             }
             catch (Exception e)
             {
-                Debug.LogWarning("Gemini Live failed: " + e.GetType().Name);
+                var why = GeminiLiveMessages.Scrub(e.Message);
+                if (string.IsNullOrWhiteSpace(why))
+                    why = e.GetType().Name;
+                Debug.LogWarning("Gemini Live failed: " + why);
+                IsConnecting = false;
                 MainThread.Post(() =>
                 {
                     if (onFailed != null)
-                        onFailed("Ligação com o Gemini Live falhou.");
+                        onFailed(why);
                 });
             }
             finally
             {
                 IsLive = false;
                 IsReady = false;
+                IsConnecting = false;
                 if (ws != null)
                     ws.Dispose();
             }
@@ -150,14 +158,22 @@ namespace GenJutsu.Gen
             {
                 var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), token).ConfigureAwait(false);
                 if (result.MessageType == WebSocketMessageType.Close)
-                    break;
+                {
+                    var why = ws.CloseStatusDescription;
+                    if (string.IsNullOrWhiteSpace(why))
+                        why = result.CloseStatus.ToString();
+                    throw new InvalidOperationException(string.IsNullOrWhiteSpace(why) ? "Gemini fechou o socket." : why);
+                }
                 msg.Write(buffer, 0, result.Count);
                 if (!result.EndOfMessage)
                     continue;
                 var text = Encoding.UTF8.GetString(msg.GetBuffer(), 0, (int)msg.Length);
                 msg.SetLength(0);
                 if (GeminiLiveMessages.TryReadServer(text, out var ev) && ev.SetupComplete)
+                {
                     IsReady = true;
+                    IsConnecting = false;
+                }
                 var delivered = text;
                 MainThread.Post(() =>
                 {
