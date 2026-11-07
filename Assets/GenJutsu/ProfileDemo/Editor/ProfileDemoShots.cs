@@ -281,10 +281,11 @@ namespace GenJutsu.ProfileDemo.EditorTools
 
             view.FollowHead = false;
             view.Show(GenVoicePhase.Listening, "A casa ouviu. Luz mais quente?");
-            var anchor = director.transform.root.position + new Vector3(0f, 1.35f, 0.2f);
-            var from = anchor + new Vector3(0.2f, 0.08f, -1.25f);
+            var anchor = director.transform.root.position + new Vector3(1.15f, 1.45f, 0.35f);
+            var from = anchor + new Vector3(0f, 0.05f, -2.2f);
             view.transform.position = anchor;
-            view.transform.rotation = Quaternion.LookRotation(from - anchor, Vector3.up);
+            // World-space UI is read from the -forward side, same as the welcome card shot.
+            view.transform.rotation = Quaternion.LookRotation(anchor - from, Vector3.up);
             Save(from, anchor, 32f, file);
         }
 
