@@ -21,6 +21,7 @@ namespace GenJutsu.ProfileDemo
         Material kanjiMat;
         Material wordMat;
         AudioSource chime;
+        bool previewLock;
 
         public static void Ensure(Transform table, DojoDirector director)
         {
@@ -37,16 +38,13 @@ namespace GenJutsu.ProfileDemo
 
             var go = new GameObject("StartPlaque");
             go.transform.SetParent(table, false);
-            var top = table.Find("TableGroup/Table");
-            if (top != null && top.GetComponent<Renderer>() != null)
-            {
-                var bounds = top.GetComponent<Renderer>().bounds;
-                go.transform.position = bounds.center + Vector3.up * (bounds.extents.y + 0.12f) + Vector3.forward * -0.04f;
-            }
+            var stand = FindDeep(table, "ShurikenStand");
+            if (stand != null)
+                go.transform.position = stand.position + Vector3.up * 0.13f;
             else
-                go.transform.localPosition = new Vector3(0f, 0.78f, -0.12f);
+                go.transform.localPosition = new Vector3(-0.444f, 0.78f, -0.26f);
 
-            go.transform.rotation = Quaternion.Euler(-32f, 180f, 0f);
+            go.transform.rotation = table.rotation * Quaternion.Euler(-32f, 180f, 0f);
             var plaque = go.AddComponent<StartPlaque>();
             plaque.director = director;
             plaque.Build();
@@ -99,8 +97,8 @@ namespace GenJutsu.ProfileDemo
                 enablePokeAngleThreshold = false,
                 interactionDepthOffset = 0f
             });
-            interactable.hoverEntered.AddListener(_ => SetGlow(true));
-            interactable.hoverExited.AddListener(_ => SetGlow(false));
+            interactable.hoverEntered.AddListener(_ => { if (!previewLock) SetGlow(true); });
+            interactable.hoverExited.AddListener(_ => { if (!previewLock) SetGlow(false); });
             interactable.selectEntered.AddListener(OnSelect);
 
             chime = gameObject.AddComponent<AudioSource>();
@@ -175,6 +173,7 @@ namespace GenJutsu.ProfileDemo
 
         public void PreviewGlow(bool on)
         {
+            previewLock = on;
             SetGlow(on);
         }
 
@@ -182,6 +181,21 @@ namespace GenJutsu.ProfileDemo
         {
             Paint(kanjiMat, on);
             Paint(wordMat, on);
+            if (wood == null)
+                return;
+            var c = on ? new Color(1f, 0.62f, 0.22f) : Wood;
+            wood.color = c;
+            if (wood.HasProperty("_BaseColor"))
+                wood.SetColor("_BaseColor", c);
+            if (wood.HasProperty("_Color"))
+                wood.SetColor("_Color", c);
+            if (on && wood.HasProperty("_EmissionColor"))
+            {
+                wood.EnableKeyword("_EMISSION");
+                wood.SetColor("_EmissionColor", Amber * 2f);
+            }
+            else if (wood.HasProperty("_EmissionColor"))
+                wood.SetColor("_EmissionColor", Color.black);
         }
 
         static void Paint(Material mat, bool on)
@@ -199,6 +213,22 @@ namespace GenJutsu.ProfileDemo
                 mat.EnableKeyword("_EMISSION");
                 mat.SetColor("_EmissionColor", Amber * 5f);
             }
+        }
+
+        static Transform FindDeep(Transform root, string name)
+        {
+            if (root == null)
+                return null;
+            if (root.name == name)
+                return root;
+            for (var i = 0; i < root.childCount; i++)
+            {
+                var found = FindDeep(root.GetChild(i), name);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
         }
 
         static AudioClip MakeChime()

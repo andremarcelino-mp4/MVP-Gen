@@ -51,10 +51,12 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 var plaque = Object.FindFirstObjectByType<StartPlaque>();
                 if (plaque != null)
                     plaque.PreviewGlow(true);
-                Capture("artifacts/11-plaque-glow.png");
             }
 
-            if (frame == 100)
+            if (frame == 110)
+                Capture("artifacts/11-plaque-glow.png");
+
+            if (frame == 130)
             {
                 armed = false;
                 EditorApplication.update -= Tick;
@@ -73,23 +75,19 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 if (t.name.Contains("Controller") || t.name.Contains("Hand"))
                     t.gameObject.SetActive(false);
             }
-            var plaque = Object.FindAnyObjectByType<StartPlaque>();
             var table = GameObject.Find("JapaneseTableSet");
             Vector3 look;
             Vector3 from;
-            if (plaque != null)
-            {
-                look = plaque.transform.position + Vector3.up * 0.04f;
-                from = new Vector3(look.x, 1.28f, look.z - 1.2f);
-            }
-            else if (table != null)
+            if (table != null)
             {
                 var renderers = table.GetComponentsInChildren<Renderer>();
+                if (renderers.Length == 0)
+                    return;
                 var bounds = renderers[0].bounds;
                 for (var i = 1; i < renderers.Length; i++)
                     bounds.Encapsulate(renderers[i].bounds);
                 look = bounds.center + Vector3.up * 0.08f;
-                from = new Vector3(look.x, 1.58f, look.z - 1.05f);
+                from = new Vector3(look.x, 1.28f, look.z - 1.2f);
             }
             else
                 return;

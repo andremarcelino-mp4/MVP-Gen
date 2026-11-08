@@ -10,14 +10,28 @@ namespace GenJutsu.ProfileDemo
     public static class WhiteRoomSetup
     {
         static readonly string[] PropNames = { "Brush", "BrushRest", "Scroll", "JadeDragon", "Teapot", "FloatingTarget" };
+        static readonly string[] HideNames = { "ShurikenStand", "Shuriken" };
 
         public static void Ensure(DojoDirector director)
         {
             var table = GameObject.Find("JapaneseTableSet");
             if (table != null)
                 table.SetActive(true);
+            HideShurikenHolder();
             ShowProps();
             StartPlaque.Ensure(table != null ? table.transform : null, director);
+        }
+
+        static void HideShurikenHolder()
+        {
+            var hide = new HashSet<string>(HideNames);
+            var transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                var t = transforms[i];
+                if (t != null && hide.Contains(t.name))
+                    t.gameObject.SetActive(false);
+            }
         }
 
         static void ShowProps()
