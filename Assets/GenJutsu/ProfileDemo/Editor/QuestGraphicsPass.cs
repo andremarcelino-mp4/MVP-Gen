@@ -22,10 +22,10 @@ namespace GenJutsu.ProfileDemo.EditorTools
         public static string Apply()
         {
             Directory.CreateDirectory(TexFolder);
-            var wood = Maps("wood", 1024, WoodAlbedo, WoodNormal, WoodMask, new Color(0.42f, 0.27f, 0.15f));
-            var washi = Maps("washi", 1024, WashiAlbedo, WashiNormal, WashiMask, new Color(0.96f, 0.93f, 0.85f));
-            var tatami = Maps("tatami", 1024, TatamiAlbedo, TatamiNormal, TatamiMask, new Color(0.76f, 0.72f, 0.5f));
-            var stone = Maps("stone", 1024, StoneAlbedo, StoneNormal, StoneMask, new Color(0.32f, 0.33f, 0.34f));
+            var wood = MakeMaps("wood", 1024, WoodAlbedo, WoodNormal, WoodMask, new Color(0.42f, 0.27f, 0.15f));
+            var washi = MakeMaps("washi", 1024, WashiAlbedo, WashiNormal, WashiMask, new Color(0.96f, 0.93f, 0.85f));
+            var tatami = MakeMaps("tatami", 1024, TatamiAlbedo, TatamiNormal, TatamiMask, new Color(0.76f, 0.72f, 0.5f));
+            var stone = MakeMaps("stone", 1024, StoneAlbedo, StoneNormal, StoneMask, new Color(0.32f, 0.33f, 0.34f));
             Bind("DojoWood", wood, 0.45f, 0.08f);
             Bind("DojoWoodDark", wood, 0.55f, 0.12f);
             Bind("DojoLowTable", wood, 0.35f, 0.04f);
@@ -102,9 +102,8 @@ namespace GenJutsu.ProfileDemo.EditorTools
 
         delegate Color Pixel(int x, int y, int n);
         delegate Vector3 Nrm(int x, int y, int n);
-        delegate Color Mask(int x, int y, int n);
 
-        static Maps Maps(string name, int n, Pixel albedo, Nrm nrm, Mask mask, Color fallback)
+        static Maps MakeMaps(string name, int n, Pixel albedo, Nrm nrm, Pixel mask, Color fallback)
         {
             return new Maps
             {

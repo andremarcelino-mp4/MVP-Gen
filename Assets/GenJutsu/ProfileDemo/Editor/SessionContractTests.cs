@@ -97,6 +97,13 @@ namespace GenJutsu.ProfileDemo.EditorTools
         }
 
         [Test]
+        public void QuestClarity_KeepsMsaaAndEyeScale()
+        {
+            Assert.AreEqual(4, QuestClarity.Msaa);
+            Assert.AreEqual(1.15f, QuestClarity.EyeScale, 0.001f);
+        }
+
+        [Test]
         public void WelcomeTitle_UsesTheName_AndNeverTheWaitingLine()
         {
             Assert.AreEqual("Bem-vindo", SessionGate.TitleFor(null));

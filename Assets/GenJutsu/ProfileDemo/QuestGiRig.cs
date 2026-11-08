@@ -43,7 +43,9 @@ namespace GenJutsu.ProfileDemo
         {
             if (light == null)
                 return;
+#if UNITY_EDITOR
             light.lightmapBakeType = LightmapBakeType.Mixed;
+#endif
             if (shadows && light.type == LightType.Directional)
                 light.shadows = LightShadows.Soft;
         }
@@ -62,9 +64,15 @@ namespace GenJutsu.ProfileDemo
             }
 
             holder.localPosition = center;
-            var probes = holder.GetComponent<LightProbeGroup>() ?? holder.gameObject.AddComponent<LightProbeGroup>();
+            var probes = holder.GetComponent<LightProbeGroup>();
+            if (probes == null)
+                probes = holder.gameObject.AddComponent<LightProbeGroup>();
+#if UNITY_EDITOR
             probes.probePositions = Grid(5, 3, 5, box);
-            var probe = holder.GetComponent<ReflectionProbe>() ?? holder.gameObject.AddComponent<ReflectionProbe>();
+#endif
+            var probe = holder.GetComponent<ReflectionProbe>();
+            if (probe == null)
+                probe = holder.gameObject.AddComponent<ReflectionProbe>();
             probe.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked;
             probe.boxProjection = true;
             probe.size = box;

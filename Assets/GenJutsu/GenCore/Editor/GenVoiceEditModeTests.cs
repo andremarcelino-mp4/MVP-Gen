@@ -94,13 +94,6 @@ namespace GenJutsu.GenCore.Tests
         }
 
         [Test]
-        public void QuestClarity_KeepsMixedLightsAndMsaaBudget()
-        {
-            Assert.AreEqual(4, GenJutsu.ProfileDemo.QuestClarity.Msaa);
-            Assert.AreEqual(1.15f, GenJutsu.ProfileDemo.QuestClarity.EyeScale, 0.001f);
-        }
-
-        [Test]
         public void LiveSetup_StripsAdditionalProperties_AndUsesGemini38()
         {
             const string tools = "[{\"name\":\"set_lights\",\"parameters\":{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"color\":{\"type\":\"string\"}}}}]";
