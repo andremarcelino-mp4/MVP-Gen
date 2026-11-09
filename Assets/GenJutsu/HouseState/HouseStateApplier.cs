@@ -55,6 +55,7 @@ namespace GenJutsu.HouseState
             TrySwitch();
             ApplyAmbience();
             ApplyMedia();
+            ApplyAir();
             if (!plan.HasLights)
                 return;
             var ms = plan.MainTransitionMs > 0 ? plan.MainTransitionMs : plan.LanternTransitionMs;
@@ -159,6 +160,19 @@ namespace GenJutsu.HouseState
             appliedTv = true;
             lastTvOn = device.On;
             tv.SetPower(device.On, false);
+        }
+
+        void ApplyAir()
+        {
+            if (!HouseStateLogic.TryDevice(plan.Devices, "ar_condicionado", out var device))
+                return;
+            var house = director.VisualHouse;
+            if (house == null)
+                return;
+            var ac = house.GetComponentInChildren<AirConUnit>(true);
+            if (ac == null)
+                return;
+            ac.Apply(device);
         }
 
         void ApplyAmbience()

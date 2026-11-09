@@ -16,6 +16,8 @@ namespace GenJutsu.GenCore
         public string VoiceName = "";
         public string BaseUrl = "";
         public string SessionId = "";
+        public bool AllowProfanity = true;
+        public bool HasProfanityFlag;
     }
 
     public sealed class GeminiToolCall
@@ -69,7 +71,46 @@ namespace GenJutsu.GenCore
                 ticket.SystemInstructionRaw = si.Raw ?? "";
             if (obj.TryGet("tools", out var tools))
                 ticket.ToolsRaw = tools.Raw ?? "";
+            ReadProfanity(obj, ticket);
             return true;
+        }
+
+        static void ReadProfanity(JObj obj, VoiceSessionTicket ticket)
+        {
+            if (TryProfanity(obj, ticket))
+                return;
+            if (TryProfanity(obj.Obj("config"), ticket))
+                return;
+            if (TryProfanity(obj.Obj("user"), ticket))
+                return;
+            if (TryProfanity(obj.Obj("flags"), ticket))
+                return;
+            ticket.AllowProfanity = true;
+            ticket.HasProfanityFlag = false;
+        }
+
+        static bool TryProfanity(JObj bag, VoiceSessionTicket ticket)
+        {
+            if (bag == null)
+                return false;
+            string[] keys = { "GEN_PROFANITY", "gen_profanity", "profanity", "allow_swearing", "allowSwearing" };
+            for (var i = 0; i < keys.Length; i++)
+            {
+                if (!bag.TryGet(keys[i], out var val) || val == null)
+                    continue;
+                ticket.HasProfanityFlag = true;
+                if (val is JBool b)
+                    ticket.AllowProfanity = b.Value;
+                else
+                {
+                    var s = (val.Raw ?? "").Trim().Trim('"').ToLowerInvariant();
+                    ticket.AllowProfanity = s != "false" && s != "0" && s != "off" && s != "no";
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public static string ResolveWs(string wsUrl, string token)
@@ -84,7 +125,7 @@ namespace GenJutsu.GenCore
             return wsUrl + join + "access_token=" + Uri.EscapeDataString(token);
         }
 
-        public static string BuildSetup(string model, string systemInstructionRaw, string toolsRaw)
+        public static string BuildSetup(string model, string systemInstructionRaw, string toolsRaw, bool allowProfanity = true)
         {
             var modelName = string.IsNullOrEmpty(model) ? "models/gemini-2.5-flash-native-audio-preview-12-2025" : model;
             if (modelName.IndexOf("/", StringComparison.Ordinal) < 0)
@@ -93,7 +134,7 @@ namespace GenJutsu.GenCore
             sb.Append("{\"setup\":{\"model\":\"").Append(GenJson.Escape(modelName)).Append("\"");
             // voiceName is locked into the ephemeral token (Charon). Sending it again is unnecessary.
             sb.Append(",\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"languageCode\":\"pt-BR\"}}");
-            var instruction = EmbedInstruction(systemInstructionRaw);
+            var instruction = EmbedInstruction(GenPersona.Merge(systemInstructionRaw, allowProfanity));
             if (instruction != null)
                 sb.Append(",\"systemInstruction\":").Append(instruction);
             var tools = EmbedTools(toolsRaw);

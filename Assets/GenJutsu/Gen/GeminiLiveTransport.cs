@@ -98,7 +98,8 @@ namespace GenJutsu.Gen
                 var setup = GeminiLiveMessages.BuildSetup(
                     ticket != null ? ticket.Model : null,
                     ticket != null ? ticket.SystemInstructionRaw : null,
-                    ticket != null ? ticket.ToolsRaw : null);
+                    ticket != null ? ticket.ToolsRaw : null,
+                    ticket == null || ticket.AllowProfanity);
                 GenVoiceLog.Info("setup bytes=" + setup.Length + " voiceInSetup=" + (setup.IndexOf("voiceName", StringComparison.Ordinal) >= 0));
                 await SendOne(ws, setup, token).ConfigureAwait(false);
                 var pump = PumpSend(ws, token);

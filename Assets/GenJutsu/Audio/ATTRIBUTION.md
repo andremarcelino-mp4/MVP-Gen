@@ -10,3 +10,7 @@ Ambient beds streamed at runtime (MP3). No API keys. If a URL fails, the old pro
 | Acolhedor | Carefree | Kevin MacLeod (incompetech.com) | CC BY | Incompetech |
 
 TV `house_state.media.url` is played as-is (HTTPS audio/video provided by the site).
+
+## Air conditioner
+
+Looping split-unit hum is synthesized in-engine (soft noise + low sine, no sample pack). Not a third-party recording.

@@ -15,10 +15,14 @@ namespace GenJutsu.ProfileDemo
             if (home == null)
                 return;
             if (home.Find("Toys") != null)
+            {
+                AirConUnit.Ensure(home);
                 return;
+            }
             var toys = new GameObject("Toys");
             toys.transform.SetParent(home, false);
             var tv = TvSet.Ensure(home);
+            AirConUnit.Ensure(home);
             Remote(toys.transform, tv);
             Pad(toys.transform, tv);
             Ball(toys.transform);

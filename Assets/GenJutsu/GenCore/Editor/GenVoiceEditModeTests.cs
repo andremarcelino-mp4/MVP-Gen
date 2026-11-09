@@ -99,9 +99,54 @@ namespace GenJutsu.GenCore.Tests
             Assert.IsTrue(plan.HasMain);
             Assert.AreEqual(0.5f, plan.MainIntensity, 0.001f);
             Assert.AreEqual(3, plan.Devices.Length);
-            Assert.AreEqual(6, HouseStateLogic.DeviceIds.Length);
+            Assert.AreEqual(7, HouseStateLogic.DeviceIds.Length);
             Assert.AreEqual("sala_luz", HouseStateLogic.DeviceIds[0]);
             Assert.AreEqual("ambiente", HouseStateLogic.DeviceIds[5]);
+            Assert.AreEqual("ar_condicionado", HouseStateLogic.DeviceIds[6]);
+        }
+
+        [Test]
+        public void Ac_ParsesTempModeFan_AndStaysOptional()
+        {
+            const string json = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":9,\"devices\":{\"ar_condicionado\":{\"on\":true,\"temp\":20,\"mode\":\"frio\",\"fan\":\"2\"}}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(json, out var snap, out _));
+            Assert.IsTrue(HouseStateLogic.TryDevice(snap.Devices, "ar_condicionado", out var ac));
+            Assert.IsTrue(ac.On);
+            Assert.AreEqual(20, ac.Temp);
+            Assert.AreEqual("frio", ac.Mode);
+            Assert.AreEqual("2", ac.Fan);
+            Assert.AreEqual(20, HouseStateLogic.Map(snap).Devices[0].Temp);
+
+            const string missing = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":10,\"devices\":{\"tv\":{\"on\":true}}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(missing, out var noAc, out _));
+            Assert.IsFalse(HouseStateLogic.TryDevice(noAc.Devices, "ar_condicionado", out _));
+
+            const string aliases = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":11,\"devices\":{\"ar_condicionado\":{\"on\":true,\"temperature\":33,\"mode\":\"cool\",\"fan\":1}}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(aliases, out var aliasSnap, out _));
+            Assert.IsTrue(HouseStateLogic.TryDevice(aliasSnap.Devices, "ar_condicionado", out var alias));
+            Assert.AreEqual(30, alias.Temp);
+            Assert.AreEqual("frio", alias.Mode);
+            Assert.AreEqual("1", alias.Fan);
+        }
+
+        [Test]
+        public void Persona_WeavesYoungPtBr_AndHonorsProfanityFlag()
+        {
+            var withSwear = GenPersona.Merge("Fale português.", true);
+            StringAssert.Contains("amigo jovem", withSwear);
+            StringAssert.Contains("porra", withSwear);
+            StringAssert.Contains("Fale português.", withSwear);
+            var clean = GenPersona.Merge("Fale português.", false);
+            StringAssert.Contains("Não use palavrão", clean);
+            StringAssert.DoesNotContain("porra", clean);
+            Assert.IsTrue(GeminiLiveMessages.TryParseTicket(
+                "{\"provider\":\"gemini\",\"token\":\"x\",\"config\":{\"GEN_PROFANITY\":false}}",
+                out var ticket));
+            Assert.IsTrue(ticket.HasProfanityFlag);
+            Assert.IsFalse(ticket.AllowProfanity);
+            var setup = GeminiLiveMessages.BuildSetup("gemini-3.8-live", "Fale português.", null, ticket.AllowProfanity);
+            StringAssert.Contains("Não use palavrão", setup);
+            StringAssert.Contains("languageCode\":\"pt-BR", setup);
         }
 
         [Test]

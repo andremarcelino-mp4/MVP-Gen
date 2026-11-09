@@ -45,6 +45,9 @@ namespace GenJutsu.GenCore
         public bool On;
         public Color Color;
         public float Intensity;
+        public int Temp;
+        public string Mode;
+        public string Fan;
     }
 
     public readonly struct HouseApplyPlan
@@ -98,7 +101,7 @@ namespace GenJutsu.GenCore
     {
         public static readonly string[] DeviceIds =
         {
-            "sala_luz", "quarto_luz", "abajur", "fita_led", "tv", "ambiente"
+            "sala_luz", "quarto_luz", "abajur", "fita_led", "tv", "ambiente", "ar_condicionado"
         };
 
         public static bool IsNewer(int appliedVersion, int incomingVersion)
@@ -280,13 +283,64 @@ namespace GenJutsu.GenCore
             if (obj.TryGet("on", out var flag) && flag is JBool b)
                 on = b.Value;
             var intensity = Intensity(obj, 1f);
+            var temp = 24;
+            if (obj.Num("temp", out var t) || obj.Num("temperature", out t))
+                temp = Mathf.Clamp((int)Math.Round(t), 16, 30);
+            var mode = NormalizeMode(obj.Str("mode"));
+            var fan = NormalizeFan(obj);
             list.Add(new HouseDeviceState
             {
                 Id = id,
                 On = on,
                 Color = ColorOf(obj, Color.white),
-                Intensity = intensity
+                Intensity = intensity,
+                Temp = temp,
+                Mode = mode,
+                Fan = fan
             });
+        }
+
+        public static string NormalizeMode(string mode)
+        {
+            var m = (mode ?? "").Trim().ToLowerInvariant();
+            if (m == "ventilar" || m == "fan" || m == "ventilacao" || m == "ventilação")
+                return "ventilar";
+            if (m == "seco" || m == "dry")
+                return "seco";
+            return "frio";
+        }
+
+        public static string NormalizeFan(JObj obj)
+        {
+            if (obj == null)
+                return "auto";
+            var s = obj.Str("fan");
+            if (!string.IsNullOrEmpty(s))
+            {
+                var f = s.Trim().ToLowerInvariant();
+                if (f == "1" || f == "2" || f == "3" || f == "auto")
+                    return f;
+            }
+
+            if (obj.Num("fan", out var n))
+            {
+                var v = (int)Math.Round(n);
+                if (v >= 1 && v <= 3)
+                    return v.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return "auto";
+        }
+
+        public static float FanScale(string fan)
+        {
+            switch ((fan ?? "auto").Trim().ToLowerInvariant())
+            {
+                case "1": return 0.55f;
+                case "2": return 0.85f;
+                case "3": return 1.2f;
+                default: return 0.7f;
+            }
         }
 
         static float Intensity(JObj obj, float fallback)
