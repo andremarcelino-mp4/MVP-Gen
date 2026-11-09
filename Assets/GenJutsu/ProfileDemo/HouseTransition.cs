@@ -52,6 +52,7 @@ namespace GenJutsu.ProfileDemo
                 Apply(i, 1f);
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(true);
+            GrabRest.SettleUnder(transform);
         }
 
         public IEnumerator Dissolve(Vector3 origin)

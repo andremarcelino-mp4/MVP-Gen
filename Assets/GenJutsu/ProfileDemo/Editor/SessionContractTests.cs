@@ -113,6 +113,35 @@ namespace GenJutsu.ProfileDemo.EditorTools
         }
 
         [Test]
+        public void Grabbables_RestKinematicUntilGrabbed()
+        {
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            var grab = GrabUtil.Make(go, 0.2f);
+            var body = go.GetComponent<UnityEngine.Rigidbody>();
+            Assert.IsNotNull(grab);
+            Assert.IsTrue(body.isKinematic);
+            Assert.IsFalse(body.useGravity);
+            UnityEngine.Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void WelcomeCard_StaysInvisibleWhenEnsured()
+        {
+            var go = new UnityEngine.GameObject("SessionGateTest", typeof(UnityEngine.RectTransform));
+            var canvas = go.AddComponent<UnityEngine.Canvas>();
+            canvas.renderMode = UnityEngine.RenderMode.WorldSpace;
+            var group = go.AddComponent<UnityEngine.CanvasGroup>();
+            group.alpha = 1f;
+            var gate = go.AddComponent<SessionGate>();
+            gate.group = group;
+            gate.suppressNetworkPoll = true;
+            gate.EnsureVisible();
+            Assert.AreEqual(0f, group.alpha, 0.001f);
+            Assert.IsFalse(canvas.enabled);
+            UnityEngine.Object.DestroyImmediate(go);
+        }
+
+        [Test]
         public void ProfileId_IsNotTheVisitId()
         {
             var key = SessionApiClient.SessionKeyFrom(

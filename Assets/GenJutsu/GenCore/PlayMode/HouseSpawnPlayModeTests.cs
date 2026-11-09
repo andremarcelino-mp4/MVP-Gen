@@ -34,5 +34,20 @@ namespace GenJutsu.GenCore.PlayModeTests
 
             Object.Destroy(root);
         }
+
+        [UnityTest]
+        public IEnumerator KinematicRest_DoesNotFallOnItsOwn()
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.transform.position = new Vector3(0f, 1.2f, 0f);
+            var body = go.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            body.useGravity = true;
+            var y = go.transform.position.y;
+            for (var i = 0; i < 30; i++)
+                yield return null;
+            Assert.AreEqual(y, go.transform.position.y, 0.001f);
+            Object.Destroy(go);
+        }
     }
 }

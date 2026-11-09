@@ -7,9 +7,8 @@ using UnityEngine.UI;
 namespace GenJutsu.ProfileDemo
 {
     /// <summary>
-    /// Welcome card. Polls the admin-selected session; the visitor never types a code.
-    /// A new visit is a new session id/code, even when the profile letter stays the same.
-    /// When the admin ends the visit, <see cref="SessionEnded"/> fires and polling continues.
+    /// Session poller. The visitor never types a code. The world-space welcome card is never shown.
+    /// Spoken Gen welcome still fires via <see cref="NamedWelcome"/>.
     /// </summary>
     public class SessionGate : MonoBehaviour
     {
@@ -44,7 +43,7 @@ namespace GenJutsu.ProfileDemo
         {
             GuestSession.Load();
             StripCodeControls();
-            CompactCard();
+            HideCardVisual();
             ShowWaiting();
 #if UNITY_EDITOR
             if (System.IO.File.Exists("Temp/dojo-shots.marker"))
@@ -67,31 +66,45 @@ namespace GenJutsu.ProfileDemo
             }
         }
 
-        /// <summary>Keeps the welcome card on screen. The dojo does not replace it with a profile panel.</summary>
         public void HideAfterMorph()
         {
-            EnsureVisible();
+            HideCardVisual();
         }
 
         public void ShowOnWhite()
         {
-            EnsureVisible();
+            HideCardVisual();
         }
 
+        /// <summary>Keeps polling alive. Never reveals the welcome card.</summary>
         public void EnsureVisible()
         {
             gameObject.SetActive(true);
-            if (group != null)
-            {
-                group.alpha = 1f;
-                group.interactable = false;
-                group.blocksRaycasts = false;
-            }
-
+            HideCardVisual();
             if (!applied)
                 ShowWaiting();
             if (isActiveAndEnabled && poll == null)
                 poll = StartCoroutine(PollRoutine());
+        }
+
+        public void HideCardVisual()
+        {
+            if (group != null)
+            {
+                group.alpha = 0f;
+                group.interactable = false;
+                group.blocksRaycasts = false;
+            }
+
+            var canvas = GetComponent<Canvas>();
+            if (canvas != null)
+                canvas.enabled = false;
+            var graphics = GetComponentsInChildren<Graphic>(true);
+            for (var i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i] != null)
+                    graphics[i].enabled = false;
+            }
         }
 
         /// <summary>Same path the poll uses. httpSuccess false is a transport failure.</summary>
@@ -222,12 +235,7 @@ namespace GenJutsu.ProfileDemo
 
         void CompactCard()
         {
-            var rect = transform as RectTransform;
-            if (rect != null && rect.sizeDelta.y > 160f)
-            {
-                rect.sizeDelta = new Vector2(720f, 140f);
-                transform.localPosition += Vector3.up * 0.22f;
-            }
+            HideCardVisual();
         }
 
         void HideStatus()
