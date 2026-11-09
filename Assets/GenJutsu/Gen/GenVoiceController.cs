@@ -299,8 +299,10 @@ namespace GenJutsu.Gen
                 Phase = GenVoicePhases.AfterServerInterrupted(Phase, ptt);
             }
 
-            if (ev.Audio != null && player != null)
+            if (ev.Audio != null && player != null && ev.Audio.Count > 0)
             {
+                GenVoiceLog.Info("model audio chunks=" + ev.Audio.Count + " rate=" + ev.Audio[0].SampleRate
+                    + " playing=" + player.SourcePlaying + " vol=" + player.SourceVolume);
                 for (var i = 0; i < ev.Audio.Count; i++)
                 {
                     player.EnqueueBase64(ev.Audio[i].Base64, ev.Audio[i].SampleRate);
@@ -350,8 +352,12 @@ namespace GenJutsu.Gen
             reply = string.IsNullOrEmpty(chat.ReplyText) ? chat.Transcript : chat.ReplyText;
             if (!string.IsNullOrEmpty(reply))
                 GenHistoryClient.Note(baseUrl, "gen", reply, "chat");
-            if (speaker != null && !string.IsNullOrEmpty(chat.ReplyText))
-                speaker.Speak(chat.ReplyText);
+            var spoken = !string.IsNullOrEmpty(chat.ReplyText) ? chat.ReplyText : chat.Transcript;
+            if (speaker != null && !string.IsNullOrEmpty(spoken))
+            {
+                GenVoiceLog.Info("fallback TTS chars=" + spoken.Length);
+                speaker.Speak(spoken);
+            }
             if (!string.IsNullOrEmpty(chat.StateRaw))
             {
                 var wrapped = "{\"state\":" + chat.StateRaw + "}";

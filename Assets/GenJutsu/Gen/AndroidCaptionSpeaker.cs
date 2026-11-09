@@ -56,7 +56,9 @@ namespace GenJutsu.Gen
                 return;
             }
 
-            tts.Call<int>("speak", text, 0, null, "gen");
+            using (var bundle = new AndroidJavaObject("android.os.Bundle"))
+                tts.Call<int>("speak", text, 0, bundle, "gen");
+            GenVoiceLog.Info("TTS speak chars=" + text.Length);
         }
 
         void OnReady(int status)
