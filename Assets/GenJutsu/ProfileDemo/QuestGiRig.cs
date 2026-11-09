@@ -17,6 +17,7 @@ namespace GenJutsu.ProfileDemo
         public static void Ensure(ProfileDemoDirector director)
         {
             DojoHomeKit.EnsureAll();
+            DojoToys.EnsureAll();
             if (director == null)
                 return;
             PrepareLight(director.mainLight, true);

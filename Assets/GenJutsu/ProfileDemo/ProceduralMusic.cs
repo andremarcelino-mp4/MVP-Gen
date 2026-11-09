@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace GenJutsu.ProfileDemo
 {
@@ -52,11 +53,31 @@ namespace GenJutsu.ProfileDemo
                 FadeTo(current, 0f, true);
 
             var source = sources[next];
-            source.clip = ClipFor(id);
+            source.spatialBlend = 0f;
+            source.loop = true;
             source.volume = 0f;
-            source.Play();
-            FadeTo(next, musicVolume, false);
+            StartCoroutine(PlayLicensed(id, source, next));
             current = next;
+        }
+
+        IEnumerator PlayLicensed(ProfileId id, AudioSource source, int slot)
+        {
+            var url = AmbientCatalog.Url(id);
+            using (var req = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+            {
+                yield return req.SendWebRequest();
+                if (req.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    source.clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(req);
+                    source.Play();
+                    FadeTo(slot, musicVolume, false);
+                    yield break;
+                }
+            }
+
+            source.clip = ClipFor(id);
+            source.Play();
+            FadeTo(slot, musicVolume, false);
         }
 
         public void Stop()

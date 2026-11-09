@@ -24,6 +24,19 @@ namespace GenJutsu.GenCore
         public float Volume;
         public int AmbienceTransitionMs;
         public HouseDeviceState[] Devices;
+        public bool HasMedia;
+        public HouseMediaState Media;
+    }
+
+    public struct HouseMediaState
+    {
+        public string Type;
+        public string Url;
+        public string Title;
+        public string Artist;
+        public string License;
+        public bool Playing;
+        public string Device;
     }
 
     public struct HouseDeviceState
@@ -52,6 +65,8 @@ namespace GenJutsu.GenCore
         public readonly bool SwitchDojo;
         public readonly string Dojo;
         public readonly HouseDeviceState[] Devices;
+        public readonly bool HasMedia;
+        public readonly HouseMediaState Media;
 
         public HouseApplyPlan(HouseSnapshot snap)
         {
@@ -71,6 +86,8 @@ namespace GenJutsu.GenCore
             SwitchDojo = !string.IsNullOrEmpty(snap.Dojo);
             Dojo = snap.Dojo ?? "";
             Devices = snap.Devices ?? System.Array.Empty<HouseDeviceState>();
+            HasMedia = snap.HasMedia;
+            Media = snap.Media;
         }
 
         /// <summary>House commands change the room. They never rewrite the visit profile.</summary>
@@ -173,6 +190,25 @@ namespace GenJutsu.GenCore
                 if (ambience.Num("volume", out var vol))
                     snap.Volume = (float)vol;
                 snap.AmbienceTransitionMs = Milliseconds(ambience);
+            }
+
+            var media = state.Obj("media");
+            if (media != null)
+            {
+                snap.HasMedia = true;
+                var playing = true;
+                if (media.TryGet("playing", out var p) && p is JBool pb)
+                    playing = pb.Value;
+                snap.Media = new HouseMediaState
+                {
+                    Type = media.Str("type") ?? "audio",
+                    Url = media.Str("url") ?? "",
+                    Title = media.Str("title") ?? "",
+                    Artist = media.Str("artist") ?? "",
+                    License = media.Str("license") ?? "",
+                    Playing = playing,
+                    Device = media.Str("device") ?? "tv"
+                };
             }
 
             if (string.IsNullOrEmpty(snap.Dojo) && string.Equals(snap.Mode, "switch_dojo", StringComparison.Ordinal))

@@ -19,6 +19,8 @@ namespace GenJutsu.HouseState
         string switchedDojo;
         string appliedPreset;
         float appliedVolume = -1f;
+        bool appliedTv;
+        bool lastTvOn;
         Color ambientFrom;
         bool ambientCaptured;
         readonly System.Collections.Generic.Dictionary<Renderer, Color> surfaceBase = new System.Collections.Generic.Dictionary<Renderer, Color>();
@@ -30,6 +32,7 @@ namespace GenJutsu.HouseState
             switchedDojo = null;
             appliedPreset = null;
             appliedVolume = -1f;
+            appliedTv = false;
         }
 
         public void Release()
@@ -38,6 +41,7 @@ namespace GenJutsu.HouseState
             switchedDojo = null;
             appliedPreset = null;
             appliedVolume = -1f;
+            appliedTv = false;
         }
 
         void LateUpdate()
@@ -50,6 +54,7 @@ namespace GenJutsu.HouseState
 
             TrySwitch();
             ApplyAmbience();
+            ApplyMedia();
             if (!plan.HasLights)
                 return;
             var ms = plan.MainTransitionMs > 0 ? plan.MainTransitionMs : plan.LanternTransitionMs;
@@ -135,6 +140,25 @@ namespace GenJutsu.HouseState
                 return;
             if (director.SwitchVisualDojo(id))
                 switchedDojo = plan.Dojo;
+        }
+
+        void ApplyMedia()
+        {
+            var house = director.VisualHouse;
+            if (house == null)
+                return;
+            var tv = house.GetComponentInChildren<TvSet>(true);
+            if (tv == null)
+                return;
+            if (plan.HasMedia)
+                tv.ApplyMedia(plan.Media);
+            if (!HouseStateLogic.TryDevice(plan.Devices, "tv", out var device))
+                return;
+            if (appliedTv && lastTvOn == device.On)
+                return;
+            appliedTv = true;
+            lastTvOn = device.On;
+            tv.SetPower(device.On, false);
         }
 
         void ApplyAmbience()

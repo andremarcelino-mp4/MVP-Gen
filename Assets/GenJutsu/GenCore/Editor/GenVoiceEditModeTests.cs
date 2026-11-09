@@ -69,6 +69,21 @@ namespace GenJutsu.GenCore.Tests
         }
 
         [Test]
+        public void Media_ParsesTvAudioAndPlayingFlag()
+        {
+            const string json = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":8,\"media\":{\"type\":\"audio\",\"url\":\"https://example.com/lofi.mp3\",\"title\":\"lo-fi para relaxar\",\"artist\":\"Gen\",\"license\":\"CC BY\",\"playing\":true,\"device\":\"tv\"}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(json, out var snap, out _));
+            Assert.IsTrue(snap.HasMedia);
+            Assert.AreEqual("audio", snap.Media.Type);
+            Assert.AreEqual("https://example.com/lofi.mp3", snap.Media.Url);
+            Assert.AreEqual("lo-fi para relaxar", snap.Media.Title);
+            Assert.AreEqual("CC BY", snap.Media.License);
+            Assert.IsTrue(snap.Media.Playing);
+            Assert.AreEqual("tv", snap.Media.Device);
+            Assert.IsTrue(HouseStateLogic.Map(snap).HasMedia);
+        }
+
+        [Test]
         public void Devices_ParseSalaRed_AndKeepLegacyLights()
         {
             const string json = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":6,\"devices\":{\"sala_luz\":{\"on\":true,\"color\":\"#FF0000\",\"intensity\":0.9},\"tv\":{\"on\":false,\"color\":\"#00FFFF\",\"intensity\":0.2},\"ambiente\":{\"on\":true,\"color\":\"#334455\",\"intensity\":0.4}},\"lights\":{\"main\":{\"color\":\"#FFFFFF\",\"intensity\":0.5}}}}";
