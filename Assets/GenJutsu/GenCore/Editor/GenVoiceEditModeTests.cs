@@ -69,6 +69,38 @@ namespace GenJutsu.GenCore.Tests
         }
 
         [Test]
+        public void Devices_ParseSalaRed_AndKeepLegacyLights()
+        {
+            const string json = "{\"state\":{\"session_id\":\"AB3K7Q\",\"version\":6,\"devices\":{\"sala_luz\":{\"on\":true,\"color\":\"#FF0000\",\"intensity\":0.9},\"tv\":{\"on\":false,\"color\":\"#00FFFF\",\"intensity\":0.2},\"ambiente\":{\"on\":true,\"color\":\"#334455\",\"intensity\":0.4}},\"lights\":{\"main\":{\"color\":\"#FFFFFF\",\"intensity\":0.5}}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(json, out var snap, out _));
+            Assert.AreEqual(3, snap.Devices.Length);
+            Assert.IsTrue(HouseStateLogic.TryDevice(snap.Devices, "sala_luz", out var sala));
+            Assert.IsTrue(sala.On);
+            Assert.Greater(sala.Color.r, 0.9f);
+            Assert.AreEqual(0.9f, sala.Intensity, 0.001f);
+            Assert.IsTrue(HouseStateLogic.TryDevice(snap.Devices, "tv", out var tv));
+            Assert.IsFalse(tv.On);
+            var plan = HouseStateLogic.Map(snap);
+            Assert.IsTrue(plan.HasMain);
+            Assert.AreEqual(0.5f, plan.MainIntensity, 0.001f);
+            Assert.AreEqual(3, plan.Devices.Length);
+            Assert.AreEqual(6, HouseStateLogic.DeviceIds.Length);
+            Assert.AreEqual("sala_luz", HouseStateLogic.DeviceIds[0]);
+            Assert.AreEqual("ambiente", HouseStateLogic.DeviceIds[5]);
+        }
+
+        [Test]
+        public void Devices_NestedUnderLights_StillMap()
+        {
+            const string json = "{\"version\":3,\"lights\":{\"sala_luz\":{\"on\":true,\"color\":\"#00FF00\",\"intensity\":0.3},\"quarto_luz\":{\"on\":true,\"color\":\"#0000FF\",\"intensity\":0.7},\"abajur\":{\"on\":true,\"color\":\"#FFAA00\",\"intensity\":0.5},\"fita_led\":{\"on\":true,\"color\":\"#00FFFF\",\"intensity\":0.8}}}";
+            Assert.IsTrue(HouseStateLogic.TryParse(json, out var snap, out _));
+            Assert.IsTrue(HouseStateLogic.TryDevice(snap.Devices, "sala_luz", out var sala));
+            Assert.Greater(sala.Color.g, 0.9f);
+            Assert.IsTrue(HouseStateLogic.TryDevice(snap.Devices, "fita_led", out var led));
+            Assert.Greater(led.Color.g, 0.9f);
+        }
+
+        [Test]
         public void WarmAndCoolLights_MapColorTransitionAndVisibleDrive()
         {
             const string warm = "{\"state\":{\"session_id\":\"YP8PFF\",\"version\":4,\"lights\":{\"main\":{\"color\":\"#FFAA00\",\"intensity\":0.8,\"transition_ms\":800},\"lanterns\":{\"color\":\"#FF1A1A\",\"intensity\":0.2,\"transition_ms\":800}},\"ambience\":{\"preset\":\"bamboo\",\"volume\":0.3,\"transition_ms\":500}}}";

@@ -9,7 +9,7 @@ namespace GenJutsu.TableProps
     [RequireComponent(typeof(Renderer))]
     public class ScrollCanvas : MonoBehaviour
     {
-        [SerializeField] int resolution = 512;
+        [SerializeField] int resolution = 1024;
         [SerializeField] Color paperColor = new Color(0.93f, 0.88f, 0.72f, 1f);
         [SerializeField] Color inkColor = new Color(0.08f, 0.08f, 0.1f, 1f);
         [SerializeField] bool sculptSheet = true;
@@ -380,13 +380,13 @@ namespace GenJutsu.TableProps
                     edge *= edge;
 
                     var blotch = Fbm(u * 3.2f + 11f, v * 3.2f + 7f, 2, Seed + 21);
-                    var age = Mathf.Clamp01((blotch - 0.58f) * 3.4f);
+                    var age = Mathf.Clamp01((blotch - 0.72f) * 2.1f);
 
                     var speck = Fbm(u * 150f, v * 150f, 1, Seed + 53);
-                    var speckAmt = Mathf.Clamp01((speck - 0.86f) * 5f) * 0.55f;
+                    var speckAmt = Mathf.Clamp01((speck - 0.9f) * 4f) * 0.25f;
 
                     var c = new Color(paperColor.r * shade, paperColor.g * shade, paperColor.b * shade, 1f);
-                    var brown = Mathf.Clamp01(age * 0.3f + edge * 0.35f + speckAmt * 0.5f);
+                    var brown = Mathf.Clamp01(age * 0.08f + edge * 0.12f + speckAmt * 0.2f);
                     c.r = Mathf.Lerp(c.r, AgedBrown.r / 255f, brown);
                     c.g = Mathf.Lerp(c.g, AgedBrown.g / 255f, brown);
                     c.b = Mathf.Lerp(c.b, AgedBrown.b / 255f, brown);
@@ -395,6 +395,62 @@ namespace GenJutsu.TableProps
             }
 
             System.Array.Copy(paperPixels, pixels, paperPixels.Length);
+            PaintDragon(res);
+        }
+
+        void PaintDragon(int res)
+        {
+            var ink = new Color32(42, 38, 32, 255);
+            for (var s = 0; s < 420; s++)
+            {
+                var t = s / 419f;
+                var x = 0.18f + t * 0.62f + 0.07f * Mathf.Sin(t * 14f);
+                var y = 0.32f + 0.2f * Mathf.Sin(t * 7.2f) + t * 0.08f;
+                var rad = (0.055f - t * 0.028f) * res;
+                Stamp(res, x * (res - 1), y * (res - 1), rad, ink, 0.92f);
+            }
+
+            Stamp(res, 0.82f * (res - 1), 0.58f * (res - 1), res * 0.07f, ink, 1f);
+            Stamp(res, 0.88f * (res - 1), 0.64f * (res - 1), res * 0.028f, ink, 1f);
+            Stamp(res, 0.9f * (res - 1), 0.7f * (res - 1), res * 0.018f, ink, 1f);
+            for (var w = 0; w < 40; w++)
+            {
+                var t = w / 39f;
+                Stamp(res, (0.86f + t * 0.1f) * (res - 1), (0.56f + t * 0.04f) * (res - 1), res * 0.008f, ink, 0.8f);
+                Stamp(res, (0.86f + t * 0.08f) * (res - 1), (0.52f - t * 0.05f) * (res - 1), res * 0.008f, ink, 0.8f);
+            }
+
+            for (var c = 0; c < 3; c++)
+            {
+                var cx = 0.28f + c * 0.16f;
+                var cy = 0.78f - (c % 2) * 0.08f;
+                Stamp(res, cx * (res - 1), cy * (res - 1), res * 0.045f, ink, 0.35f);
+            }
+        }
+
+        void Stamp(int res, float fx, float fy, float radius, Color32 ink, float alpha)
+        {
+            var x0 = Mathf.Max(0, Mathf.FloorToInt(fx - radius));
+            var x1 = Mathf.Min(res - 1, Mathf.CeilToInt(fx + radius));
+            var y0 = Mathf.Max(0, Mathf.FloorToInt(fy - radius));
+            var y1 = Mathf.Min(res - 1, Mathf.CeilToInt(fy + radius));
+            var r2 = radius * radius;
+            for (var y = y0; y <= y1; y++)
+            {
+                var dy = y - fy;
+                for (var x = x0; x <= x1; x++)
+                {
+                    var dx = x - fx;
+                    var d = dx * dx + dy * dy;
+                    if (d > r2)
+                        continue;
+                    var w = (1f - d / r2) * alpha;
+                    var i = y * res + x;
+                    var p = paperPixels[i];
+                    paperPixels[i] = Color32.Lerp(p, ink, w);
+                    pixels[i] = paperPixels[i];
+                }
+            }
         }
 
         Texture2D BuildNormalMap()

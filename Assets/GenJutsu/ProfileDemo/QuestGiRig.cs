@@ -8,8 +8,15 @@ namespace GenJutsu.ProfileDemo
     /// </summary>
     public static class QuestGiRig
     {
+        static readonly string[] ProbeOnly =
+        {
+            "Scroll", "Paper", "Brush", "BrushRest", "Teapot", "FloatingTarget", "StartPlaque",
+            "JadeDragon", "TeaCup_1", "TeaCup_2", "Kanji", "Word", "Board", "Foot"
+        };
+
         public static void Ensure(ProfileDemoDirector director)
         {
+            DojoHomeKit.EnsureAll();
             if (director == null)
                 return;
             PrepareLight(director.mainLight, true);
@@ -108,8 +115,31 @@ namespace GenJutsu.ProfileDemo
                 var r = renderers[i];
                 if (r == null || r.GetComponent<Rigidbody>() != null)
                     continue;
+                if (UseProbes(r.transform))
+                {
+                    r.gameObject.isStatic = false;
+                    continue;
+                }
+
                 r.gameObject.isStatic = true;
             }
+        }
+
+        static bool UseProbes(Transform t)
+        {
+            while (t != null)
+            {
+                var n = t.name;
+                for (var i = 0; i < ProbeOnly.Length; i++)
+                {
+                    if (n == ProbeOnly[i])
+                        return true;
+                }
+
+                t = t.parent;
+            }
+
+            return false;
         }
     }
 }

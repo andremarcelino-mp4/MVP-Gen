@@ -23,6 +23,15 @@ namespace GenJutsu.GenCore
         public string Preset;
         public float Volume;
         public int AmbienceTransitionMs;
+        public HouseDeviceState[] Devices;
+    }
+
+    public struct HouseDeviceState
+    {
+        public string Id;
+        public bool On;
+        public Color Color;
+        public float Intensity;
     }
 
     public readonly struct HouseApplyPlan
@@ -42,6 +51,7 @@ namespace GenJutsu.GenCore
         public readonly int AmbienceTransitionMs;
         public readonly bool SwitchDojo;
         public readonly string Dojo;
+        public readonly HouseDeviceState[] Devices;
 
         public HouseApplyPlan(HouseSnapshot snap)
         {
@@ -60,6 +70,7 @@ namespace GenJutsu.GenCore
             AmbienceTransitionMs = snap.AmbienceTransitionMs;
             SwitchDojo = !string.IsNullOrEmpty(snap.Dojo);
             Dojo = snap.Dojo ?? "";
+            Devices = snap.Devices ?? System.Array.Empty<HouseDeviceState>();
         }
 
         /// <summary>House commands change the room. They never rewrite the visit profile.</summary>
@@ -68,6 +79,11 @@ namespace GenJutsu.GenCore
 
     public static class HouseStateLogic
     {
+        public static readonly string[] DeviceIds =
+        {
+            "sala_luz", "quarto_luz", "abajur", "fita_led", "tv", "ambiente"
+        };
+
         public static bool IsNewer(int appliedVersion, int incomingVersion)
         {
             return incomingVersion > appliedVersion;
@@ -144,6 +160,10 @@ namespace GenJutsu.GenCore
                 }
             }
 
+            snap.Devices = ReadDevices(state, lights);
+            if (snap.Devices != null && snap.Devices.Length > 0)
+                snap.HasLights = true;
+
             var ambience = state.Obj("ambience");
             if (ambience != null)
             {
@@ -158,6 +178,79 @@ namespace GenJutsu.GenCore
             if (string.IsNullOrEmpty(snap.Dojo) && string.Equals(snap.Mode, "switch_dojo", StringComparison.Ordinal))
                 snap.Dojo = state.Str("profile_id") ?? "";
             return snap;
+        }
+
+        public static bool TryDevice(HouseDeviceState[] devices, string id, out HouseDeviceState device)
+        {
+            device = default;
+            if (devices == null)
+                return false;
+            for (var i = 0; i < devices.Length; i++)
+            {
+                if (string.Equals(devices[i].Id, id, StringComparison.OrdinalIgnoreCase))
+                {
+                    device = devices[i];
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static HouseDeviceState[] ReadDevices(JObj state, JObj lights)
+        {
+            var list = new System.Collections.Generic.List<HouseDeviceState>(6);
+            CollectBag(state.Obj("devices"), list);
+            if (lights != null)
+            {
+                CollectBag(lights.Obj("devices"), list);
+                CollectKnown(lights, list);
+            }
+
+            CollectKnown(state, list);
+            return list.Count == 0 ? System.Array.Empty<HouseDeviceState>() : list.ToArray();
+        }
+
+        static void CollectBag(JObj bag, System.Collections.Generic.List<HouseDeviceState> list)
+        {
+            if (bag == null)
+                return;
+            for (var i = 0; i < bag.Items.Count; i++)
+            {
+                var pair = bag.Items[i];
+                AddDevice(pair.Key, pair.Value as JObj, list);
+            }
+        }
+
+        static void CollectKnown(JObj bag, System.Collections.Generic.List<HouseDeviceState> list)
+        {
+            if (bag == null)
+                return;
+            for (var i = 0; i < DeviceIds.Length; i++)
+                AddDevice(DeviceIds[i], bag.Obj(DeviceIds[i]), list);
+        }
+
+        static void AddDevice(string id, JObj obj, System.Collections.Generic.List<HouseDeviceState> list)
+        {
+            if (string.IsNullOrEmpty(id) || obj == null)
+                return;
+            for (var i = 0; i < list.Count; i++)
+            {
+                if (string.Equals(list[i].Id, id, StringComparison.OrdinalIgnoreCase))
+                    return;
+            }
+
+            var on = true;
+            if (obj.TryGet("on", out var flag) && flag is JBool b)
+                on = b.Value;
+            var intensity = Intensity(obj, 1f);
+            list.Add(new HouseDeviceState
+            {
+                Id = id,
+                On = on,
+                Color = ColorOf(obj, Color.white),
+                Intensity = intensity
+            });
         }
 
         static float Intensity(JObj obj, float fallback)

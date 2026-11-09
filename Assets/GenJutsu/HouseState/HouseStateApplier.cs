@@ -60,8 +60,31 @@ namespace GenJutsu.HouseState
                 TintMain(k);
                 TintLargeSurfaces(k);
             }
-            if (plan.HasLanterns)
+            if (plan.Devices != null && plan.Devices.Length > 0)
+                TintDevices(k);
+            else if (plan.HasLanterns)
                 TintLanterns(k);
+        }
+
+        void TintDevices(float k)
+        {
+            var house = director.VisualHouse;
+            if (house == null)
+                return;
+            var rig = house.GetComponent<HouseDeviceRig>() ?? house.GetComponentInChildren<HouseDeviceRig>(true);
+            if (rig == null)
+                return;
+            rig.Apply(plan, k);
+            if (HouseStateLogic.TryDevice(plan.Devices, "sala_luz", out var sala) && sala.On && plan.HasMain == false)
+            {
+                if (director.mainLight != null)
+                {
+                    director.mainLight.color = Color.Lerp(director.mainLight.color, sala.Color, k);
+                    director.mainLight.intensity = Mathf.Lerp(director.mainLight.intensity, HouseStateLogic.DriveIntensity(sala.Intensity, false), k);
+                }
+
+                RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, sala.Color * 0.45f, k);
+            }
         }
 
         void TintMain(float k)

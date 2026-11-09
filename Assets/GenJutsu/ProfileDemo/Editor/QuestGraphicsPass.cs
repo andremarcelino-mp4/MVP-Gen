@@ -37,10 +37,53 @@ namespace GenJutsu.ProfileDemo.EditorTools
             TunePipeline();
             var director = Object.FindFirstObjectByType<ProfileDemoDirector>();
             QuestGiRig.Ensure(director);
+            ExcludeSmallPropsFromBake();
             QuestClarity.Ensure(director);
             Lightmapping.lightingSettings = LightingSettingsOrCreate();
+            Lightmapping.Bake();
             AssetDatabase.SaveAssets();
-            return "PBR maps + mixed GI rig + clarity 1.15/MSAA4";
+            return "PBR maps + mixed GI rig + clarity 1.15/MSAA4 + bake";
+        }
+
+        static readonly string[] ProbeOnly =
+        {
+            "Scroll", "Paper", "Brush", "BrushRest", "Teapot", "FloatingTarget", "StartPlaque",
+            "JadeDragon", "TeaCup_1", "TeaCup_2", "Kanji", "Word", "Board", "Foot"
+        };
+
+        static void ExcludeSmallPropsFromBake()
+        {
+            var renderers = Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include);
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                var r = renderers[i];
+                if (r == null)
+                    continue;
+                var probe = false;
+                var t = r.transform;
+                while (t != null)
+                {
+                    for (var n = 0; n < ProbeOnly.Length; n++)
+                    {
+                        if (t.name == ProbeOnly[n])
+                        {
+                            probe = true;
+                            break;
+                        }
+                    }
+
+                    if (probe)
+                        break;
+                    t = t.parent;
+                }
+
+                if (!probe)
+                    continue;
+                r.receiveGI = ReceiveGI.LightProbes;
+                r.scaleInLightmap = 0f;
+                r.gameObject.isStatic = false;
+                GameObjectUtility.SetStaticEditorFlags(r.gameObject, 0);
+            }
         }
 
         static void TunePipeline()
