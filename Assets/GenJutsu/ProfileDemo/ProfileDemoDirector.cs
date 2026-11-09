@@ -200,6 +200,8 @@ namespace GenJutsu.ProfileDemo
 
             if (sessionGate != null)
                 sessionGate.EnsureVisible();
+            if (to != null)
+                HouseSpawn.Align(to.transform);
             Current = State.InHouse;
             visualSwitch = null;
         }
@@ -273,6 +275,7 @@ namespace GenJutsu.ProfileDemo
                 activity.ResetActivity();
             foreach (var pose in house.GetComponentsInChildren<ResettablePose>())
                 pose.ResetNow();
+            HouseSpawn.Align(house.transform);
             Current = State.InHouse;
         }
 

@@ -14,11 +14,12 @@ namespace GenJutsu.ProfileDemo
             var home = look.transform.Find("Pieces/Home") ?? look.transform.Find("Home");
             if (home == null)
                 return;
+            AirConUnit.Ensure(home);
+            GrabExisting(home, "Kitchen/Kettle", 0.2f);
+            GrabExisting(home, "Kitchen/MugA", 0.08f);
+            GrabExisting(home, "Kitchen/MugB", 0.08f);
             if (home.Find("Toys") != null)
-            {
-                AirConUnit.Ensure(home);
                 return;
-            }
             var toys = new GameObject("Toys");
             toys.transform.SetParent(home, false);
             var tv = TvSet.Ensure(home);
@@ -28,9 +29,6 @@ namespace GenJutsu.ProfileDemo
             Ball(toys.transform);
             Book(toys.transform);
             Cushion(toys.transform);
-            GrabExisting(home, "Kitchen/Kettle", 0.2f);
-            GrabExisting(home, "Kitchen/MugA", 0.08f);
-            GrabExisting(home, "Kitchen/MugB", 0.08f);
         }
 
         public static void EnsureAll()

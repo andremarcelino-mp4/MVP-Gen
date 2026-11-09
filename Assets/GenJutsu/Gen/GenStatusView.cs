@@ -135,32 +135,67 @@ namespace GenJutsu.Gen
                 transform.rotation = Quaternion.LookRotation(-toCam, Vector3.up);
         }
 
-        static Texture2D CrowSheet()
+        public static Texture2D CrowSheet()
         {
             var tex = new Texture2D(256, 64, TextureFormat.RGBA32, false);
-            tex.filterMode = FilterMode.Point;
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
             var px = new Color[256 * 64];
+            var fill = new Color(0.18f, 0.18f, 0.2f, 1f);
+            var edge = new Color(0.92f, 0.9f, 0.9f, 1f);
+            var beak = new Color(1f, 0.55f, 0.15f, 1f);
             for (var f = 0; f < 4; f++)
             {
                 var ox = f * 64;
-                for (var y = 8; y < 56; y++)
-                for (var x = 12; x < 52; x++)
+                var flap = f % 2 == 0 ? -7 : 8;
+                for (var y = 2; y < 62; y++)
+                for (var x = 4; x < 60; x++)
                 {
-                    var dx = (x - 32) / 20f;
-                    var dy = (y - 32) / 18f;
-                    var body = dx * dx * 0.7f + dy * dy < 1f;
-                    var beak = x > 44 && y > 28 && y < 36 && x < 58;
-                    var wing = Mathf.Abs(y - (30 + (f % 2 == 0 ? -6 : 6))) < 5 && x > 18 && x < 40;
-                    if (body || beak || wing)
-                        px[y * 256 + ox + x] = new Color(0.05f, 0.05f, 0.06f, 1f);
+                    var dx = (x - 28) / 18f;
+                    var dy = (y - 32) / 16f;
+                    var body = dx * dx * 0.75f + dy * dy < 1f;
+                    var bill = x > 46 && x < 60 && y > 28 && y < 38 && y > 26 + (x - 46) * 0.15f;
+                    var wing = Mathf.Abs(y - (32 + flap)) < 7 && x > 10 && x < 38;
+                    var eye = (x - 40) * (x - 40) + (y - 36) * (y - 36) < 10;
+                    Color c = default;
+                    if (bill)
+                        c = beak;
+                    else if (eye)
+                        c = Accent;
+                    else if (body || wing)
+                        c = fill;
+                    if (c.a < 0.5f)
+                        continue;
+                    var outline = !body && !bill && !wing;
+                    if (outline)
+                        continue;
+                    px[y * 256 + ox + x] = c;
+                    StampEdge(px, ox, x, y, edge, body || wing || bill);
                 }
-
-                px[(36) * 256 + ox + 40] = Accent;
             }
 
             tex.SetPixels(px);
-            tex.Apply();
+            tex.Apply(false, false);
             return tex;
+        }
+
+        static void StampEdge(Color[] px, int ox, int x, int y, Color edge, bool solid)
+        {
+            if (!solid)
+                return;
+            for (var oy = -1; oy <= 1; oy++)
+            for (var ox2 = -1; ox2 <= 1; ox2++)
+            {
+                if (ox2 == 0 && oy == 0)
+                    continue;
+                var xx = x + ox2;
+                var yy = y + oy;
+                if (xx < 0 || xx >= 64 || yy < 0 || yy >= 64)
+                    continue;
+                var i = yy * 256 + ox + xx;
+                if (px[i].a < 0.1f)
+                    px[i] = edge;
+            }
         }
 
         static Image Quad(RectTransform parent, string name, Color color, Vector2 a0, Vector2 a1, Vector2 o0, Vector2 o1)

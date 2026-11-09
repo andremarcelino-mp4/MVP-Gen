@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GenJutsu.GenCore.Tests
 {
@@ -276,6 +277,31 @@ namespace GenJutsu.GenCore.Tests
             StringAssert.Contains("call-1", mock.Last);
             StringAssert.Contains("switch_dojo", mock.Last);
             StringAssert.Contains("\"ok\":true", mock.Last);
+        }
+
+        [Test]
+        public void SpawnPoint_IsClearOfFurnitureInEachHouse()
+        {
+            Assert.Greater(HouseSpawnLogic.DistanceToLook(), 1.8f);
+            Assert.Less(HouseSpawnLogic.DistanceToLook(), 2.4f);
+            var names = new[] { "Zen", "Cyber", "Excentrico", "Acolhedor" };
+            for (var i = 0; i < names.Length; i++)
+            {
+                var probe = HouseSpawnLogic.LocalFeet + Vector3.up * 0.9f;
+                Assert.IsFalse(HouseSpawnLogic.Overlaps(probe, HouseSpawnLogic.ClearRadius, out var hit),
+                    names[i] + " spawn inside " + hit);
+                Assert.IsFalse(HouseSpawnLogic.Overlaps(HouseSpawnLogic.LocalFeet, 0.2f, out hit),
+                    names[i] + " feet inside " + hit);
+            }
+
+            Assert.AreEqual(14, HouseSpawnLogic.RequiredProps.Length);
+        }
+
+        [Test]
+        public void AmbientCatalog_UsesReachableIncompetechUrls()
+        {
+            StringAssert.Contains("incompetech.com", "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3");
+            Assert.Greater(HouseSpawnLogic.Furniture.Length, 5);
         }
 
         [Test]

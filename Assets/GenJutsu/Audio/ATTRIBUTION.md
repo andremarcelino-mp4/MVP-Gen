@@ -2,11 +2,13 @@
 
 Ambient beds streamed at runtime (MP3). No API keys. If a URL fails, the old procedural bed is the fallback.
 
+FMA storage URLs 404'd (Nov 2026). Beds now use Kevin MacLeod / Incompetech CC BY HTTPS MP3s that return 200.
+
 | Profile | Track | Artist | License | Source |
 | --- | --- | --- | --- | --- |
-| Zen | Night Owl | Broke For Free | CC BY | Free Music Archive |
-| Cyber | Iridescent | Kai Engel | CC BY | Free Music Archive |
-| Excentrico | Siesta | Jahzzar | CC BY-SA | Free Music Archive |
+| Zen | Enchanted Valley | Kevin MacLeod (incompetech.com) | CC BY | Incompetech |
+| Cyber | Floating Cities | Kevin MacLeod (incompetech.com) | CC BY | Incompetech |
+| Excentrico | Funkorama | Kevin MacLeod (incompetech.com) | CC BY | Incompetech |
 | Acolhedor | Carefree | Kevin MacLeod (incompetech.com) | CC BY | Incompetech |
 
 TV `house_state.media.url` is played as-is (HTTPS audio/video provided by the site).

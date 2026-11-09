@@ -65,19 +65,29 @@ namespace GenJutsu.ProfileDemo
             var url = AmbientCatalog.Url(id);
             using (var req = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
             {
+                req.timeout = 20;
+                req.SetRequestHeader("User-Agent", "GenJutsuQuest/2.8");
+                var handler = req.downloadHandler as UnityEngine.Networking.DownloadHandlerAudioClip;
+                if (handler != null)
+                    handler.streamAudio = true;
                 yield return req.SendWebRequest();
                 if (req.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
                 {
                     source.clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(req);
+                    source.loop = true;
                     source.Play();
                     FadeTo(slot, musicVolume, false);
+                    Debug.Log("[Music] playing " + AmbientCatalog.Credit(id) + " bytes=" + (req.downloadedBytes));
                     yield break;
                 }
+
+                Debug.LogWarning("[Music] stream failed " + url + " " + req.result + " " + req.error);
             }
 
             source.clip = ClipFor(id);
             source.Play();
             FadeTo(slot, musicVolume, false);
+            Debug.Log("[Music] synth fallback " + id);
         }
 
         public void Stop()
