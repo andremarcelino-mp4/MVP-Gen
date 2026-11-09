@@ -153,6 +153,59 @@ namespace GenJutsu.ProfileDemo
             return null;
         }
 
+        public HouseTransition VisualHouse
+        {
+            get
+            {
+                if (Current == State.WhiteSpace || Current == State.Dissolving)
+                    return null;
+                return ResolveLook(Active);
+            }
+        }
+
+        Coroutine visualSwitch;
+
+        /// <summary>
+        /// Magic morph into another dojo look. Visual only: GuestSession and the visit profile stay as they are.
+        /// </summary>
+        public bool SwitchVisualDojo(ProfileId id)
+        {
+            if (Current != State.InHouse || id == Active || visualSwitch != null)
+                return false;
+            visualSwitch = StartCoroutine(SwitchVisualRoutine(id));
+            return true;
+        }
+
+        IEnumerator SwitchVisualRoutine(ProfileId next)
+        {
+            Current = State.Transforming;
+            var from = ResolveLook(Active);
+            var info = Profiles.Get(next);
+            var to = ResolveLook(next);
+            var origin = HeadPosition();
+            if (from != null)
+                yield return from.Dissolve(origin);
+            Active = next;
+            var whiteAmbient = new Color(0.85f, 0.86f, 0.88f);
+            if (morph != null && to != null)
+            {
+                morph.duration = Mathf.Min(transitionDuration, 3f);
+                yield return morph.MorphIn(info, to, (inf, u) => ApplyEnvironment(inf, u, whiteAmbient), null, origin);
+            }
+            else if (to != null)
+            {
+                yield return to.Build(origin);
+                ApplyEnvironment(info, 1f, whiteAmbient);
+            }
+
+            if (sessionGate != null)
+                sessionGate.EnsureVisible();
+            if (to != null)
+                HouseSpawn.Align(to.transform);
+            Current = State.InHouse;
+            visualSwitch = null;
+        }
+
         public bool ReturnToWhiteSpace()
         {
             if (Current != State.InHouse)
@@ -173,7 +226,7 @@ namespace GenJutsu.ProfileDemo
             if (music != null)
                 music.Play(id);
             if (caption != null)
-                caption.Show(info.Title + " / " + info.Subtitle, info.Caption, info.Accent);
+                caption.gameObject.SetActive(false);
             SetWhiteSpaceOnly(false);
 
             var house = ResolveLook(id);
@@ -192,7 +245,6 @@ namespace GenJutsu.ProfileDemo
                 yield return morph.MorphIn(info, house, (inf, u) =>
                 {
                     ApplyEnvironment(inf, u, whiteAmbient);
-                    FadeSessionGate(1f - Mathf.Clamp01(u / 0.4f));
                     if (u > 0.55f)
                         SetWhiteSpaceRenderers(false);
                 }, hubDissolve, origin);
@@ -217,13 +269,13 @@ namespace GenJutsu.ProfileDemo
 
             ApplyEnvironment(info, 1f, whiteAmbient);
             SetWhiteSpaceRenderers(false);
-            FadeSessionGate(0f);
             if (sessionGate != null)
-                sessionGate.HideAfterMorph();
+                sessionGate.EnsureVisible();
             foreach (var activity in house.GetComponentsInChildren<ProfileActivity>())
                 activity.ResetActivity();
             foreach (var pose in house.GetComponentsInChildren<ResettablePose>())
                 pose.ResetNow();
+            HouseSpawn.Align(house.transform);
             Current = State.InHouse;
         }
 
@@ -253,28 +305,37 @@ namespace GenJutsu.ProfileDemo
             if (music != null)
                 music.Stop();
             if (caption != null)
-                caption.Show("Ambiente branco", "O espaço volta ao neutro. Use o código da sessão se precisar de um novo look.", new Color(0.35f, 0.4f, 0.48f));
+                caption.gameObject.SetActive(false);
 
             var origin = HeadPosition();
-            DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.8f, 0.8f);
             SetWhiteSpaceRenderers(true);
-            var dissolve = StartCoroutine(house.Dissolve(origin));
             var whiteAmbient = new Color(0.85f, 0.86f, 0.88f);
-            var t = 0f;
-            while (t < transitionDuration)
+            if (morph != null)
             {
-                t += Time.deltaTime;
-                ApplyEnvironment(info, 1f - Mathf.SmoothStep(0f, 1f, t / transitionDuration), whiteAmbient);
-                yield return null;
+                morph.duration = Mathf.Min(transitionDuration, 3f);
+                yield return morph.MorphOut(info, house, (inf, u) => ApplyEnvironment(inf, u, whiteAmbient), hubDissolve, origin);
+            }
+            else
+            {
+                DemoSfx.Play(DemoSfx.Kind.Whoosh, origin, 0.8f, 0.8f);
+                var dissolve = StartCoroutine(house.Dissolve(origin));
+                var t = 0f;
+                while (t < transitionDuration)
+                {
+                    t += Time.deltaTime;
+                    ApplyEnvironment(info, 1f - Mathf.SmoothStep(0f, 1f, t / transitionDuration), whiteAmbient);
+                    yield return null;
+                }
+
+                yield return dissolve;
+                if (hubDissolve != null)
+                    yield return hubDissolve.Appear();
             }
 
-            yield return dissolve;
             RestoreBaseline();
             SetWhiteSpaceOnly(true);
-            if (hubDissolve != null)
-                hubDissolve.RestoreImmediate();
             if (sessionGate != null)
-                sessionGate.ShowOnWhite();
+                sessionGate.EnsureVisible();
             if (results != null)
                 results.Refresh();
             Current = State.WhiteSpace;
@@ -342,13 +403,6 @@ namespace GenJutsu.ProfileDemo
                 if (r != null)
                     r.enabled = visible;
             }
-        }
-
-        void FadeSessionGate(float alpha)
-        {
-            if (sessionGate == null || sessionGate.group == null)
-                return;
-            sessionGate.group.alpha = alpha;
         }
 
         void SetWhiteSpaceOnly(bool visible)

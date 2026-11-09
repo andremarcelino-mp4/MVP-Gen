@@ -52,6 +52,7 @@ namespace GenJutsu.ProfileDemo
                 Apply(i, 1f);
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(true);
+            GrabRest.SettleUnder(transform);
         }
 
         public IEnumerator Dissolve(Vector3 origin)
@@ -63,9 +64,9 @@ namespace GenJutsu.ProfileDemo
             ComputeDelays(origin);
             yield return Animate(false);
 
+            gameObject.SetActive(false);
             for (var i = 0; i < pieces.Count; i++)
                 Apply(i, 1f);
-            gameObject.SetActive(false);
         }
 
         public void HideImmediate()

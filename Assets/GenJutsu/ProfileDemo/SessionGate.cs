@@ -7,7 +7,8 @@ using UnityEngine.UI;
 namespace GenJutsu.ProfileDemo
 {
     /// <summary>
-    /// Welcome card. Polls the admin-selected session; the visitor never types a code.
+    /// Session poller. The visitor never types a code. The world-space welcome card is never shown.
+    /// Spoken Gen welcome still fires via <see cref="NamedWelcome"/>.
     /// </summary>
     public class SessionGate : MonoBehaviour
     {
@@ -17,20 +18,37 @@ namespace GenJutsu.ProfileDemo
         public CanvasGroup group;
         public float pollSeconds = 2f;
 
+        /// <summary>Shot rig and tests skip the network and push JSON through <see cref="Ingest"/>.</summary>
+        public bool suppressNetworkPoll;
+
         [HideInInspector] public TMP_InputField codeField;
         [HideInInspector] public Button submitButton;
 
         public event Action<ProfileId> ProfileResolved;
+        public event Action SessionEnded;
+        public event Action<string> NamedWelcome;
+
+        public string VisitorName { get; private set; }
+
+        public bool HasSession { get; private set; }
+        public string ActiveSessionKey { get; private set; }
+        public ProfileId ActiveProfile { get; private set; }
 
         bool applied;
-        ProfileId appliedId;
+        string appliedKey;
+        string shownWelcome;
         Coroutine poll;
 
         void Awake()
         {
             GuestSession.Load();
             StripCodeControls();
+            HideCardVisual();
             ShowWaiting();
+#if UNITY_EDITOR
+            if (System.IO.File.Exists("Temp/dojo-shots.marker"))
+                suppressNetworkPoll = true;
+#endif
         }
 
         void OnEnable()
@@ -50,29 +68,49 @@ namespace GenJutsu.ProfileDemo
 
         public void HideAfterMorph()
         {
-            if (group != null)
-            {
-                group.interactable = false;
-                group.blocksRaycasts = false;
-            }
-
-            gameObject.SetActive(false);
+            HideCardVisual();
         }
 
         public void ShowOnWhite()
         {
+            HideCardVisual();
+        }
+
+        /// <summary>Keeps polling alive. Never reveals the welcome card.</summary>
+        public void EnsureVisible()
+        {
             gameObject.SetActive(true);
+            HideCardVisual();
+            if (!applied)
+                ShowWaiting();
+            if (isActiveAndEnabled && poll == null)
+                poll = StartCoroutine(PollRoutine());
+        }
+
+        public void HideCardVisual()
+        {
             if (group != null)
             {
-                group.alpha = 1f;
+                group.alpha = 0f;
                 group.interactable = false;
                 group.blocksRaycasts = false;
             }
 
-            applied = false;
-            ShowWaiting();
-            if (isActiveAndEnabled && poll == null)
-                poll = StartCoroutine(PollRoutine());
+            var canvas = GetComponent<Canvas>();
+            if (canvas != null)
+                canvas.enabled = false;
+            var graphics = GetComponentsInChildren<Graphic>(true);
+            for (var i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i] != null)
+                    graphics[i].enabled = false;
+            }
+        }
+
+        /// <summary>Same path the poll uses. httpSuccess false is a transport failure.</summary>
+        public void Ingest(string body, long httpStatus, bool httpSuccess)
+        {
+            ApplyResult(SessionApiClient.Parse(body, httpStatus, httpSuccess));
         }
 
         IEnumerator PollRoutine()
@@ -82,16 +120,23 @@ namespace GenJutsu.ProfileDemo
             {
                 var mockName = string.IsNullOrWhiteSpace(editorMockName) ? "Visitante" : editorMockName.Trim();
                 GuestSession.Save("EDITOR", mockName, editorMockProfile);
-                ShowWelcome(mockName, Profiles.Get(editorMockProfile).Title);
-                Notify(editorMockProfile);
+                ShowWelcome(mockName);
+                Notify(editorMockProfile, "EDITOR");
                 yield break;
             }
 #endif
             while (enabled)
             {
+                if (suppressNetworkPoll)
+                {
+                    yield return new WaitForSecondsRealtime(Mathf.Max(1f, pollSeconds));
+                    continue;
+                }
+
                 if (client == null)
                 {
-                    SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
+                    if (!applied)
+                        SetStatus("Cliente de sessão em falta.", new Color(0.7f, 0.2f, 0.2f));
                     yield return new WaitForSecondsRealtime(pollSeconds);
                     continue;
                 }
@@ -108,7 +153,10 @@ namespace GenJutsu.ProfileDemo
             switch (result.kind)
             {
                 case SessionApiClient.Kind.WaitingForAdmin:
-                    if (!applied)
+                case SessionApiClient.Kind.Ended:
+                    if (applied)
+                        ClearSession();
+                    else
                         ShowWaiting();
                     return;
                 case SessionApiClient.Kind.Down:
@@ -116,42 +164,86 @@ namespace GenJutsu.ProfileDemo
                         SetStatus(result.error, new Color(0.65f, 0.22f, 0.22f));
                     return;
                 case SessionApiClient.Kind.Incomplete:
+                    if (applied && !SameVisit(result.sessionKey))
+                        ClearSession();
                     GuestSession.Save(result.sessionCode, result.displayName, null);
-                    ShowWelcome(result.displayName, null);
-                    SetStatus("A casa ainda não tem perfil ZCEA. Permaneça no branco.", new Color(0.45f, 0.38f, 0.22f));
+                    ShowWelcome(result.displayName);
                     return;
                 case SessionApiClient.Kind.Ready:
                     GuestSession.Save(result.sessionCode, result.displayName, result.profile);
-                    ShowWelcome(result.displayName, Profiles.Get(result.profile).Title);
-                    Notify(result.profile);
+                    ShowWelcome(result.displayName);
+                    Notify(result.profile, result.sessionKey);
                     return;
             }
         }
 
-        void Notify(ProfileId id)
+        bool SameVisit(string key)
         {
-            if (applied && appliedId == id)
+            return !string.IsNullOrEmpty(appliedKey) && appliedKey == key;
+        }
+
+        void Notify(ProfileId id, string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                key = id.ToString();
+            if (applied && appliedKey == key)
                 return;
             applied = true;
-            appliedId = id;
+            appliedKey = key;
+            HasSession = true;
+            ActiveSessionKey = key;
+            ActiveProfile = id;
             ProfileResolved?.Invoke(id);
+        }
+
+        void ClearSession()
+        {
+            applied = false;
+            appliedKey = null;
+            HasSession = false;
+            ActiveSessionKey = null;
+            ShowWaiting();
+            SessionEnded?.Invoke();
+        }
+
+        public static string TitleFor(string rawName)
+        {
+            if (string.IsNullOrWhiteSpace(rawName))
+                return "Bem-vindo";
+            return "Bem-vindo, " + rawName.Trim();
         }
 
         void ShowWaiting()
         {
-            SetTitle("Bem-vindo");
-            SetStatus("À espera que o anfitrião escolha a sessão no admin. Você não escolhe a casa.",
-                new Color(0.28f, 0.32f, 0.38f));
+            VisitorName = "";
+            shownWelcome = null;
+            SetTitle(TitleFor(null));
+            HideStatus();
         }
 
-        void ShowWelcome(string rawName, string lookTitle)
+        void ShowWelcome(string rawName)
         {
             var name = string.IsNullOrWhiteSpace(rawName) ? "visitante" : rawName.Trim();
-            SetTitle("Bem-vindo, " + name);
-            if (!string.IsNullOrEmpty(lookTitle))
-                SetStatus("Olá, " + name + ". A casa assume o look " + lookTitle + ".", new Color(0.28f, 0.32f, 0.38f));
-            else
-                SetStatus("Olá, " + name + ".", new Color(0.28f, 0.32f, 0.38f));
+            VisitorName = name;
+            SetTitle(TitleFor(name));
+            HideStatus();
+            if (shownWelcome == name)
+                return;
+            shownWelcome = name;
+            NamedWelcome?.Invoke(name);
+        }
+
+        void CompactCard()
+        {
+            HideCardVisual();
+        }
+
+        void HideStatus()
+        {
+            if (status == null)
+                return;
+            status.text = "";
+            status.gameObject.SetActive(false);
         }
 
         void SetTitle(string text)
@@ -164,6 +256,7 @@ namespace GenJutsu.ProfileDemo
         {
             if (status == null)
                 return;
+            status.gameObject.SetActive(true);
             status.text = text;
             status.color = color;
         }

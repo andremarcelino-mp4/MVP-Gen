@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ namespace GenJutsu.ProfileDemo
                 root.gameObject.SetActive(true);
 
             DisableHousePicker(root);
+            DisableHeadsetChrome(root);
             EnsureHubVisible();
 
             if (director.morph == null)
@@ -49,11 +51,23 @@ namespace GenJutsu.ProfileDemo
             dojo.hubDissolve = director.hubDissolve;
             dojo.gaze = gaze;
             dojo.Bind();
+            GenJutsu.Gen.GenBootstrap.Ensure(director);
+            WhiteRoomSetup.Ensure(dojo);
+            LocomotionGuard.Apply();
+            QuestGiRig.Ensure(director);
+            DojoToys.EnsureAll();
+            QuestClarity.Ensure(director);
+            var voice = director.GetComponent<GenJutsu.Gen.GenVoiceController>();
+            if (director.sessionGate != null && voice != null)
+            {
+                director.sessionGate.NamedWelcome -= voice.SpeakWelcome;
+                director.sessionGate.NamedWelcome += voice.SpeakWelcome;
+            }
         }
 
         static void DisableHousePicker(Transform profileRoot)
         {
-            foreach (var token in Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var token in UnityEngine.Object.FindObjectsByType<ProfileToken>(FindObjectsInactive.Include))
             {
                 token.opensHouse = false;
                 var grab = token.GetComponent<XRGrabInteractable>();
@@ -66,6 +80,45 @@ namespace GenJutsu.ProfileDemo
             var tokens = profileRoot.Find("TableTokens");
             if (tokens != null)
                 tokens.gameObject.SetActive(false);
+        }
+
+        static void DisableHeadsetChrome(Transform profileRoot)
+        {
+            foreach (var caption in UnityEngine.Object.FindObjectsByType<ProfileCaption>(FindObjectsInactive.Include))
+            {
+                if (caption != null)
+                    caption.gameObject.SetActive(false);
+            }
+
+            foreach (var board in UnityEngine.Object.FindObjectsByType<ResultsBoard>(FindObjectsInactive.Include))
+            {
+                if (board != null)
+                    board.gameObject.SetActive(false);
+            }
+
+            var transforms = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                var t = transforms[i];
+                if (t == null)
+                    continue;
+                var name = t.name;
+                if (name == "Jump" || name == "HousePlaque" || name == "ProfileCaption" ||
+                    name.StartsWith("Affordance Callouts", StringComparison.Ordinal))
+                    t.gameObject.SetActive(false);
+            }
+
+            foreach (var behaviour in UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include))
+            {
+                if (behaviour == null)
+                    continue;
+                var typeName = behaviour.GetType().Name;
+                if (typeName == "JumpProvider" || typeName.EndsWith("JumpProvider", StringComparison.Ordinal))
+                {
+                    behaviour.enabled = false;
+                    behaviour.gameObject.SetActive(false);
+                }
+            }
         }
 
         static void EnsureHubVisible()
@@ -131,7 +184,7 @@ namespace GenJutsu.ProfileDemo
 
         static SessionGate DedupAndEnsureGate(SessionGate preferred, Transform parent, SessionApiClient api)
         {
-            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var all = UnityEngine.Object.FindObjectsByType<SessionGate>(FindObjectsInactive.Include);
             SessionGate keep = preferred;
             if (keep == null)
             {
@@ -182,23 +235,23 @@ namespace GenJutsu.ProfileDemo
         {
             var canvasGo = new GameObject("SessionGate", typeof(RectTransform));
             canvasGo.transform.SetParent(parent, false);
-            canvasGo.transform.localPosition = new Vector3(0f, 1.15f, 0.55f);
+            canvasGo.transform.localPosition = new Vector3(0f, 1.42f, 0.55f);
             canvasGo.transform.localScale = Vector3.one * 0.00115f;
             var canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
             canvasGo.AddComponent<CanvasScaler>().dynamicPixelsPerUnit = 4f;
             canvasGo.AddComponent<GraphicRaycaster>();
             var rect = (RectTransform)canvasGo.transform;
-            rect.sizeDelta = new Vector2(920f, 360f);
+            rect.sizeDelta = new Vector2(720f, 140f);
 
             var group = canvasGo.AddComponent<CanvasGroup>();
             group.interactable = false;
             group.blocksRaycasts = false;
             FullImage(rect, "Background", new Color(0.97f, 0.97f, 0.98f, 0.94f));
-            var title = Tmp(rect, "Title", "Bem-vindo", 48f, new Color(0.16f, 0.18f, 0.22f),
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(36f, -100f), new Vector2(-36f, -24f));
+            var title = Tmp(rect, "Title", "Bem-vindo", 52f, new Color(0.16f, 0.18f, 0.22f),
+                new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(24f, 12f), new Vector2(-24f, -12f));
             title.fontStyle = FontStyles.Bold;
-            var status = Tmp(rect, "Status", "À espera que o anfitrião escolha a sessão no admin.",
+            var status = Tmp(rect, "Status", "",
                 28f, new Color(0.35f, 0.38f, 0.44f),
                 new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(36f, 28f), new Vector2(-36f, -8f));
             status.textWrappingMode = TextWrappingModes.Normal;

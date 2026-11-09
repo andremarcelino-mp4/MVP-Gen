@@ -1,51 +1,75 @@
 # Contrato — sessão Quest (admin no site, sem código no headset)
 
-O visitante **não digita código** no Quest. O anfitrião escolhe a pessoa em `https://genjutsuai.vercel.app/admin`. O headset lê a sessão activa.
+O visitante **não digita código** no Quest. O anfitrião escolhe a pessoa em `https://genjutsuai.vercel.app/admin`. O headset lê `GET /api/session` (sem query). Várias visitas podem usar o **mesmo** `profile_id`. O Quest distingue uma visita da seguinte pelo **`session.id`**, nunca pela letra Z/C/E/A.
 
-## O que o site já faz (verificado 2026-11-05)
+Fonte: `Andremarcelin/genjustuai` PR #9 (`cursor/end-session-and-multi-profile-133f`). `id` é o código único da visita.
 
-| Pedido | Resultado observado |
-|---|---|
-| `GET /api/session` (sem query) | `404 {"error":"no_current_session"}` se o admin ainda não escolheu ninguém |
-| `GET /api/session` com sessão activa | (mesmo path) corpo da pessoa escolhida |
-| `GET /api/session?code=3V9TXC` | `200` com `session_code`, `display_name`, `profile_id`, `archetype` |
-| `GET /api/admin/session` | `current_session_code` + `recent[]` (`display_name`, `session_code`) |
-| Admin HTML | “O Quest em `GET /api/session` carrega a pessoa escolhida.” |
+## Contrato actual — `GET /api/session`
 
-Exemplo real (`?code=3V9TXC`):
+Sessão activa, HTTP 200:
 
 ```json
 {
-  "session_code": "3V9TXC",
-  "display_name": "Cyber 365",
-  "personality_text": "…",
-  "archetype": "Perfil em formação",
-  "profile_id": null
+  "session": {
+    "id": "AB3K7Q",
+    "session_code": "AB3K7Q",
+    "display_name": "Lina",
+    "personality_text": "Lina, o dia abre em água parada.",
+    "archetype": "Zen",
+    "profile_id": "Zen",
+    "status": "active"
+  }
 }
 ```
 
-`profile_id` válido no produto: `Zen` | `Cyber` | `Excentrico` | `Acolhedor` (strings exactas). `null` = sessão existe, look ainda não.
+Sem sessão activa — o admin ainda não iniciou, **ou** a sessão foi encerrada. HTTP 200, não é erro:
+
+```json
+{ "session": null }
+```
+
+Consulta com `?code=` de uma visita já encerrada (o poll sem query não devolve este objeto; devolve `{ "session": null }`):
+
+```json
+{
+  "session": {
+    "id": "AB3K7Q",
+    "session_code": "AB3K7Q",
+    "display_name": "Lina",
+    "profile_id": "Zen",
+    "status": "ended"
+  }
+}
+```
+
+`profile_id` válido: `Zen` | `Cyber` | `Excentrico` | `Acolhedor`.
+
+## Fim de sessão
+
+O Quest volta ao hub branco (morph reverso, sem corte seco) e o card regressa a “Bem-vindo”. O poll continua. O card **“Bem-vindo, {nome}”** permanece durante a visita; o que sai são os painéis de explicação do perfil.
+
+1. **`{ "session": null }`** em HTTP 200. É o sinal do poll quando não há visita ou o admin finalizou.
+2. **Objecto `session` com visita encerrada** (`status` / `state` / `session_status` / `lifecycle` em `ended`, `encerrado`, `encerrada`, `closed`, `finished`, `complete`, `completed`, `cancelled`, `canceled`, `inactive`, `finalizado`, `finalizada`, `terminado`, `terminada`), ou `ended: true`, `active: false`, `ended_at` com data. `status: "active"` não encerra.
+3. **Legado:** HTTP 404/204, em particular `{"error":"no_current_session"}`, e um JSON plano sem wrapper `session` (deploy anterior ao PR #9).
+
+Falha de rede não encerra o dojo.
+
+## Identidade
+
+Chave = `session.id`. O mesmo perfil com outro `id` é outra visita e o morph corre de novo. Sem `id`, o fallback é `session_code` (corpo plano antigo).
 
 ## O que o Unity faz
 
-1. Poll `GET https://genjutsuai.vercel.app/api/session` a ~2 s. **Sem** campo de código.
-2. `no_current_session` → card “Bem-vindo” / à espera do admin. Branco + mesa + pergaminho. Sem look inventado.
-3. `display_name` → **“Bem-vindo, {nome}”**.
-4. `profile_id` válido → morph gradual no DojoShell.
-5. `profile_id` ausente/`null` → boas-vindas com nome, **fica no branco**.
-6. Rede em baixo → mensagem, fica no branco.
+1. Poll `GET https://genjutsuai.vercel.app/api/session` a ~2 s, no hub e dentro do dojo.
+2. `session: null` → card só com “Bem-vindo”. Sem a frase de espera. Branco + mesa, pincel, pergaminho, bule, alvo e a placa COMEÇAR.
+3. `display_name` com `status: "active"` → a UI do óculos é o card **“Bem-vindo, {nome}”**. Sem painel “Acolhedor / Empático” nem callouts de controle.
+4. `profile_id` válido e `id` novo → a visita fica pronta. O morph só começa quando o visitante toca a placa 始 / COMEÇAR. Mesa, pincel, pergaminho, bule e alvo dissolvem. O card de boas-vindas fica.
+5. `profile_id` ausente → nome no card, fica no branco.
+6. Fim (casos acima) → morph reverso ~2,6 s até o hub, pronto para outra visita.
+7. Rede em baixo no hub → mensagem, sem look inventado. Rede em baixo no dojo → permanece.
 
-Não usa `GET /api/admin/session` no headset (página de backoffice).
+Não usa `GET /api/admin/session` no headset.
 
-## Follow-up no repo `genjustuai` (não este PR)
+Editor QA: `SessionGate.useEditorMock` (só Editor) simula nome + perfil sem o admin. `SessionGate.Ingest` aplica um JSON sem rede (testes e capturas).
 
-Não é obrigatório mudar o path: `GET /api/session` sem código **já é** a sessão activa.
-
-Pedidos ao site, se o morph não disparar em feira:
-
-1. Garantir que **Iniciar sessão no Quest** em `/admin` grava `current_session_code` para o `GET /api/session` sem query passar a 200.
-2. Preencher `profile_id` no JSON quando o questionário inferir ZCEA. Hoje um cadastro real veio com `"profile_id": null` — o Unity não inventa look.
-3. Manter `display_name` para o cartão de boas-vindas.
-4. CORS já está `access-control-allow-origin: *` neste endpoint.
-
-Editor QA: `SessionGate.useEditorMock` (só Editor) simula nome + perfil sem o admin.
+Enquanto o PR #9 não estiver em produção, um corpo plano (`session_code` na raiz) ou um `404 no_current_session` continua válido.

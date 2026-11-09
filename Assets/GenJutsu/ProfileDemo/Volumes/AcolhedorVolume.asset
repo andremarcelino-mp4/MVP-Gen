@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7846140922896787107
+--- !u!114 &-7602850616932925795
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,17 +9,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
-  m_Name: WhiteBalance
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.WhiteBalance
+  m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
+  m_Name: Vignette
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Vignette
   active: 1
-  temperature:
+  color:
     m_OverrideState: 1
-    m_Value: 32
-  tint:
+    m_Value: {r: 0.22, g: 0.1, b: 0.04, a: 1}
+  center:
     m_OverrideState: 1
-    m_Value: 4
---- !u!114 &-4165980134662893278
+    m_Value: {x: 0.5, y: 0.5}
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.22
+  smoothness:
+    m_OverrideState: 1
+    m_Value: 0.55
+  rounded:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &-5910562244929336372
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,10 +91,10 @@ MonoBehaviour:
   m_Name: AcolhedorVolume
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
-  - {fileID: -7846140922896787107}
-  - {fileID: -4165980134662893278}
-  - {fileID: 6265082487566822362}
---- !u!114 &6265082487566822362
+  - {fileID: 3629978648417100832}
+  - {fileID: -5910562244929336372}
+  - {fileID: -7602850616932925795}
+--- !u!114 &3629978648417100832
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,22 +103,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
-  m_Name: Vignette
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Vignette
+  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
+  m_Name: WhiteBalance
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.WhiteBalance
   active: 1
-  color:
+  temperature:
     m_OverrideState: 1
-    m_Value: {r: 0.22, g: 0.1, b: 0.04, a: 1}
-  center:
+    m_Value: 32
+  tint:
     m_OverrideState: 1
-    m_Value: {x: 0.5, y: 0.5}
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.22
-  smoothness:
-    m_OverrideState: 1
-    m_Value: 0.55
-  rounded:
-    m_OverrideState: 1
-    m_Value: 0
+    m_Value: 4

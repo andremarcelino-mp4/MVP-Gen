@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace GenJutsu.ProfileDemo
 {
@@ -17,6 +18,16 @@ namespace GenJutsu.ProfileDemo
         Coroutine[] fades;
         int current = -1;
         readonly AudioClip[] clips = new AudioClip[Profiles.Count];
+
+        public bool IsPlaying => current >= 0;
+
+        public void SetLevel(float volume)
+        {
+            musicVolume = Mathf.Clamp01(volume);
+            if (sources == null || current < 0)
+                return;
+            FadeTo(current, musicVolume, false);
+        }
 
         void Awake()
         {
@@ -42,11 +53,41 @@ namespace GenJutsu.ProfileDemo
                 FadeTo(current, 0f, true);
 
             var source = sources[next];
-            source.clip = ClipFor(id);
+            source.spatialBlend = 0f;
+            source.loop = true;
             source.volume = 0f;
-            source.Play();
-            FadeTo(next, musicVolume, false);
+            StartCoroutine(PlayLicensed(id, source, next));
             current = next;
+        }
+
+        IEnumerator PlayLicensed(ProfileId id, AudioSource source, int slot)
+        {
+            var url = AmbientCatalog.Url(id);
+            using (var req = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+            {
+                req.timeout = 20;
+                req.SetRequestHeader("User-Agent", "GenJutsuQuest/2.8");
+                var handler = req.downloadHandler as UnityEngine.Networking.DownloadHandlerAudioClip;
+                if (handler != null)
+                    handler.streamAudio = true;
+                yield return req.SendWebRequest();
+                if (req.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    source.clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(req);
+                    source.loop = true;
+                    source.Play();
+                    FadeTo(slot, musicVolume, false);
+                    Debug.Log("[Music] playing " + AmbientCatalog.Credit(id) + " bytes=" + (req.downloadedBytes));
+                    yield break;
+                }
+
+                Debug.LogWarning("[Music] stream failed " + url + " " + req.result + " " + req.error);
+            }
+
+            source.clip = ClipFor(id);
+            source.Play();
+            FadeTo(slot, musicVolume, false);
+            Debug.Log("[Music] synth fallback " + id);
         }
 
         public void Stop()
