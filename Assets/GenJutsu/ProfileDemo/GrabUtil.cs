@@ -8,7 +8,7 @@ namespace GenJutsu.ProfileDemo
     {
         public static XRGrabInteractable Make(GameObject go, float mass)
         {
-            if (go.GetComponent<Collider>() == null)
+            if (go.GetComponent<Collider>() == null && go.GetComponentInChildren<Collider>() == null)
                 go.AddComponent<BoxCollider>();
             var body = go.GetComponent<Rigidbody>();
             if (body == null)
@@ -21,7 +21,7 @@ namespace GenJutsu.ProfileDemo
             if (grab == null)
                 grab = go.AddComponent<XRGrabInteractable>();
             grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
-            grab.throwOnDetach = true;
+            grab.throwOnDetach = mass < 4f;
             grab.useDynamicAttach = true;
             if (go.GetComponent<XRGeneralGrabTransformer>() == null)
                 go.AddComponent<XRGeneralGrabTransformer>();
@@ -31,6 +31,10 @@ namespace GenJutsu.ProfileDemo
             rest.Bind(grab, body);
             if (go.GetComponent<BoundsReset>() == null)
                 go.AddComponent<BoundsReset>().Capture();
+            if (go.GetComponent<ResettablePose>() == null)
+                go.AddComponent<ResettablePose>();
+            if (go.GetComponent<GrabHaptics>() == null)
+                go.AddComponent<GrabHaptics>();
             go.isStatic = false;
             return grab;
         }
@@ -69,6 +73,9 @@ namespace GenJutsu.ProfileDemo
                 var reset = rest[i].GetComponent<BoundsReset>();
                 if (reset != null)
                     reset.Capture();
+                var pose = rest[i].GetComponent<ResettablePose>();
+                if (pose != null)
+                    pose.Capture();
             }
         }
 
@@ -135,10 +142,8 @@ namespace GenJutsu.ProfileDemo
             body = GetComponent<Rigidbody>();
         }
 
-        void LateUpdate()
+        public void Restore()
         {
-            if (transform.localPosition.y > -0.4f && transform.position.y < 4f)
-                return;
             if (homeParent != null)
                 transform.SetParent(homeParent, false);
             transform.localPosition = homeLocal;
@@ -151,6 +156,13 @@ namespace GenJutsu.ProfileDemo
                 body.linearVelocity = Vector3.zero;
                 body.angularVelocity = Vector3.zero;
             }
+        }
+
+        void LateUpdate()
+        {
+            if (transform.localPosition.y > -0.4f && transform.position.y < 4f)
+                return;
+            Restore();
         }
     }
 }

@@ -46,6 +46,11 @@ namespace GenJutsu.ProfileDemo
             for (var i = 0; i < pieces.Count; i++)
                 Apply(i, 0f);
 
+            foreach (var pose in GetComponentsInChildren<ResettablePose>(true))
+                pose.ResetNow();
+            foreach (var bounds in GetComponentsInChildren<BoundsReset>(true))
+                bounds.Restore();
+
             yield return Animate(true);
 
             for (var i = 0; i < pieces.Count; i++)

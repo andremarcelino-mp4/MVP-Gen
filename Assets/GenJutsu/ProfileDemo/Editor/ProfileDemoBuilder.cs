@@ -174,6 +174,8 @@ namespace GenJutsu.ProfileDemo.EditorTools
 
             var cameraNote = PrepareMainCamera();
             DojoHomeKit.EnsureAll();
+            DojoToys.EnsureAll();
+            QuestGiRig.FinishLooks();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);

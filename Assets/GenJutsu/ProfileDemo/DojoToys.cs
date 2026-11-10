@@ -26,6 +26,8 @@ namespace GenJutsu.ProfileDemo
             AirConUnit.Ensure(home);
             Remote(toys.transform, tv);
             Pad(toys.transform, tv);
+            if (FindNamed(home, "Console") == null)
+                Prim(PrimitiveType.Cube, "Console", toys.transform, new Vector3(-0.05f, 0.48f, -1.9f), new Vector3(0.22f, 0.06f, 0.16f), new Color(0.15f, 0.15f, 0.17f));
             Ball(toys.transform);
             Book(toys.transform);
             Cushion(toys.transform);
@@ -58,7 +60,6 @@ namespace GenJutsu.ProfileDemo
         static void Pad(Transform parent, TvSet tv)
         {
             var go = Prim(PrimitiveType.Cube, "GamePad", parent, new Vector3(0.72f, 0.27f, -0.88f), new Vector3(0.16f, 0.03f, 0.08f), new Color(0.18f, 0.18f, 0.2f));
-            Prim(PrimitiveType.Cube, "Console", parent, new Vector3(-0.15f, 0.36f, -0.72f), new Vector3(0.22f, 0.06f, 0.16f), new Color(0.15f, 0.15f, 0.17f));
             var grab = GrabUtil.Make(go, 0.12f);
             var click = go.AddComponent<AudioSource>();
             click.playOnAwake = false;
@@ -108,6 +109,18 @@ namespace GenJutsu.ProfileDemo
             if (t == null)
                 return;
             GrabUtil.Make(t.gameObject, mass);
+        }
+
+        static Transform FindNamed(Transform root, string name)
+        {
+            var all = root.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < all.Length; i++)
+            {
+                if (all[i].name == name)
+                    return all[i];
+            }
+
+            return null;
         }
 
         static GameObject Prim(PrimitiveType type, string name, Transform parent, Vector3 pos, Vector3 scale, Color color)

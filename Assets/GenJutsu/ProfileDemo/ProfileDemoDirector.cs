@@ -201,7 +201,11 @@ namespace GenJutsu.ProfileDemo
             if (sessionGate != null)
                 sessionGate.EnsureVisible();
             if (to != null)
+            {
+                foreach (var pose in to.GetComponentsInChildren<ResettablePose>(true))
+                    pose.ResetNow();
                 HouseSpawn.Align(to.transform);
+            }
             Current = State.InHouse;
             visualSwitch = null;
         }

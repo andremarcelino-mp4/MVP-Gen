@@ -18,6 +18,7 @@ namespace GenJutsu.ProfileDemo
         {
             DojoHomeKit.EnsureAll();
             DojoToys.EnsureAll();
+            FinishLooks();
             if (director == null)
                 return;
             PrepareLight(director.mainLight, true);
@@ -25,6 +26,16 @@ namespace GenJutsu.ProfileDemo
             for (var i = 0; i < looks.Length; i++)
                 RigLook(looks[i]);
             RigHub();
+        }
+
+        public static void FinishLooks()
+        {
+            var looks = Object.FindObjectsByType<ProfileLook>(FindObjectsInactive.Include);
+            for (var i = 0; i < looks.Length; i++)
+            {
+                FurnitureGrab.Ensure(looks[i]);
+                ToonOutline.Ensure(looks[i]);
+            }
         }
 
         static void RigHub()
