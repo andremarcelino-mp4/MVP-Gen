@@ -34,6 +34,7 @@ namespace GenJutsu.ProfileDemo
             for (var i = 0; i < looks.Length; i++)
             {
                 FurnitureGrab.Ensure(looks[i]);
+                DojoHomeKit.HideLooseToys(looks[i]);
                 ToonOutline.Ensure(looks[i]);
             }
         }

@@ -16,6 +16,8 @@ namespace GenJutsu.ProfileDemo
             var looks = Object.FindObjectsByType<ProfileLook>(FindObjectsInactive.Include);
             for (var i = 0; i < looks.Length; i++)
                 Ensure(looks[i]);
+            for (var i = 0; i < looks.Length; i++)
+                HideLooseToys(looks[i]);
         }
 
         public static void Ensure(ProfileLook look)
@@ -50,12 +52,31 @@ namespace GenJutsu.ProfileDemo
                     Object.DestroyImmediate(home.gameObject);
             }
 
-            var hide = new[] { "LowTable", "Frame", "Platform", "Lanterns", "Accents" };
+            var hide = new[] { "LowTable", "Frame", "Platform", "Lanterns", "Accents", "Toys" };
             for (var i = 0; i < hide.Length; i++)
             {
                 var t = look.transform.Find("Pieces/" + hide[i]) ?? look.transform.Find(hide[i]);
                 if (t != null)
                     t.gameObject.SetActive(false);
+            }
+
+            HideLooseToys(look);
+        }
+
+        public static void HideLooseToys(ProfileLook look)
+        {
+            if (look == null)
+                return;
+            var clutter = new[] { "GamePad", "Ball", "Book", "CushionLoose", "TvRemote", "Toys" };
+            var all = look.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < all.Length; i++)
+            {
+                var n = all[i].name;
+                for (var c = 0; c < clutter.Length; c++)
+                {
+                    if (n == clutter[c])
+                        all[i].gameObject.SetActive(false);
+                }
             }
         }
 
@@ -84,7 +105,6 @@ namespace GenJutsu.ProfileDemo
                     break;
             }
 
-            SharedProps(home.transform, style);
             WireDevices(look, home.transform, style);
         }
 
@@ -106,11 +126,11 @@ namespace GenJutsu.ProfileDemo
                     wallTex = Tex("plaster");
                     break;
                 case ProfileId.Excentrico:
-                    wallCol = new Color(0.42f, 0.22f, 0.55f);
-                    ceilCol = new Color(0.55f, 0.35f, 0.22f);
-                    beamCol = new Color(0.28f, 0.16f, 0.1f);
+                    wallCol = new Color(0.84f, 0.74f, 0.56f);
+                    ceilCol = new Color(0.36f, 0.22f, 0.12f);
+                    beamCol = new Color(0.22f, 0.12f, 0.07f);
                     floorTex = Tex("woodFloor");
-                    wallTex = Tex("plaster");
+                    wallTex = Tex("paper");
                     break;
                 case ProfileId.Acolhedor:
                     wallCol = new Color(0.86f, 0.76f, 0.62f);
@@ -139,32 +159,42 @@ namespace GenJutsu.ProfileDemo
             var beam = TexMat("RoomBeam_" + style, beamCol, 0.22f, Tex("wood"));
             var paper = TexMat("RoomShoji", new Color(0.96f, 0.93f, 0.84f), 0.06f, Tex("paper"));
 
-            const float half = 2.48f;
-            const float h = 3.05f;
-            const float t = 0.08f;
-            Cube("Floor", room, new Vector3(0f, 0.02f, 0f), new Vector3(half * 2f + 0.35f, 0.08f, half * 2f + 0.35f), floor);
-            Cube("Ceiling", room, new Vector3(0f, h + 0.03f, 0f), new Vector3(half * 2f + 0.35f, 0.12f, half * 2f + 0.35f), ceil);
-            Cube("WallN", room, new Vector3(0f, h * 0.5f, half), new Vector3(half * 2f + 0.16f, h + 0.12f, t), wall);
-            Cube("WallW", room, new Vector3(-half, h * 0.5f, 0f), new Vector3(t, h + 0.12f, half * 2f + 0.16f), wall);
-            Cube("WallE", room, new Vector3(half, h * 0.5f, 0f), new Vector3(t, h + 0.12f, half * 2f + 0.16f), wall);
-            Cube("WallS", room, new Vector3(0f, h * 0.5f, -half), new Vector3(half * 2f + 0.16f, h + 0.12f, t), wall);
-            Cube("SillL", room, new Vector3(-1.35f, 1.35f, -half + 0.03f), new Vector3(1.05f, 0.95f, 0.02f), paper);
-            Cube("SillR", room, new Vector3(1.35f, 1.35f, -half + 0.03f), new Vector3(1.05f, 0.95f, 0.02f), paper);
-            Cube("Mullion", room, new Vector3(0f, 1.35f, -half + 0.04f), new Vector3(0.08f, 0.95f, 0.03f), beam);
-            Cube("BeamX", room, new Vector3(0f, h - 0.08f, 0f), new Vector3(half * 2f, 0.1f, 0.12f), beam);
-            Cube("BeamZ", room, new Vector3(0f, h - 0.1f, 0f), new Vector3(0.12f, 0.1f, half * 2f), beam);
-            Cube("PostNW", room, new Vector3(-half + 0.06f, h * 0.5f, half - 0.06f), new Vector3(0.12f, h, 0.12f), beam);
-            Cube("PostNE", room, new Vector3(half - 0.06f, h * 0.5f, half - 0.06f), new Vector3(0.12f, h, 0.12f), beam);
-            Cube("PostSW", room, new Vector3(-half + 0.06f, h * 0.5f, -half + 0.06f), new Vector3(0.12f, h, 0.12f), beam);
-            Cube("PostSE", room, new Vector3(half - 0.06f, h * 0.5f, -half + 0.06f), new Vector3(0.12f, h, 0.12f), beam);
+            const float half = 2.35f;
+            const float h = 2.52f;
+            const float t = 0.07f;
+            Cube("Floor", room, new Vector3(0f, 0.02f, 0f), new Vector3(half * 2f + 0.2f, 0.08f, half * 2f + 0.2f), floor);
+            Cube("Ceiling", room, new Vector3(0f, h + 0.04f, 0f), new Vector3(half * 2f + 0.2f, 0.1f, half * 2f + 0.2f), ceil);
+            Cube("WallN", room, new Vector3(0f, h * 0.5f, half), new Vector3(half * 2f + 0.12f, h + 0.08f, t), wall);
+            Cube("WallW", room, new Vector3(-half, h * 0.5f, 0f), new Vector3(t, h + 0.08f, half * 2f + 0.12f), wall);
+            Cube("WallE", room, new Vector3(half, h * 0.5f, 0f), new Vector3(t, h + 0.08f, half * 2f + 0.12f), wall);
+            Cube("WallS", room, new Vector3(0f, h * 0.5f, -half), new Vector3(half * 2f + 0.12f, h + 0.08f, t), wall);
+            Cube("BeamX", room, new Vector3(0f, h - 0.06f, 0f), new Vector3(half * 2f, 0.1f, 0.14f), beam);
+            Cube("BeamZ", room, new Vector3(0f, h - 0.08f, 0f), new Vector3(0.14f, 0.1f, half * 2f), beam);
+            Cube("PostNW", room, new Vector3(-half + 0.05f, h * 0.5f, half - 0.05f), new Vector3(0.14f, h, 0.14f), beam);
+            Cube("PostNE", room, new Vector3(half - 0.05f, h * 0.5f, half - 0.05f), new Vector3(0.14f, h, 0.14f), beam);
+            Cube("PostSW", room, new Vector3(-half + 0.05f, h * 0.5f, -half + 0.05f), new Vector3(0.14f, h, 0.14f), beam);
+            Cube("PostSE", room, new Vector3(half - 0.05f, h * 0.5f, -half + 0.05f), new Vector3(0.14f, h, 0.14f), beam);
+
+            if (style == ProfileId.Zen || style == ProfileId.Acolhedor || style == ProfileId.Excentrico)
+            {
+                Shoji(room, new Vector3(-half + 0.05f, 1.15f, 0f), 90f, 3.2f, 1.85f, paper, beam);
+                Shoji(room, new Vector3(half - 0.05f, 1.15f, 0.35f), -90f, 2.4f, 1.85f, paper, beam);
+            }
+            else
+            {
+                Cube("SillL", room, new Vector3(-1.2f, 1.25f, -half + 0.03f), new Vector3(1.0f, 0.85f, 0.02f), paper);
+                Cube("SillR", room, new Vector3(1.2f, 1.25f, -half + 0.03f), new Vector3(1.0f, 0.85f, 0.02f), paper);
+            }
 
             if (style == ProfileId.Zen)
             {
-                var edge = Mat("TatamiEdge", new Color(0.27f, 0.4f, 0.22f), 0.12f);
-                Cube("TatamiBorder", room, new Vector3(0f, 0.005f, 0f), new Vector3(4.9f, 0.02f, 4.9f), edge);
-                for (var x = -1; x <= 1; x++)
-                for (var z = -1; z <= 1; z++)
-                    Cube("Tatami", room, new Vector3(x * 1.55f, 0.02f, z * 1.55f), new Vector3(1.48f, 0.016f, 1.48f), floor);
+                var edge = Mat("TatamiEdge", new Color(0.22f, 0.28f, 0.14f), 0.1f);
+                Cube("TatamiBorder", room, new Vector3(0f, 0.028f, 0f), new Vector3(4.55f, 0.012f, 4.55f), edge);
+                var tatami = Mat("TatamiFace", new Color(0.76f, 0.71f, 0.5f), 0.06f);
+                Cube("TatamiNW", room, new Vector3(-1.12f, 0.09f, 1.12f), new Vector3(2.18f, 0.03f, 2.18f), tatami);
+                Cube("TatamiNE", room, new Vector3(1.12f, 0.09f, 1.12f), new Vector3(2.18f, 0.03f, 2.18f), tatami);
+                Cube("TatamiSW", room, new Vector3(-1.12f, 0.09f, -1.12f), new Vector3(2.18f, 0.03f, 2.18f), tatami);
+                Cube("TatamiSE", room, new Vector3(1.12f, 0.09f, -1.12f), new Vector3(2.18f, 0.03f, 2.18f), tatami);
             }
 
             if (style == ProfileId.Cyber)
@@ -177,98 +207,120 @@ namespace GenJutsu.ProfileDemo
             }
         }
 
-        static void SharedProps(Transform home, ProfileId style)
+        static void Shoji(Transform room, Vector3 pos, float yaw, float width, float height, Material paper, Material wood)
         {
-            Bed(home, style);
-            Kitchen(home, style);
+            var root = Group(room, "Shoji", pos, yaw);
+            Cube("Paper", root, Vector3.zero, new Vector3(width, height, 0.02f), paper);
+            Cube("FrameT", root, new Vector3(0f, height * 0.5f, 0f), new Vector3(width, 0.04f, 0.04f), wood);
+            Cube("FrameB", root, new Vector3(0f, -height * 0.5f, 0f), new Vector3(width, 0.04f, 0.04f), wood);
+            Cube("FrameL", root, new Vector3(-width * 0.5f, 0f, 0f), new Vector3(0.04f, height, 0.04f), wood);
+            Cube("FrameR", root, new Vector3(width * 0.5f, 0f, 0f), new Vector3(0.04f, height, 0.04f), wood);
+            for (var i = 1; i < 4; i++)
+                Cube("V" + i, root, new Vector3(-width * 0.5f + i * (width / 4f), 0f, 0.005f), new Vector3(0.025f, height, 0.02f), wood);
+            for (var j = 1; j < 3; j++)
+                Cube("H" + j, root, new Vector3(0f, -height * 0.5f + j * (height / 3f), 0.005f), new Vector3(width, 0.025f, 0.02f), wood);
         }
 
         static void Zen(Transform home)
         {
-            TvCabinet(home, new Vector3(-0.05f, 0f, -2.08f), 0f, new Color(0.28f, 0.16f, 0.08f), false);
-            var table = Group(home, "Chabudai", new Vector3(0.08f, 0f, -0.18f), 0f);
-            ZceaModels.Place("tableCoffeeSquare", table, Vector3.zero, 0f, 1.15f);
-            TeaSet(table);
-            Zabuton(home, "ZabutonN", new Vector3(0.08f, 0.05f, 0.42f), new Color(0.22f, 0.32f, 0.28f));
-            Zabuton(home, "ZabutonS", new Vector3(0.08f, 0.05f, -0.72f), new Color(0.22f, 0.32f, 0.28f));
-            Zabuton(home, "ZabutonE", new Vector3(0.68f, 0.05f, -0.18f), new Color(0.22f, 0.32f, 0.28f));
-            Zabuton(home, "ZabutonW", new Vector3(-0.52f, 0.05f, -0.18f), new Color(0.22f, 0.32f, 0.28f));
-            Bonsai(home, new Vector3(1.55f, 0f, -1.85f));
-            Ikebana(home, new Vector3(1.85f, 0.02f, 0.15f));
-            Scroll(home, new Vector3(0.55f, 1.55f, 2.38f), "Zen", new Color(0.18f, 0.28f, 0.16f));
-            Byobu(home, new Vector3(2.05f, 0f, 1.35f));
-            SandGarden(home, new Vector3(2.05f, 0.02f, 1.35f));
-            LanternHang(home, new Vector3(-1.35f, 0f, -1.05f), new Color(1f, 0.86f, 0.62f));
-            LanternHang(home, new Vector3(1.35f, 0f, -1.05f), new Color(1f, 0.86f, 0.62f));
-            SofaBench(home, new Vector3(1.65f, 0f, 1.85f), -90f, new Color(0.55f, 0.5f, 0.42f));
+            TvCabinet(home, new Vector3(0f, 0f, -2.05f), 0f, new Color(0.28f, 0.16f, 0.08f), false);
+            Chabudai(home, Vector3.zero, new Color(0.32f, 0.18f, 0.09f));
+            var zab = new Color(0.28f, 0.38f, 0.3f);
+            Zabuton(home, "ZenZabN", new Vector3(0f, 0.125f, 0.7f), zab);
+            Zabuton(home, "ZenZabS", new Vector3(0f, 0.125f, -0.7f), zab);
+            Zabuton(home, "ZenZabE", new Vector3(0.7f, 0.125f, 0f), zab);
+            Zabuton(home, "ZenZabW", new Vector3(-0.7f, 0.125f, 0f), zab);
+            Tokonoma(home);
+            Byobu(home, new Vector3(1.35f, 0f, 1.35f));
+            LanternHang(home, new Vector3(-1.55f, 0f, -1.15f), new Color(1f, 0.88f, 0.62f));
+            LanternHang(home, new Vector3(0.15f, 0f, -1.15f), new Color(1f, 0.88f, 0.62f));
+            LanternHang(home, new Vector3(-1.55f, 0f, 1.15f), new Color(1f, 0.88f, 0.62f));
+            LanternHang(home, new Vector3(0.15f, 0f, 1.15f), new Color(1f, 0.88f, 0.62f));
+        }
+
+        static void Tokonoma(Transform home)
+        {
+            var t = Group(home, "Tokonoma", new Vector3(0.55f, 0f, 1.92f), 0f);
+            Cube("Deck", t, new Vector3(0f, 0.08f, 0f), new Vector3(1.7f, 0.14f, 0.72f), Wood(0.3f, 0.16f, 0.08f));
+            Scroll(t, new Vector3(0.15f, 1.15f, 0.32f), "Zen", new Color(0.12f, 0.12f, 0.1f));
+            Bonsai(t, new Vector3(-0.42f, 0.16f, 0.05f));
+            Ikebana(t, new Vector3(0.55f, 0.16f, 0.08f));
+            SandGarden(t, new Vector3(0.05f, 0.16f, -0.05f));
         }
 
         static void Cyber(Transform home)
         {
-            TvCabinet(home, new Vector3(0f, 0f, -2.08f), 0f, new Color(0.12f, 0.1f, 0.16f), false);
-            var desk = Group(home, "Desk", new Vector3(1.75f, 0f, -1.55f), -20f);
-            ZceaModels.Place("desk", desk, Vector3.zero, 0f, 1f);
-            ZceaModels.Place("computerScreen", desk, new Vector3(-0.2f, 0.55f, -0.05f), 0f, 1f);
-            ZceaModels.Place("laptop", desk, new Vector3(0.35f, 0.52f, 0.05f), -15f, 1f);
-            ZceaModels.Place("computerKeyboard", desk, new Vector3(-0.1f, 0.52f, 0.12f), 0f, 1f);
-            Strip(desk, new Vector3(0f, 0.03f, 0.28f), new Vector3(1.3f, 0.02f, 0.02f), Glow("CyberEdge", new Color(1f, 0.15f, 0.45f), 2f));
-
-            Chair(home, new Vector3(1.35f, 0f, -0.85f));
-            var bag = Group(home, "BeanBag", new Vector3(1.55f, 0f, 1.45f), 25f);
-            Prim(PrimitiveType.Sphere, "Bag", bag, new Vector3(0f, 0.22f, 0f), new Vector3(0.7f, 0.42f, 0.62f), Mat("Bag", new Color(0.12f, 0.14f, 0.2f), 0.15f));
-            SofaBench(home, new Vector3(-1.65f, 0f, 0.15f), 90f, new Color(0.18f, 0.2f, 0.28f));
-            NeonSign(home, new Vector3(0.85f, 1.72f, 2.38f), new Color(1f, 0.2f, 0.85f));
-            Torii(home, new Vector3(-1.15f, 1.55f, 2.38f));
-            Katana(home, new Vector3(1.55f, 1.05f, 2.32f));
-            Maneki(home, new Vector3(-0.55f, 0.48f, -1.55f));
-            LanternHang(home, new Vector3(-1.55f, 0f, 0.85f), new Color(1f, 0.25f, 0.35f));
-            LanternHang(home, new Vector3(1.55f, 0f, -1.55f), new Color(1f, 0.25f, 0.35f));
-            LanternHang(home, new Vector3(1.55f, 0f, 1.85f), new Color(1f, 0.25f, 0.35f));
-            Strip(home, new Vector3(0f, 0.03f, -2.35f), new Vector3(4.6f, 0.02f, 0.03f), Glow("CyberFloor", new Color(0.15f, 0.85f, 1f), 1.8f));
-            Strip(home, new Vector3(2.32f, 0.03f, 0f), new Vector3(0.03f, 0.02f, 4.6f), Glow("CyberFloor2", new Color(0.15f, 0.85f, 1f), 1.8f));
+            TvCabinet(home, new Vector3(0f, 0f, -2.05f), 0f, new Color(0.1f, 0.08f, 0.14f), false);
+            var desk = Group(home, "Desk", new Vector3(-1.7f, 0f, 0.25f), 90f);
+            ZceaModels.Place("desk", desk, Vector3.zero, 0f, 1.05f);
+            ZceaModels.Place("computerScreen", desk, new Vector3(-0.2f, 0.55f, 0f), 0f, 1.1f);
+            ZceaModels.Place("computerKeyboard", desk, new Vector3(-0.05f, 0.52f, 0.14f), 0f, 1f);
+            Strip(desk, new Vector3(0f, 0.03f, 0.28f), new Vector3(1.3f, 0.02f, 0.02f), Glow("CyberEdge", new Color(1f, 0.12f, 0.45f), 2.2f));
+            Maneki(desk, new Vector3(0.4f, 0.52f, 0.08f));
+            var chair = Group(home, "Chair", new Vector3(-0.55f, 0f, 0.25f), 90f);
+            Cube("Seat", chair, new Vector3(0f, 0.28f, 0f), new Vector3(0.48f, 0.08f, 0.48f), Mat("Gamer", new Color(0.04f, 0.05f, 0.07f), 0.18f));
+            Cube("Back", chair, new Vector3(0f, 0.55f, 0.18f), new Vector3(0.48f, 0.5f, 0.08f), Mat("Gamer", new Color(0.04f, 0.05f, 0.07f), 0.18f));
+            Cube("Accent", chair, new Vector3(0f, 0.55f, 0.22f), new Vector3(0.08f, 0.42f, 0.02f), Glow("GamerNeon", new Color(0.1f, 0.8f, 1f), 1.6f));
+            var bag = Group(home, "BeanBag", new Vector3(1.4f, 0f, 1.45f), 0f);
+            Prim(PrimitiveType.Sphere, "Bag", bag, new Vector3(0f, 0.22f, 0f), new Vector3(0.72f, 0.4f, 0.62f), Mat("Bag", new Color(0.08f, 0.1f, 0.14f), 0.12f));
+            NeonSign(home, new Vector3(0.95f, 1.68f, 2.22f), new Color(1f, 0.15f, 0.75f));
+            Torii(home, new Vector3(-0.85f, 1.52f, 2.22f));
+            Katana(home, new Vector3(1.55f, 1.12f, 2.18f));
+            LanternHang(home, new Vector3(-1.5f, 0f, 1.5f), new Color(1f, 0.22f, 0.38f));
+            LanternHang(home, new Vector3(1.5f, 0f, -1.15f), new Color(1f, 0.22f, 0.38f));
+            LanternHang(home, new Vector3(1.5f, 0f, 1.5f), new Color(1f, 0.22f, 0.38f));
         }
 
         static void Excentrico(Transform home)
         {
-            TvCabinet(home, new Vector3(0.15f, 0f, -2.08f), 0f, new Color(0.18f, 0.18f, 0.2f), true);
-            Arcade(home, new Vector3(1.85f, 0f, -1.55f));
+            TvCabinet(home, new Vector3(-1.15f, 0f, -2.05f), 0f, new Color(0.22f, 0.18f, 0.14f), true);
+            Arcade(home, new Vector3(0.55f, 0f, -1.95f));
             Koinobori(home);
-            Oni(home, new Vector3(-0.35f, 1.85f, 2.38f));
-            Daruma(home, new Vector3(0.15f, 0.12f, 0.55f));
+            Oni(home, new Vector3(-0.15f, 1.78f, 2.22f));
+            Daruma(home, new Vector3(-0.85f, 0.02f, 0.85f));
             Origami(home);
-            Parasol(home, new Vector3(1.05f, 0f, -0.55f));
-            Dartboard(home, new Vector3(2.32f, 1.45f, 0.85f));
-            Lava(home, new Vector3(-2.05f, 0.02f, 0.55f), new Color(1f, 0.35f, 0.1f));
-            Lava(home, new Vector3(-1.15f, 0.55f, -1.35f), new Color(0.7f, 0.2f, 1f));
-            Stool(home, "StoolA", new Vector3(0.85f, 0f, 0.85f), new Color(0.85f, 0.15f, 0.2f));
-            Stool(home, "StoolB", new Vector3(-0.15f, 0f, 1.15f), new Color(0.45f, 0.15f, 0.75f));
-            SofaBench(home, new Vector3(1.75f, 0f, 1.75f), -20f, new Color(0.2f, 0.72f, 0.55f));
-            Cube("Snack", Group(home, "SnackTable", new Vector3(-0.95f, 0f, -0.35f), 0f), new Vector3(0f, 0.22f, 0f), new Vector3(0.55f, 0.08f, 0.35f), Wood(0.4f, 0.22f, 0.12f));
+            Parasol(home, new Vector3(1.05f, 0f, 0.55f));
+            Dartboard(home, new Vector3(2.22f, 1.4f, 0.55f));
+            Lava(home, new Vector3(-1.95f, 0.02f, -0.85f), new Color(1f, 0.35f, 0.1f));
+            Lava(home, new Vector3(-1.95f, 0.02f, 0.55f), new Color(0.7f, 0.2f, 1f));
+            Stool(home, "StoolA", new Vector3(0.35f, 0f, 1.05f), new Color(0.85f, 0.15f, 0.2f));
+            Stool(home, "StoolB", new Vector3(-0.45f, 0f, 1.15f), new Color(0.45f, 0.15f, 0.75f));
         }
 
         static void Acolhedor(Transform home)
         {
-            TvCabinet(home, new Vector3(0.05f, 0f, -2.08f), 0f, new Color(0.28f, 0.16f, 0.08f), false);
-            var kota = Group(home, "Kotatsu", new Vector3(0.15f, 0f, -0.05f), 0f);
+            TvCabinet(home, new Vector3(-1.2f, 0f, -2.05f), 0f, new Color(0.28f, 0.16f, 0.08f), false);
+            var kota = Group(home, "Kotatsu", Vector3.zero, 0f);
             kota.name = "Chabudai";
-            ZceaModels.Place("tableCoffeeSquare", kota, Vector3.zero, 0f, 1.2f);
-            Cube("Cloth", kota, new Vector3(0f, 0.18f, 0f), new Vector3(1.35f, 0.2f, 1.35f), Mat("KotatsuCloth", new Color(0.72f, 0.22f, 0.18f), 0.18f));
-            Prim(PrimitiveType.Sphere, "OrangeA", kota, new Vector3(-0.08f, 0.4f, 0.05f), Vector3.one * 0.08f, Mat("Orange", new Color(0.95f, 0.45f, 0.12f), 0.35f));
-            Prim(PrimitiveType.Sphere, "OrangeB", kota, new Vector3(0.06f, 0.4f, -0.04f), Vector3.one * 0.08f, Mat("Orange", new Color(0.95f, 0.45f, 0.12f), 0.35f));
-            Prim(PrimitiveType.Cylinder, "CupA", kota, new Vector3(-0.22f, 0.38f, 0.18f), new Vector3(0.07f, 0.04f, 0.07f), Mat("Cup", new Color(0.92f, 0.9f, 0.84f), 0.3f));
-            Prim(PrimitiveType.Cylinder, "CupB", kota, new Vector3(0.22f, 0.38f, -0.16f), new Vector3(0.07f, 0.04f, 0.07f), Mat("Cup", new Color(0.92f, 0.9f, 0.84f), 0.3f));
-            Zabuton(home, "ZabutonN", new Vector3(0.15f, 0.05f, 0.72f), new Color(0.55f, 0.18f, 0.16f));
-            Zabuton(home, "ZabutonE", new Vector3(0.85f, 0.05f, -0.05f), new Color(0.15f, 0.28f, 0.55f));
-            Zabuton(home, "ZabutonW", new Vector3(-0.55f, 0.05f, -0.05f), new Color(0.82f, 0.42f, 0.22f));
-            Cat(home, new Vector3(-0.15f, 0.16f, 0.72f));
-            Fireplace(home, new Vector3(0.35f, 0f, 2.15f));
-            Bookshelf(home, new Vector3(-0.95f, 0f, 2.15f));
-            Noren(home, new Vector3(-1.55f, 1.55f, 2.38f));
-            Scroll(home, new Vector3(-0.35f, 1.55f, 2.38f), "Aco", new Color(0.55f, 0.42f, 0.28f));
-            Plant(home, new Vector3(1.85f, 0f, -0.35f));
-            Plant(home, new Vector3(-2.05f, 0f, 1.55f));
-            Sofa(home, new Vector3(-1.85f, 0f, 0.15f), 90f, new Color(0.72f, 0.68f, 0.6f));
-            Prim(PrimitiveType.Cylinder, "TeapotLoose", home, new Vector3(-1.35f, 0.18f, 0.85f), new Vector3(0.1f, 0.08f, 0.1f), Mat("IronPot", new Color(0.18f, 0.2f, 0.22f), 0.4f, 0.5f));
+            Cube("Top", kota, new Vector3(0f, 0.32f, 0f), new Vector3(1.15f, 0.05f, 1.15f), Wood(0.32f, 0.18f, 0.1f));
+            Legs(kota, 0.48f, 0.15f, Wood(0.32f, 0.18f, 0.1f));
+            Cube("Cloth", kota, new Vector3(0f, 0.22f, 0f), new Vector3(1.28f, 0.22f, 1.28f), Mat("KotatsuCloth", new Color(0.78f, 0.18f, 0.14f), 0.16f));
+            Prim(PrimitiveType.Sphere, "OrangeA", kota, new Vector3(-0.08f, 0.4f, 0.04f), Vector3.one * 0.07f, Mat("Orange", new Color(0.95f, 0.45f, 0.12f), 0.35f));
+            Prim(PrimitiveType.Sphere, "OrangeB", kota, new Vector3(0.05f, 0.4f, -0.03f), Vector3.one * 0.07f, Mat("Orange", new Color(0.95f, 0.45f, 0.12f), 0.35f));
+            Prim(PrimitiveType.Sphere, "OrangeC", kota, new Vector3(0.0f, 0.4f, 0.08f), Vector3.one * 0.07f, Mat("Orange", new Color(0.95f, 0.45f, 0.12f), 0.35f));
+            Zabuton(home, "AcoZabN", new Vector3(0f, 0.045f, 0.78f), new Color(0.55f, 0.16f, 0.14f));
+            Zabuton(home, "AcoZabS", new Vector3(0f, 0.045f, -0.78f), new Color(0.55f, 0.16f, 0.14f));
+            Zabuton(home, "AcoZabE", new Vector3(0.78f, 0.045f, 0f), new Color(0.18f, 0.32f, 0.62f));
+            Zabuton(home, "AcoZabW", new Vector3(-0.78f, 0.045f, 0f), new Color(0.82f, 0.42f, 0.2f));
+            Cat(home, new Vector3(-0.15f, 0.14f, 0.78f));
+            Fireplace(home, new Vector3(0.55f, 0f, 2.05f));
+            Bookshelf(home, new Vector3(-0.85f, 0f, 2.05f));
+            Noren(home, new Vector3(-1.55f, 1.48f, 2.22f));
+            Scroll(home, new Vector3(-0.15f, 1.48f, 2.22f), "Aco", new Color(0.45f, 0.32f, 0.2f));
+            Plant(home, new Vector3(1.75f, 0f, 1.55f));
+            Plant(home, new Vector3(-1.95f, 0f, 1.55f));
+            Sofa(home, new Vector3(-1.85f, 0f, 0.15f), 90f, new Color(0.62f, 0.6f, 0.55f));
+            LanternHang(home, new Vector3(-0.55f, 0f, 0.95f), new Color(1f, 0.82f, 0.55f));
+            LanternHang(home, new Vector3(0.85f, 0f, 0.95f), new Color(1f, 0.82f, 0.55f));
+        }
+
+        static void Chabudai(Transform home, Vector3 pos, Color woodCol)
+        {
+            var table = Group(home, "Chabudai", pos, 0f);
+            var wood = Wood(woodCol.r, woodCol.g, woodCol.b);
+            Cube("Top", table, new Vector3(0f, 0.32f, 0f), new Vector3(0.98f, 0.05f, 0.98f), wood);
+            Legs(table, 0.4f, 0.15f, wood);
+            TeaSet(table);
         }
 
         static void Bed(Transform home, ProfileId style)
@@ -296,11 +348,11 @@ namespace GenJutsu.ProfileDemo
         static void TvCabinet(Transform home, Vector3 pos, float yaw, Color wood, bool retro)
         {
             var tv = Group(home, "TvStand", pos, yaw);
-            ZceaModels.Place("cabinetTelevision", tv, Vector3.zero, 0f, 1f);
-            ZceaModels.Place(retro ? "televisionVintage" : "televisionModern", tv, new Vector3(0f, 0.42f, 0.02f), 0f, 1f);
-            Cube("Screen", tv, new Vector3(0f, 0.78f, 0.12f), new Vector3(0.92f, 0.52f, 0.02f), Glow(retro ? "HomeTvScreenRetro" : "HomeTvScreenDark", retro ? new Color(0.25f, 0.7f, 0.45f) : new Color(0.08f, 0.08f, 0.1f), retro ? 0.8f : 0.25f));
-            Cube("Console", tv, new Vector3(0.22f, 0.44f, 0.18f), new Vector3(0.28f, 0.07f, 0.18f), Mat("Console", new Color(0.82f, 0.82f, 0.84f), 0.35f));
-            Cube("Deck", tv, new Vector3(-0.28f, 0.44f, 0.16f), new Vector3(0.22f, 0.05f, 0.16f), Mat("Deck", new Color(0.12f, 0.12f, 0.14f), 0.25f));
+            Cube("Cabinet", tv, new Vector3(0f, 0.16f, 0f), new Vector3(1.15f, 0.32f, 0.36f), Mat("TvWood", wood, 0.22f));
+            Cube("Bezel", tv, new Vector3(0f, 0.62f, 0.12f), new Vector3(1.06f, 0.58f, 0.03f), Mat("TvBezel", new Color(0.08f, 0.08f, 0.08f), 0.25f));
+            Cube("Screen", tv, new Vector3(0f, 0.62f, 0.145f), new Vector3(0.94f, 0.48f, 0.02f), Glow(retro ? "HomeTvScreenRetro" : "HomeTvScreenDark", retro ? new Color(0.2f, 0.55f, 0.4f) : new Color(0.07f, 0.07f, 0.09f), retro ? 0.7f : 0.2f));
+            Cube("Console", tv, new Vector3(0.28f, 0.36f, 0.14f), new Vector3(0.28f, 0.06f, 0.16f), Mat("Console", new Color(0.82f, 0.82f, 0.84f), 0.35f));
+            Cube("Deck", tv, new Vector3(-0.28f, 0.35f, 0.14f), new Vector3(0.22f, 0.05f, 0.14f), Mat("Deck", new Color(0.12f, 0.12f, 0.14f), 0.25f));
         }
 
         static void Sofa(Transform home, Vector3 pos, float yaw, Color fabric)
@@ -319,15 +371,16 @@ namespace GenJutsu.ProfileDemo
 
         static void TeaSet(Transform table)
         {
-            Prim(PrimitiveType.Cylinder, "Pot", table, new Vector3(0.05f, 0.38f, 0.02f), new Vector3(0.12f, 0.1f, 0.12f), Mat("TeaPot", new Color(0.9f, 0.9f, 0.88f), 0.4f));
-            Prim(PrimitiveType.Cylinder, "Cup", table, new Vector3(-0.18f, 0.34f, 0.12f), new Vector3(0.06f, 0.04f, 0.06f), Mat("TeaCup", new Color(0.95f, 0.95f, 0.93f), 0.35f));
-            Cube("Tray", table, new Vector3(0f, 0.32f, 0.02f), new Vector3(0.42f, 0.02f, 0.28f), Wood(0.25f, 0.14f, 0.08f));
-            Cube("RemoteHold", table, new Vector3(-0.22f, 0.32f, -0.22f), new Vector3(0.12f, 0.015f, 0.08f), Mat("Hold", new Color(0.85f, 0.85f, 0.82f), 0.2f));
+            Cube("Tray", table, new Vector3(0f, 0.355f, 0.05f), new Vector3(0.42f, 0.02f, 0.28f), Wood(0.22f, 0.12f, 0.07f));
+            Prim(PrimitiveType.Cylinder, "Pot", table, new Vector3(0.04f, 0.4f, 0.04f), new Vector3(0.11f, 0.07f, 0.11f), Mat("TeaPot", new Color(0.92f, 0.9f, 0.86f), 0.4f));
+            Prim(PrimitiveType.Cylinder, "CupA", table, new Vector3(-0.16f, 0.375f, 0.1f), new Vector3(0.055f, 0.03f, 0.055f), Mat("TeaCup", new Color(0.95f, 0.95f, 0.93f), 0.35f));
+            Prim(PrimitiveType.Cylinder, "CupB", table, new Vector3(-0.08f, 0.375f, -0.08f), new Vector3(0.055f, 0.03f, 0.055f), Mat("TeaCup", new Color(0.95f, 0.95f, 0.93f), 0.35f));
+            Cube("Remote", table, new Vector3(0.22f, 0.36f, -0.18f), new Vector3(0.14f, 0.02f, 0.05f), Mat("Hold", new Color(0.12f, 0.12f, 0.12f), 0.2f));
         }
 
         static void Zabuton(Transform home, string name, Vector3 pos, Color color)
         {
-            Cube(name, home, pos, new Vector3(0.42f, 0.08f, 0.42f), Mat(name, color, 0.18f));
+            Cube(name, home, pos, new Vector3(0.52f, 0.07f, 0.52f), Mat(name, color, 0.16f));
         }
 
         static void Bonsai(Transform home, Vector3 pos)
@@ -360,14 +413,14 @@ namespace GenJutsu.ProfileDemo
 
         static void Byobu(Transform home, Vector3 pos)
         {
-            var t = Group(home, "Byobu", pos, -25f);
-            var paper = Mat("ByobuPaper", new Color(0.82f, 0.72f, 0.38f), 0.12f);
+            var t = Group(home, "Byobu", pos, -12f);
+            var paper = Mat("ByobuPaper", new Color(0.86f, 0.72f, 0.28f), 0.12f);
             var wood = Wood(0.28f, 0.16f, 0.08f);
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 3; i++)
             {
-                var p = Group(t, "Panel" + i, new Vector3(i * 0.38f - 0.55f, 0.7f, i * 0.04f), i * 8f);
-                Cube("Paper", p, Vector3.zero, new Vector3(0.36f, 1.35f, 0.03f), paper);
-                Cube("Frame", p, Vector3.zero, new Vector3(0.38f, 1.38f, 0.02f), wood);
+                var p = Group(t, "Panel" + i, new Vector3(i * 0.42f, 0.72f, i * 0.03f), i * 6f);
+                Cube("Paper", p, Vector3.zero, new Vector3(0.4f, 1.4f, 0.03f), paper);
+                Cube("Frame", p, Vector3.zero, new Vector3(0.42f, 1.44f, 0.025f), wood);
             }
         }
 
@@ -382,9 +435,11 @@ namespace GenJutsu.ProfileDemo
         static void LanternHang(Transform home, Vector3 xz, Color paper)
         {
             var hang = Group(home, "Lantern", xz, 0f);
-            Prim(PrimitiveType.Cylinder, "Cord", hang, new Vector3(0f, 2.28f, 0f), new Vector3(0.012f, 0.12f, 0.012f), Wood(0.16f, 0.1f, 0.07f));
-            Prim(PrimitiveType.Cylinder, "Cap", hang, new Vector3(0f, 2.12f, 0f), new Vector3(0.16f, 0.02f, 0.16f), Wood(0.16f, 0.1f, 0.07f));
-            Prim(PrimitiveType.Cylinder, "Shade", hang, new Vector3(0f, 1.92f, 0f), new Vector3(0.22f, 0.16f, 0.22f), Glow("Lantern" + xz.x, paper, 1.3f));
+            Prim(PrimitiveType.Cylinder, "Cord", hang, new Vector3(0f, 2.22f, 0f), new Vector3(0.012f, 0.18f, 0.012f), Wood(0.16f, 0.1f, 0.07f));
+            Prim(PrimitiveType.Cylinder, "Cap", hang, new Vector3(0f, 2.02f, 0f), new Vector3(0.14f, 0.025f, 0.14f), Wood(0.16f, 0.1f, 0.07f));
+            Prim(PrimitiveType.Cylinder, "Shade", hang, new Vector3(0f, 1.82f, 0f), new Vector3(0.16f, 0.2f, 0.16f), Glow("Lantern" + xz.x + xz.z, paper, 1.6f));
+            Prim(PrimitiveType.Cylinder, "CapB", hang, new Vector3(0f, 1.62f, 0f), new Vector3(0.14f, 0.02f, 0.14f), Wood(0.16f, 0.1f, 0.07f));
+            Point("Glow", hang, new Vector3(0f, 1.82f, 0f), paper, 0.85f, 3.4f);
         }
 
         static void Chair(Transform home, Vector3 pos)
@@ -476,17 +531,14 @@ namespace GenJutsu.ProfileDemo
                 new Color(0.95f, 0.55f, 0.15f), Color.white
             };
             for (var i = 0; i < colors.Length; i++)
-            {
-                var c = Cube("Crane" + i, t, new Vector3((i - 2) * 0.22f, Mathf.Sin(i) * 0.08f, 0f), new Vector3(0.12f, 0.02f, 0.08f), Mat("Crane" + i, colors[i], 0.25f));
-                c.transform.localRotation = Quaternion.Euler(0f, i * 18f, 25f);
-            }
+                Cube("Crane" + i, t, new Vector3((i - 2) * 0.28f, 0f, 0f), new Vector3(0.14f, 0.03f, 0.1f), Mat("Crane" + i, colors[i], 0.25f));
         }
 
         static void Parasol(Transform home, Vector3 pos)
         {
             var t = Group(home, "Parasol", pos, -20f);
             Prim(PrimitiveType.Cylinder, "Pole", t, new Vector3(0f, 0.7f, 0f), new Vector3(0.03f, 0.7f, 0.03f), Wood(0.2f, 0.12f, 0.08f));
-            Prim(PrimitiveType.Sphere, "Canopy", t, new Vector3(0f, 1.35f, 0f), new Vector3(1.1f, 0.18f, 1.1f), Mat("Aka", new Color(0.85f, 0.08f, 0.08f), 0.2f));
+            Prim(PrimitiveType.Cylinder, "Canopy", t, new Vector3(0f, 1.28f, 0f), new Vector3(0.78f, 0.05f, 0.78f), Mat("Aka", new Color(0.85f, 0.08f, 0.08f), 0.2f));
         }
 
         static void Dartboard(Transform home, Vector3 pos)
@@ -569,9 +621,9 @@ namespace GenJutsu.ProfileDemo
         static void WireDevices(ProfileLook look, Transform home, ProfileId style)
         {
             var rig = look.gameObject.AddComponent<HouseDeviceRig>();
-            var sala = Point("Device_sala_luz", home, new Vector3(0.2f, 1.92f, -0.55f), SalaColor(style), 1.4f, 7.2f);
+            var sala = Point("Device_sala_luz", home, new Vector3(0f, 2.15f, 0f), SalaColor(style), 1.85f, 8.2f);
             var quarto = Point("Device_quarto_luz", home, new Vector3(-1.5f, 1.85f, 1.45f), new Color(1f, 0.86f, 0.62f), 1.1f, 5.5f);
-            var lamp = Group(home, "Device_abajur", new Vector3(-0.95f, 0f, 1.15f), 0f);
+            var lamp = Group(home, "Device_abajur", new Vector3(-1.85f, 0f, 1.55f), 0f);
             Prim(PrimitiveType.Cylinder, "Stem", lamp, new Vector3(0f, 0.28f, 0f), new Vector3(0.04f, 0.22f, 0.04f), Wood(0.18f, 0.12f, 0.08f));
             Prim(PrimitiveType.Cylinder, "Shade", lamp, new Vector3(0f, 0.52f, 0f), new Vector3(0.18f, 0.1f, 0.18f), Glow("HomeAbajur", new Color(1f, 0.82f, 0.55f), 1.4f));
             var abajur = Point("Light", lamp, new Vector3(0f, 0.52f, 0f), new Color(1f, 0.78f, 0.45f), 0.7f, 3.2f);
