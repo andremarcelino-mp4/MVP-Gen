@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1511221095774627219
+--- !u!114 &-5085752375081748702
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,7 +28,7 @@ MonoBehaviour:
   rounded:
     m_OverrideState: 1
     m_Value: 0
---- !u!114 &-587876723344337160
+--- !u!114 &-3573786535900576675
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,5 +69,5 @@ MonoBehaviour:
   m_Name: ZenVolume
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
-  - {fileID: -587876723344337160}
-  - {fileID: -1511221095774627219}
+  - {fileID: -3573786535900576675}
+  - {fileID: -5085752375081748702}

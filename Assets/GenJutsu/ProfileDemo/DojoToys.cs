@@ -139,18 +139,5 @@ namespace GenJutsu.ProfileDemo
             go.isStatic = false;
             return go;
         }
-
-        public sealed class BallThud : MonoBehaviour
-        {
-            public AudioSource source;
-
-            void OnCollisionEnter(Collision collision)
-            {
-                if (source == null || collision.relativeVelocity.magnitude < 0.4f)
-                    return;
-                source.pitch = Random.Range(0.9f, 1.1f);
-                source.Play();
-            }
-        }
     }
 }
