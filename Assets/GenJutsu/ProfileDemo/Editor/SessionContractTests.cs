@@ -200,6 +200,18 @@ namespace GenJutsu.ProfileDemo.EditorTools
         }
 
         [Test]
+        public void ToonOutline_AssignsSharedMaterialOnHull()
+        {
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.name = "OutlinedCube";
+            ToonOutline.Apply(go.GetComponent<UnityEngine.MeshRenderer>());
+            var hull = go.transform.Find("ToonOutlineHull");
+            Assert.IsNotNull(hull);
+            Assert.IsNotNull(hull.GetComponent<UnityEngine.MeshRenderer>().sharedMaterial);
+            UnityEngine.Object.DestroyImmediate(go);
+        }
+
+        [Test]
         public void GrabUtil_AddsResetAndHaptics()
         {
             var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);

@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace GenJutsu.ProfileDemo
 {
@@ -9,6 +12,7 @@ namespace GenJutsu.ProfileDemo
     public static class ToonOutline
     {
         const string Child = "ToonOutlineHull";
+        const string AssetPath = "Assets/GenJutsu/ProfileDemo/Materials/ToonOutlineShared.mat";
         static Material shared;
 
         public static void EnsureAll()
@@ -34,8 +38,14 @@ namespace GenJutsu.ProfileDemo
             var filter = renderer.GetComponent<MeshFilter>();
             if (filter == null || filter.sharedMesh == null)
                 return;
-            if (renderer.transform.Find(Child) != null)
+            var existing = renderer.transform.Find(Child);
+            if (existing != null)
+            {
+                var hullRenderer = existing.GetComponent<MeshRenderer>();
+                if (hullRenderer != null && hullRenderer.sharedMaterial == null)
+                    hullRenderer.sharedMaterial = Mat();
                 return;
+            }
             var go = new GameObject(Child);
             go.transform.SetParent(renderer.transform, false);
             go.AddComponent<MeshFilter>().sharedMesh = filter.sharedMesh;
@@ -72,10 +82,25 @@ namespace GenJutsu.ProfileDemo
         {
             if (shared != null)
                 return shared;
+#if UNITY_EDITOR
+            shared = AssetDatabase.LoadAssetAtPath<Material>(AssetPath);
+            if (shared != null)
+                return shared;
+#endif
             var shader = Shader.Find("GenJutsu/ToonOutline") ?? Shader.Find("Hidden/InternalErrorShader");
-            shared = new Material(shader) { name = "ToonOutlineShared", hideFlags = HideFlags.DontSave };
+            shared = new Material(shader) { name = "ToonOutlineShared" };
             shared.SetColor("_Color", Color.black);
             shared.SetFloat("_Width", 0.012f);
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                var folder = "Assets/GenJutsu/ProfileDemo/Materials";
+                if (!AssetDatabase.IsValidFolder(folder))
+                    AssetDatabase.CreateFolder("Assets/GenJutsu/ProfileDemo", "Materials");
+                AssetDatabase.CreateAsset(shared, AssetPath);
+                AssetDatabase.SaveAssets();
+            }
+#endif
             return shared;
         }
     }

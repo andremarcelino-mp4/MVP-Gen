@@ -206,7 +206,7 @@ namespace GenJutsu.ProfileDemo
         {
             var tv = Group(home, "TvStand", pos, yaw);
             Cube("Cabinet", tv, new Vector3(0f, 0.22f, 0f), new Vector3(1.05f, 0.4f, 0.34f), Mat("TvWood", wood, 0.28f));
-            Cube("Screen", tv, new Vector3(0f, 0.78f, 0.02f), new Vector3(0.92f, 0.58f, 0.05f), Glow("HomeTvScreen", retro ? new Color(0.25f, 0.7f, 0.45f) : new Color(0.08f, 0.08f, 0.1f), retro ? 0.8f : 0.25f));
+            Cube("Screen", tv, new Vector3(0f, 0.78f, 0.02f), new Vector3(0.92f, 0.58f, 0.05f), Glow(retro ? "HomeTvScreenRetro" : "HomeTvScreenDark", retro ? new Color(0.25f, 0.7f, 0.45f) : new Color(0.08f, 0.08f, 0.1f), retro ? 0.8f : 0.25f));
             Cube("Console", tv, new Vector3(0.22f, 0.44f, 0.12f), new Vector3(0.28f, 0.07f, 0.18f), Mat("Console", new Color(0.82f, 0.82f, 0.84f), 0.35f));
             Cube("Deck", tv, new Vector3(-0.28f, 0.44f, 0.1f), new Vector3(0.22f, 0.05f, 0.16f), Mat("Deck", new Color(0.12f, 0.12f, 0.14f), 0.25f));
         }
