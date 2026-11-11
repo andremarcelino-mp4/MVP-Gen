@@ -19,6 +19,24 @@ namespace GenJutsu.ProfileDemo.EditorTools
             File.WriteAllText("artifacts/pr10-v2/qa-pass.txt", "ok " + System.DateTime.Now.ToString("o"));
         }
 
+        public static void BuildAndroid()
+        {
+            Directory.CreateDirectory("Builds/Android");
+            var paths = new System.Collections.Generic.List<string>();
+            var scenes = EditorBuildSettings.scenes;
+            for (var i = 0; i < scenes.Length; i++)
+            {
+                if (scenes[i].enabled)
+                    paths.Add(scenes[i].path);
+            }
+
+            var r = BuildPipeline.BuildPlayer(paths.ToArray(), "Builds/Android/MVP Gen.apk", BuildTarget.Android, BuildOptions.None);
+            Directory.CreateDirectory("artifacts/pr10-v2");
+            File.WriteAllText("artifacts/pr10-v2/apk-build.txt", r.summary.result + " bytes=" + r.summary.totalSize + " " + System.DateTime.Now.ToString("o"));
+            if (r.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+                throw new System.Exception("Android build " + r.summary.result);
+        }
+
         static void CaptureSet()
         {
             Directory.CreateDirectory("artifacts/pr10-v2");
