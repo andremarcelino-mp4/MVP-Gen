@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6930447829942581207
+--- !u!114 &-4710286825876375206
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,7 +50,7 @@ MonoBehaviour:
   dirtIntensity:
     m_OverrideState: 1
     m_Value: 0
---- !u!114 &-3227083121993413233
+--- !u!114 &-4011159350663787171
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,10 +82,10 @@ MonoBehaviour:
   m_Name: CyberVolume
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
-  - {fileID: -6930447829942581207}
-  - {fileID: 4983350290813119008}
-  - {fileID: -3227083121993413233}
---- !u!114 &4983350290813119008
+  - {fileID: -4710286825876375206}
+  - {fileID: 5152966625927324530}
+  - {fileID: -4011159350663787171}
+--- !u!114 &5152966625927324530
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}

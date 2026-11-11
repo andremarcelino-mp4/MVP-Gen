@@ -31,7 +31,7 @@ namespace GenJutsu.ProfileDemo
         {
             foreach (Transform child in root)
             {
-                if (child.name == "ToonOutlineHull" || child.name == "Device_sala_luz" ||
+                if (child.name == "ToonOutlineHull" || child.name == "Room" || child.name == "Device_sala_luz" ||
                     child.name == "Device_quarto_luz" || child.name == "Device_tv" || child.name == "Device_ambiente")
                     continue;
                 if (child.GetComponent<Canvas>() != null)
