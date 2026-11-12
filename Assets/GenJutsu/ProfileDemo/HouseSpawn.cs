@@ -87,7 +87,7 @@ namespace GenJutsu.ProfileDemo
 
         static bool IsFloor(string n)
         {
-            return n == "Deck" || n == "Tatami" || n == "TatamiField" || n == "Lip" || n == "Platform" || n == "Pieces" || n == "Home";
+            return n == "Deck" || n == "Tatami" || n == "TatamiField" || n == "Lip" || n == "Platform" || n == "Pieces" || n == "Home" || n == "Futon" || n == "Cloth";
         }
     }
 }

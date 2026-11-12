@@ -31,9 +31,18 @@ namespace GenJutsu.ProfileDemo
                 return existing;
             var root = new GameObject("AirCon");
             var stand = home.Find("TvStand");
-            root.transform.SetParent(stand != null ? stand : home, false);
-            root.transform.localPosition = stand != null ? new Vector3(0f, 1.18f, 0.02f) : new Vector3(-0.15f, 1.55f, -1.05f);
-            root.transform.localRotation = Quaternion.identity;
+            root.transform.SetParent(home, false);
+            if (stand != null)
+            {
+                var p = stand.localPosition;
+                root.transform.localPosition = new Vector3(p.x, 2.12f, Mathf.Clamp(p.z, -2.35f, 2.35f));
+                root.transform.localRotation = stand.localRotation;
+            }
+            else
+            {
+                root.transform.localPosition = new Vector3(-0.05f, 2.12f, -2.28f);
+                root.transform.localRotation = Quaternion.identity;
+            }
             var unit = root.AddComponent<AirConUnit>();
             unit.Build();
             return unit;
@@ -230,7 +239,12 @@ namespace GenJutsu.ProfileDemo
             {
                 var col = go.GetComponent<Collider>();
                 if (col != null)
-                    Object.Destroy(col);
+                {
+                    if (Application.isPlaying)
+                        Object.Destroy(col);
+                    else
+                        Object.DestroyImmediate(col);
+                }
             }
 
             return go;

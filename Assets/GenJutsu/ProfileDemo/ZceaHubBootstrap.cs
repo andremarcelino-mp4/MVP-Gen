@@ -56,6 +56,7 @@ namespace GenJutsu.ProfileDemo
             LocomotionGuard.Apply();
             QuestGiRig.Ensure(director);
             DojoToys.EnsureAll();
+            QuestGiRig.FinishLooks();
             QuestClarity.Ensure(director);
             var voice = director.GetComponent<GenJutsu.Gen.GenVoiceController>();
             if (director.sessionGate != null && voice != null)

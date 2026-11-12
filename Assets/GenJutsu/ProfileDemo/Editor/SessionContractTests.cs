@@ -148,5 +148,113 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 "{\"session\":{\"id\":\"VISIT1\",\"profile_id\":\"Zen\",\"session_code\":\"EXU4RN\",\"status\":\"active\"}}");
             Assert.AreEqual("VISIT1", key);
         }
+
+        [Test]
+        public void ResettablePose_ReturnsToCapturedTransform()
+        {
+            var parent = new UnityEngine.GameObject("ResetParent");
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(0.4f, 0.2f, -0.1f);
+            go.transform.localRotation = UnityEngine.Quaternion.Euler(0f, 25f, 0f);
+            var pose = go.AddComponent<ResettablePose>();
+            pose.Capture();
+            go.transform.localPosition = new UnityEngine.Vector3(2f, 1f, 3f);
+            go.transform.localRotation = UnityEngine.Quaternion.Euler(15f, 90f, 0f);
+            pose.ResetNow();
+            Assert.AreEqual(0.4f, go.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(0.2f, go.transform.localPosition.y, 0.001f);
+            Assert.AreEqual(-0.1f, go.transform.localPosition.z, 0.001f);
+            Assert.AreEqual(25f, go.transform.localRotation.eulerAngles.y, 0.5f);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
+        public void BoundsReset_RestoresLocalPose()
+        {
+            var parent = new UnityEngine.GameObject("BoundsParent");
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(1f, 0.1f, 0.2f);
+            var bounds = go.AddComponent<BoundsReset>();
+            bounds.Capture();
+            go.transform.localPosition = new UnityEngine.Vector3(4f, -2f, 8f);
+            bounds.Restore();
+            Assert.AreEqual(1f, go.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(0.1f, go.transform.localPosition.y, 0.001f);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
+        public void BoundsReset_WithoutCaptureDoesNotPileAtParentOrigin()
+        {
+            var parent = new UnityEngine.GameObject("PileParent");
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(0.7f, 0.3f, -0.5f);
+            var bounds = go.AddComponent<BoundsReset>();
+            Assert.IsFalse(bounds.Captured);
+            bounds.Restore();
+            Assert.AreEqual(0.7f, go.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(-0.5f, go.transform.localPosition.z, 0.001f);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
+        public void BoundsReset_HomeSurvivesSerialization()
+        {
+            var parent = new UnityEngine.GameObject("SerParent");
+            var go = new UnityEngine.GameObject("Prop");
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(1.2f, 0.4f, 0.9f);
+            var bounds = go.AddComponent<BoundsReset>();
+            bounds.Capture();
+            var copy = UnityEngine.Object.Instantiate(parent);
+            var restored = copy.GetComponentInChildren<BoundsReset>();
+            Assert.IsTrue(restored.Captured);
+            restored.transform.localPosition = UnityEngine.Vector3.zero;
+            restored.Restore();
+            Assert.AreEqual(1.2f, restored.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(0.9f, restored.transform.localPosition.z, 0.001f);
+            UnityEngine.Object.DestroyImmediate(copy);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
+        public void ToonOutline_SkipsUiScreensAndHands()
+        {
+            var house = new UnityEngine.GameObject("LookMesh");
+            Assert.IsTrue(ToonOutline.ShouldOutline(house.transform));
+            var screen = new UnityEngine.GameObject("Screen");
+            screen.transform.SetParent(house.transform, false);
+            Assert.IsFalse(ToonOutline.ShouldOutline(screen.transform));
+            var hand = new UnityEngine.GameObject("LeftHand");
+            Assert.IsFalse(ToonOutline.ShouldOutline(hand.transform));
+            UnityEngine.Object.DestroyImmediate(house);
+            UnityEngine.Object.DestroyImmediate(hand);
+        }
+
+        [Test]
+        public void ToonOutline_AssignsSharedMaterialOnHull()
+        {
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.name = "OutlinedCube";
+            ToonOutline.Apply(go.GetComponent<UnityEngine.MeshRenderer>());
+            var hull = go.transform.Find("ToonOutlineHull");
+            Assert.IsNotNull(hull);
+            Assert.IsNotNull(hull.GetComponent<UnityEngine.MeshRenderer>().sharedMaterial);
+            UnityEngine.Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void GrabUtil_AddsResetAndHaptics()
+        {
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            GrabUtil.Make(go, 12f);
+            Assert.IsNotNull(go.GetComponent<ResettablePose>());
+            Assert.IsNotNull(go.GetComponent<GrabHaptics>());
+            Assert.IsFalse(go.GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>().throwOnDetach);
+            UnityEngine.Object.DestroyImmediate(go);
+        }
     }
 }

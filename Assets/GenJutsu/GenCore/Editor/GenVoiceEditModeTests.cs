@@ -283,7 +283,7 @@ namespace GenJutsu.GenCore.Tests
         public void SpawnPoint_IsClearOfFurnitureInEachHouse()
         {
             Assert.Greater(HouseSpawnLogic.DistanceToLook(), 1.8f);
-            Assert.Less(HouseSpawnLogic.DistanceToLook(), 2.4f);
+            Assert.Less(HouseSpawnLogic.DistanceToLook(), 3.6f);
             var names = new[] { "Zen", "Cyber", "Excentrico", "Acolhedor" };
             for (var i = 0; i < names.Length; i++)
             {

@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="45" result="Passed" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1,1338348">
+  <test-suite type="TestSuite" id="1000" name="MVP Gen" fullname="MVP Gen" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1.133835" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1031" name="Assembly-CSharp-Editor.dll" fullname="C:/Users/andre/MVP Gen/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1.077293" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="816" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1032" name="GenJutsu" fullname="GenJutsu" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1.075913" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1033" name="ProfileDemo" fullname="GenJutsu.ProfileDemo" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1.074975" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1034" name="EditorTools" fullname="GenJutsu.ProfileDemo.EditorTools" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="1.069108" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1006" name="SessionContractTests" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.226514" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1013" name="ActiveStatus_IsNotClosed" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.ActiveStatus_IsNotClosed" methodname="ActiveStatus_IsNotClosed" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="501500832" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.024552" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="BoundsReset_HomeSurvivesSerialization" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.BoundsReset_HomeSurvivesSerialization" methodname="BoundsReset_HomeSurvivesSerialization" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1789969566" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.031150" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="BoundsReset_RestoresLocalPose" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.BoundsReset_RestoresLocalPose" methodname="BoundsReset_RestoresLocalPose" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="292922447" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.010716" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="BoundsReset_WithoutCaptureDoesNotPileAtParentOrigin" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.BoundsReset_WithoutCaptureDoesNotPileAtParentOrigin" methodname="BoundsReset_WithoutCaptureDoesNotPileAtParentOrigin" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1992320210" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.001310" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="EndedStatus_ClosesEvenIfProfileIsPresent" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.EndedStatus_ClosesEvenIfProfileIsPresent" methodname="EndedStatus_ClosesEvenIfProfileIsPresent" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1167111354" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.007017" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1018" name="Grabbables_RestKinematicUntilGrabbed" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.Grabbables_RestKinematicUntilGrabbed" methodname="Grabbables_RestKinematicUntilGrabbed" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1927866157" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.054588" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Setting linear velocity of a kinematic body is not supported.
+Setting linear velocity of a kinematic body is not supported.
+Setting angular velocity of a kinematic body is not supported.
+Setting angular velocity of a kinematic body is not supported.
+]]></output>
+              </test-case>
+              <test-case id="1027" name="GrabUtil_AddsResetAndHaptics" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.GrabUtil_AddsResetAndHaptics" methodname="GrabUtil_AddsResetAndHaptics" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="2078694589" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.005899" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Setting linear velocity of a kinematic body is not supported.
+Setting linear velocity of a kinematic body is not supported.
+Setting angular velocity of a kinematic body is not supported.
+Setting angular velocity of a kinematic body is not supported.
+]]></output>
+              </test-case>
+              <test-case id="1011" name="Legacy404_IsStillNoActiveVisit" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.Legacy404_IsStillNoActiveVisit" methodname="Legacy404_IsStillNoActiveVisit" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="671012801" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000592" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="LegacyFlatSummary_StillResolves" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.LegacyFlatSummary_StillResolves" methodname="LegacyFlatSummary_StillResolves" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="279162897" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.002348" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="NullSession_IsNoActiveVisit_EvenOnHttp200" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.NullSession_IsNoActiveVisit_EvenOnHttp200" methodname="NullSession_IsNoActiveVisit_EvenOnHttp200" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1326832839" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="ProfileId_IsNotTheVisitId" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.ProfileId_IsNotTheVisitId" methodname="ProfileId_IsNotTheVisitId" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1473810" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000265" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="QuestClarity_KeepsMsaaAndEyeScale" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.QuestClarity_KeepsMsaaAndEyeScale" methodname="QuestClarity_KeepsMsaaAndEyeScale" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="465463986" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000794" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="ResettablePose_ReturnsToCapturedTransform" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.ResettablePose_ReturnsToCapturedTransform" methodname="ResettablePose_ReturnsToCapturedTransform" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1538749261" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.004445" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="SameProfile_DifferentVisitId_IsADifferentSession" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.SameProfile_DifferentVisitId_IsADifferentSession" methodname="SameProfile_DifferentVisitId_IsADifferentSession" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1330477803" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="SameVisitId_IsNotANewSession_EvenIfTheCodeFieldDiffers" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.SameVisitId_IsNotANewSession_EvenIfTheCodeFieldDiffers" methodname="SameVisitId_IsNotANewSession_EvenIfTheCodeFieldDiffers" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1166640647" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000397" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="ToonOutline_AssignsSharedMaterialOnHull" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.ToonOutline_AssignsSharedMaterialOnHull" methodname="ToonOutline_AssignsSharedMaterialOnHull" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1602905234" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.012254" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="ToonOutline_SkipsUiScreensAndHands" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.ToonOutline_SkipsUiScreensAndHands" methodname="ToonOutline_SkipsUiScreensAndHands" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="461675774" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000753" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="TransportFailure_DoesNotLookLikeAnEndedSession" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.TransportFailure_DoesNotLookLikeAnEndedSession" methodname="TransportFailure_DoesNotLookLikeAnEndedSession" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1922479632" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000351" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="WelcomeCard_StaysInvisibleWhenEnsured" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.WelcomeCard_StaysInvisibleWhenEnsured" methodname="WelcomeCard_StaysInvisibleWhenEnsured" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="1903605955" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.014058" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="WelcomeTitle_UsesTheName_AndNeverTheWaitingLine" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.WelcomeTitle_UsesTheName_AndNeverTheWaitingLine" methodname="WelcomeTitle_UsesTheName_AndNeverTheWaitingLine" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="960800677" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.002263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="WrappedActiveSession_IsReady_AndKeyIsTheVisitId" fullname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests.WrappedActiveSession_IsReady_AndKeyIsTheVisitId" methodname="WrappedActiveSession_IsReady_AndKeyIsTheVisitId" classname="GenJutsu.ProfileDemo.EditorTools.SessionContractTests" runstate="Runnable" seed="596047656" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:17Z" duration="0.000653" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1028" name="SmartHouseDeviceTests" fullname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests" classname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="0.838862" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1029" name="EachHouse_RegistersLampLedAcTv_AndToggleChangesState" fullname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests.EachHouse_RegistersLampLedAcTv_AndToggleChangesState" methodname="EachHouse_RegistersLampLedAcTv_AndToggleChangesState" classname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests" runstate="Runnable" seed="1783366731" result="Passed" start-time="2026-11-12 15:25:17Z" end-time="2026-11-12 15:25:18Z" duration="0.804836" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+
+IgnoreFailingMessages:true
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:true
+
+IgnoreFailingMessages:true
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:true
+
+IgnoreFailingMessages:true
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:true
+
+IgnoreFailingMessages:true
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+
+IgnoreFailingMessages:false
+
+IgnoreFailingMessages:false
+]]></output>
+              </test-case>
+              <test-case id="1030" name="HouseStateJson_ExposesSmartDeviceIds" fullname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests.HouseStateJson_ExposesSmartDeviceIds" methodname="HouseStateJson_ExposesSmartDeviceIds" classname="GenJutsu.ProfileDemo.EditorTools.SmartHouseDeviceTests" runstate="Runnable" seed="924986175" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.010306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1001" name="GazeLanCodecTests" fullname="GenJutsu.ProfileDemo.GazeLanCodecTests" classname="GenJutsu.ProfileDemo.GazeLanCodecTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.004522" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="CenterYawMapsToServoMid" fullname="GenJutsu.ProfileDemo.GazeLanCodecTests.CenterYawMapsToServoMid" methodname="CenterYawMapsToServoMid" classname="GenJutsu.ProfileDemo.GazeLanCodecTests" runstate="Runnable" seed="210183496" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000936" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1004" name="InvertSwapsSides" fullname="GenJutsu.ProfileDemo.GazeLanCodecTests.InvertSwapsSides" methodname="InvertSwapsSides" classname="GenJutsu.ProfileDemo.GazeLanCodecTests" runstate="Runnable" seed="2042079740" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000252" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1003" name="LeftAndRightYawReachLimits" fullname="GenJutsu.ProfileDemo.GazeLanCodecTests.LeftAndRightYawReachLimits" methodname="LeftAndRightYawReachLimits" classname="GenJutsu.ProfileDemo.GazeLanCodecTests" runstate="Runnable" seed="2028813892" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000238" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1005" name="PacketIsAsciiLine" fullname="GenJutsu.ProfileDemo.GazeLanCodecTests.PacketIsAsciiLine" methodname="PacketIsAsciiLine" classname="GenJutsu.ProfileDemo.GazeLanCodecTests" runstate="Runnable" seed="703891543" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000878" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1054" name="GenJutsu.GenCore.EditorTests.dll" fullname="C:/Users/andre/MVP Gen/Library/ScriptAssemblies/GenJutsu.GenCore.EditorTests.dll" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.037640" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="816" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1055" name="GenJutsu" fullname="GenJutsu" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.036744" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1056" name="GenCore" fullname="GenJutsu.GenCore" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.036095" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1057" name="Tests" fullname="GenJutsu.GenCore.Tests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.035421" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1035" name="GenVoiceEditModeTests" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.034478" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1041" name="Ac_ParsesTempModeFan_AndStaysOptional" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.Ac_ParsesTempModeFan_AndStaysOptional" methodname="Ac_ParsesTempModeFan_AndStaysOptional" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="232522557" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001609" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="AmbientCatalog_UsesReachableIncompetechUrls" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.AmbientCatalog_UsesReachableIncompetechUrls" methodname="AmbientCatalog_UsesReachableIncompetechUrls" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="877149254" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.002344" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1038" name="ApplierMapping_DoesNotChangeTheSessionProfile" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.ApplierMapping_DoesNotChangeTheSessionProfile" methodname="ApplierMapping_DoesNotChangeTheSessionProfile" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="465477668" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001356" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1047" name="BinarySetupComplete_DecodesAsUtf8Json" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.BinarySetupComplete_DecodesAsUtf8Json" methodname="BinarySetupComplete_DecodesAsUtf8Json" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="1851146030" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.004199" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1043" name="Devices_NestedUnderLights_StillMap" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.Devices_NestedUnderLights_StillMap" methodname="Devices_NestedUnderLights_StillMap" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="1468193027" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000576" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1040" name="Devices_ParseSalaRed_AndKeepLegacyLights" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.Devices_ParseSalaRed_AndKeepLegacyLights" methodname="Devices_ParseSalaRed_AndKeepLegacyLights" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="707263539" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001056" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="GeminiAudio_UsesPcm16Rate_AndStreamEnd" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.GeminiAudio_UsesPcm16Rate_AndStreamEnd" methodname="GeminiAudio_UsesPcm16Rate_AndStreamEnd" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="660329799" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001345" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="HistoryBody_CarriesSessionRoleAndKind" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.HistoryBody_CarriesSessionRoleAndKind" methodname="HistoryBody_CarriesSessionRoleAndKind" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="852757979" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="InterruptedFlag_IsReadFromServerContent" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.InterruptedFlag_IsReadFromServerContent" methodname="InterruptedFlag_IsReadFromServerContent" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="1756474357" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000590" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1045" name="LiveSetup_StripsAdditionalProperties_AndUsesGemini38" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.LiveSetup_StripsAdditionalProperties_AndUsesGemini38" methodname="LiveSetup_StripsAdditionalProperties_AndUsesGemini38" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="625044359" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.004457" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1039" name="Media_ParsesTvAudioAndPlayingFlag" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.Media_ParsesTvAudioAndPlayingFlag" methodname="Media_ParsesTvAudioAndPlayingFlag" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="894200539" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000598" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1036" name="NewerVersion_ReplacesPlan_OlderAndEqualDoNot" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.NewerVersion_ReplacesPlan_OlderAndEqualDoNot" methodname="NewerVersion_ReplacesPlan_OlderAndEqualDoNot" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="539677802" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001098" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1037" name="NullState_AndOtherSession_AreIgnored" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.NullState_AndOtherSession_AreIgnored" methodname="NullState_AndOtherSession_AreIgnored" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="818445825" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000576" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1042" name="Persona_WeavesYoungPtBr_AndHonorsProfanityFlag" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.Persona_WeavesYoungPtBr_AndHonorsProfanityFlag" methodname="Persona_WeavesYoungPtBr_AndHonorsProfanityFlag" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="663161286" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000563" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="PushToTalk_InterruptsSpeaking" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.PushToTalk_InterruptsSpeaking" methodname="PushToTalk_InterruptsSpeaking" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="142177475" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.000452" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1051" name="SpawnPoint_IsClearOfFurnitureInEachHouse" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.SpawnPoint_IsClearOfFurnitureInEachHouse" methodname="SpawnPoint_IsClearOfFurnitureInEachHouse" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="1495122204" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001350" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="ToolCall_ForwardsToolAndArgs_AndBuildsToolResponse" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.ToolCall_ForwardsToolAndArgs_AndBuildsToolResponse" methodname="ToolCall_ForwardsToolAndArgs_AndBuildsToolResponse" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="1298089718" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.002572" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="WarmAndCoolLights_MapColorTransitionAndVisibleDrive" fullname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests.WarmAndCoolLights_MapColorTransitionAndVisibleDrive" methodname="WarmAndCoolLights_MapColorTransitionAndVisibleDrive" classname="GenJutsu.GenCore.Tests.GenVoiceEditModeTests" runstate="Runnable" seed="441274814" result="Passed" start-time="2026-11-12 15:25:18Z" end-time="2026-11-12 15:25:18Z" duration="0.001009" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/andre/AppData/LocalLow/DefaultCompany/MVP Gen\TestResults.xml
+Saving results to: C:/Users/andre/AppData/LocalLow/DefaultCompany/MVP Gen\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

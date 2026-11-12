@@ -19,8 +19,10 @@ namespace GenJutsu.ProfileDemo
         XRGrabInteractable grab;
         Rigidbody body;
         Transform homeParent;
-        Vector3 homePosition;
-        Quaternion homeRotation;
+        // Pose local ao pai: a peça da casa cresce/sobe durante a transição, então uma pose de mundo
+        // capturada no meio da animação deixava lanternas, plantas etc. fora do lugar.
+        Vector3 homeLocalPosition;
+        Quaternion homeLocalRotation = Quaternion.identity;
         bool captured;
         bool homeKinematic;
         float awayTimer;
@@ -30,7 +32,8 @@ namespace GenJutsu.ProfileDemo
         public bool IsHeld => grab != null && grab.isSelected;
         public bool IsFlying => flight != null;
         public Rigidbody Body => body;
-        public Vector3 HomePosition => homePosition;
+        public Vector3 HomePosition => homeParent != null ? homeParent.TransformPoint(homeLocalPosition) : homeLocalPosition;
+        Quaternion HomeRotation => homeParent != null ? homeParent.rotation * homeLocalRotation : homeLocalRotation;
 
         /// <summary>Every pose whose home is under <paramref name="root"/>, including props currently held outside it.</summary>
         public static System.Collections.Generic.List<ResettablePose> OwnedBy(Transform root)
@@ -61,8 +64,8 @@ namespace GenJutsu.ProfileDemo
         public void Capture()
         {
             homeParent = transform.parent;
-            homePosition = transform.position;
-            homeRotation = transform.rotation;
+            homeLocalPosition = transform.localPosition;
+            homeLocalRotation = transform.localRotation;
             homeKinematic = body != null && body.isKinematic;
             captured = true;
         }
@@ -76,7 +79,7 @@ namespace GenJutsu.ProfileDemo
                 return;
             }
 
-            if (transform.position.y < floorReturnHeight)
+            if (transform.position.y < floorReturnHeight && (transform.position - HomePosition).sqrMagnitude > 0.0025f)
             {
                 floorTimer += Time.deltaTime;
                 if (floorTimer >= floorReturnDelay)
@@ -89,7 +92,7 @@ namespace GenJutsu.ProfileDemo
 
             if (autoReturnDelay <= 0f)
                 return;
-            if ((transform.position - homePosition).sqrMagnitude < 0.0025f)
+            if ((transform.position - HomePosition).sqrMagnitude < 0.0025f)
             {
                 awayTimer = 0f;
                 return;
@@ -112,8 +115,9 @@ namespace GenJutsu.ProfileDemo
 
             ForceRelease();
             if (transform.parent != homeParent)
-                transform.SetParent(homeParent, true);
-            transform.SetPositionAndRotation(homePosition, homeRotation);
+                transform.SetParent(homeParent, false);
+            transform.localPosition = homeLocalPosition;
+            transform.localRotation = homeLocalRotation;
             if (body != null)
             {
                 if (!body.isKinematic)
@@ -123,8 +127,8 @@ namespace GenJutsu.ProfileDemo
                 }
 
                 body.isKinematic = homeKinematic;
-                body.position = homePosition;
-                body.rotation = homeRotation;
+                body.position = transform.position;
+                body.rotation = transform.rotation;
             }
 
             awayTimer = 0f;
@@ -172,8 +176,8 @@ namespace GenJutsu.ProfileDemo
                 t += Time.deltaTime;
                 var u = Mathf.SmoothStep(0f, 1f, t / flightDuration);
                 var arc = Mathf.Sin(u * Mathf.PI) * 0.15f;
-                transform.SetPositionAndRotation(Vector3.Lerp(startPos, homePosition, u) + Vector3.up * arc,
-                    Quaternion.Slerp(startRot, homeRotation, u));
+                transform.SetPositionAndRotation(Vector3.Lerp(startPos, HomePosition, u) + Vector3.up * arc,
+                    Quaternion.Slerp(startRot, HomeRotation, u));
                 yield return null;
             }
 
