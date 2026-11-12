@@ -42,22 +42,56 @@ namespace GenJutsu.ProfileDemo
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(false);
 
+            // Devolve os objetos ao lugar ANTES de encolher as peças: com a peça em escala 0,
+            // gravar posição de mundo num filho gera posição local degenerada (móveis amontoados).
+            RestoreProps();
+
+            // Rigidbody com interpolação reescreve o transform com a pose da física e "congela"
+            // o objeto no meio do crescimento da peça. Desliga durante a animação.
+            var bodies = GetComponentsInChildren<Rigidbody>(true);
+            var interp = new RigidbodyInterpolation[bodies.Length];
+            for (var i = 0; i < bodies.Length; i++)
+            {
+                interp[i] = bodies[i].interpolation;
+                bodies[i].interpolation = RigidbodyInterpolation.None;
+            }
+
             ComputeDelays(origin);
             for (var i = 0; i < pieces.Count; i++)
                 Apply(i, 0f);
-
-            foreach (var pose in GetComponentsInChildren<ResettablePose>(true))
-                pose.ResetNow();
-            foreach (var bounds in GetComponentsInChildren<BoundsReset>(true))
-                bounds.Restore();
 
             yield return Animate(true);
 
             for (var i = 0; i < pieces.Count; i++)
                 Apply(i, 1f);
+            RestoreProps();
+            Physics.SyncTransforms();
+            for (var i = 0; i < bodies.Length; i++)
+            {
+                if (bodies[i] != null)
+                    bodies[i].interpolation = interp[i];
+            }
+
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(true);
             GrabRest.SettleUnder(transform);
+        }
+
+        void RestoreProps()
+        {
+            foreach (var bounds in GetComponentsInChildren<BoundsReset>(true))
+                bounds.Restore();
+            foreach (var pose in GetComponentsInChildren<ResettablePose>(true))
+            {
+                if (pose.GetComponent<BoundsReset>() == null)
+                    pose.ResetNow();
+            }
+
+            foreach (var body in GetComponentsInChildren<Rigidbody>(true))
+            {
+                body.position = body.transform.position;
+                body.rotation = body.transform.rotation;
+            }
         }
 
         public IEnumerator Dissolve(Vector3 origin)

@@ -186,6 +186,41 @@ namespace GenJutsu.ProfileDemo.EditorTools
         }
 
         [Test]
+        public void BoundsReset_WithoutCaptureDoesNotPileAtParentOrigin()
+        {
+            var parent = new UnityEngine.GameObject("PileParent");
+            var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(0.7f, 0.3f, -0.5f);
+            var bounds = go.AddComponent<BoundsReset>();
+            Assert.IsFalse(bounds.Captured);
+            bounds.Restore();
+            Assert.AreEqual(0.7f, go.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(-0.5f, go.transform.localPosition.z, 0.001f);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
+        public void BoundsReset_HomeSurvivesSerialization()
+        {
+            var parent = new UnityEngine.GameObject("SerParent");
+            var go = new UnityEngine.GameObject("Prop");
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = new UnityEngine.Vector3(1.2f, 0.4f, 0.9f);
+            var bounds = go.AddComponent<BoundsReset>();
+            bounds.Capture();
+            var copy = UnityEngine.Object.Instantiate(parent);
+            var restored = copy.GetComponentInChildren<BoundsReset>();
+            Assert.IsTrue(restored.Captured);
+            restored.transform.localPosition = UnityEngine.Vector3.zero;
+            restored.Restore();
+            Assert.AreEqual(1.2f, restored.transform.localPosition.x, 0.001f);
+            Assert.AreEqual(0.9f, restored.transform.localPosition.z, 0.001f);
+            UnityEngine.Object.DestroyImmediate(copy);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+
+        [Test]
         public void ToonOutline_SkipsUiScreensAndHands()
         {
             var house = new UnityEngine.GameObject("LookMesh");

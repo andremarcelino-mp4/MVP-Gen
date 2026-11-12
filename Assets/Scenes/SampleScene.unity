@@ -3403,6 +3403,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0, z: -0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &38294165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4659,6 +4663,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.85, y: 0, z: 2.05}
+  homeRot: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &54718190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7495,6 +7503,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.35, y: 0.48, z: -0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &88882949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8529,6 +8541,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.75, y: 0, z: 0.15}
+  homeRot: {x: 0, y: -0.1736482, z: 0, w: 0.9848078}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &92995825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9528,6 +9544,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.92, y: 0.05, z: -0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &106036565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10623,6 +10643,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.78, y: 0.07, z: 0.62}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1388180604}
+  captured: 1
 --- !u!114 &118318086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11158,6 +11182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.35, y: 0.045, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &121047405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14183,6 +14211,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.05, y: 0.28, z: 0.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &146999593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14538,6 +14570,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.125, z: -0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &147395956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15110,6 +15146,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.16, z: 0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1066383040}
+  captured: 1
 --- !u!114 &151377461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17169,6 +17209,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.7, y: 0.95, z: 0.55}
+  homeRot: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &164660468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18088,6 +18132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.05, y: 0.48, z: -1.9}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &168017537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18555,6 +18603,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.2, y: 0.12, z: -0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1241239856}
+  captured: 1
 --- !u!114 &170131458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27904,6 +27956,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.15, y: 1.45, z: 2.3799999}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &218529577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29973,6 +30029,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &247434826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30684,6 +30744,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0, z: 2.05}
+  homeRot: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &250074336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31530,6 +31594,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.72, y: 0.07, z: -0.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1388180604}
+  captured: 1
 --- !u!114 &259972245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32398,6 +32466,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.38, y: 0.275, z: -0.92}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 298294975}
+  captured: 1
 --- !u!114 &270235769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34073,6 +34145,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: -0.85}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &284699578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35705,6 +35781,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.7, y: 1.55, z: 2.42}
+  homeRot: {x: 0, y: 0.15643448, z: 0, w: 0.98768836}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &299466373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38217,6 +38297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.75, y: 1.55, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &329745001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38615,6 +38699,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 1.15, z: -2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &331839823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40847,6 +40935,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.95, y: 0, z: 1.55}
+  homeRot: {x: 0, y: -0.104528464, z: 0, w: 0.9945219}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &353138527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41641,6 +41733,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.9, y: 0.02, z: 1.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1388180604}
+  captured: 1
 --- !u!114 &357742227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43249,6 +43345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.2, y: 0.12, z: -0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &368594037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56227,6 +56327,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.72, y: 0.27, z: -0.88}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 298294975}
+  captured: 1
 --- !u!114 &437720164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59843,6 +59947,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.85, y: 0, z: 1.75}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &475102091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60671,6 +60779,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 2.15, z: 0.4}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &486050980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61150,6 +61262,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &490965829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61426,6 +61542,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 1.52, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &491608892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62161,6 +62281,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.45, y: 0.42, z: 0.4}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &497328270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63128,6 +63252,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.15, y: 0, z: 1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &504220993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64347,6 +64475,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.75, y: 0, z: 1.45}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &517582238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66061,6 +66193,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.42, y: 1.15, z: 0.8}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &536730884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67616,6 +67752,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 2000320245}
+  captured: 1
 --- !u!114 &545548077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68687,6 +68827,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.95, y: 0.02, z: 0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &550858111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71184,6 +71328,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.35, y: 0, z: 1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &567252204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71854,6 +72002,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.95, y: 0.02, z: 0.75}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &574486979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72996,6 +73148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.9, y: 1.85, z: 2.42}
+  homeRot: {x: 0, y: -0.104528464, z: 0, w: 0.9945219}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &585761483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74330,6 +74486,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0.28, z: -1.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &600512252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78582,6 +78742,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.45}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &659614127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79197,6 +79361,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.35, y: 0.48, z: -0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 50245537}
+  captured: 1
 --- !u!114 &665964387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80355,6 +80523,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.65, y: 1.5, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &677437237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81581,6 +81753,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 2000320245}
+  captured: 1
 --- !u!114 &686113003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83113,6 +83289,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.95, y: 0, z: -0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &708584974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84140,6 +84320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.72, y: 0.27, z: -0.88}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &719043817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86659,6 +86843,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &738194316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87425,6 +87613,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.35, y: 0.48, z: -0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 298294975}
+  captured: 1
 --- !u!114 &744009084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89042,6 +89234,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.95, y: 0.02, z: -1.45}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1468804238}
+  captured: 1
 --- !u!114 &752049639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89965,6 +90161,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 474099889}
+  captured: 1
 --- !u!114 &757639612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91618,6 +91818,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &777183355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92930,6 +93134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.7, y: 0.125, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &786244317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93380,6 +93588,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.15, y: 0, z: -2.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &786872030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97504,6 +97716,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0.28, z: -1.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 50245537}
+  captured: 1
 --- !u!114 &844376218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99237,6 +99453,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.45, y: 0, z: 1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &863408908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100729,6 +100949,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0.08, z: 0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &871532594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101741,6 +101965,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0, z: 1.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &879065693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108561,6 +108789,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0.28, z: -1.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 298294975}
+  captured: 1
 --- !u!114 &904096913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109135,6 +109367,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 793241331}
+  captured: 1
 --- !u!114 &907483851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112504,6 +112740,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.55, y: 0, z: 1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &938827598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113907,6 +114147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.85, y: 1.72, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &951379894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114865,6 +115109,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.45}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &956801917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115917,6 +116165,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1384654779}
+  captured: 1
 --- !u!114 &971111809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118633,6 +118885,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 793241331}
+  captured: 1
 --- !u!114 &1015843419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119972,6 +120228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.85, y: 0.02, z: -0.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1468804238}
+  captured: 1
 --- !u!114 &1028406174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120563,6 +120823,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.38, y: 0.275, z: -0.92}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 16804273}
+  captured: 1
 --- !u!114 &1031744353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120918,6 +121182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.85, y: 0.05, z: 0.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1032246811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121884,6 +122152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0, z: 1.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1039197090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124126,6 +124398,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.95, y: 0.02, z: -1.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1067986685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124621,6 +124897,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.72, y: 0.27, z: -0.88}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 50245537}
+  captured: 1
 --- !u!114 &1069501621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125564,6 +125844,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.2, y: 0.12, z: -0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 298294975}
+  captured: 1
 --- !u!114 &1079443149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126447,6 +126731,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.75, y: 0, z: -1.45}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &1088930698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128325,6 +128613,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0.28, z: 0.95}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1109560248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131507,6 +131799,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.15, y: 0, z: 1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1132671231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132634,6 +132930,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.5, y: 1.3, z: 2.5}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1149040873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142199,6 +142499,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 2.12, z: 0.05}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1208508846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144111,6 +144415,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.35, y: 2.12, z: -2.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1224957767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145173,6 +145481,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1231989627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145901,6 +146213,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 1.15, z: -2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &1234452284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146393,6 +146709,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.35, y: 0, z: -2.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1236637798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148081,6 +148401,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.38, y: 0.275, z: -0.92}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 50245537}
+  captured: 1
 --- !u!114 &1246093663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149149,6 +149473,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 1.15, z: -2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1258651349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149897,6 +150225,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.25}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1266826006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150850,6 +151182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1272929580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151218,6 +151554,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.3, y: 0.35, z: 1.1}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1273724795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153365,6 +153705,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 2000320245}
+  captured: 1
 --- !u!114 &1304257339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154695,6 +155039,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.72, y: 0.27, z: -0.88}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1241239856}
+  captured: 1
 --- !u!114 &1311166335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159907,6 +160255,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 474099889}
+  captured: 1
 --- !u!114 &1369288640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161622,6 +161974,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.85, y: 0.85, z: -0.35}
+  homeRot: {x: 0.066452295, y: 0.16043, z: 0.37686965, w: 0.9098437}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &1382492129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163000,6 +163356,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1392509738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163366,6 +163726,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.05, y: 0.14, z: 0.78}
+  homeRot: {x: 0, y: 0.34202015, z: 0, w: 0.9396927}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1394643599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163822,6 +164186,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.05, y: 0, z: 0.15}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1398015304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164814,6 +165182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1384654779}
+  captured: 1
 --- !u!114 &1402677338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166526,6 +166898,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.85, y: 1.35, z: 2.28}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1417376027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167126,6 +167502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 793241331}
+  captured: 1
 --- !u!114 &1420786267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167456,6 +167836,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.9, y: 0.02, z: -1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1388180604}
+  captured: 1
 --- !u!114 &1424597778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168391,6 +168775,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.35, y: 0, z: 1.92}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &1432190499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170114,6 +170502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 793241331}
+  captured: 1
 --- !u!114 &1448087939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171755,6 +172147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.9, y: 0.55, z: -1.2}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1470683620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174812,6 +175208,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.15, y: 2.12, z: -2.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &1496219349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176985,6 +177385,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0.05, z: 0.78}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1509214555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178061,6 +178465,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.38, y: 0.275, z: -0.92}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1241239856}
+  captured: 1
 --- !u!114 &1517757902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181797,6 +182205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.16, z: 0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1545620523}
+  captured: 1
 --- !u!114 &1548117999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183509,6 +183921,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0, z: -1.95}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1559667117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184881,6 +185297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.75, y: 0, z: -0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1573791535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185892,6 +186312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 1.85, z: 2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1586375713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190564,6 +190988,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.12, y: 1.52, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1639586318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191654,6 +192082,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.92, y: 0.02, z: 0.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1468804238}
+  captured: 1
 --- !u!114 &1645557839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198178,6 +198610,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0.72, z: 0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &1661260136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198668,6 +199104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 0.55}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1665581008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201803,6 +202243,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.75, y: 0, z: -0.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1698958080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204142,6 +204586,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.55, y: 0.28, z: -1.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1241239856}
+  captured: 1
 --- !u!114 &1726160911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204879,6 +205327,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.2, y: 0.12, z: -0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 50245537}
+  captured: 1
 --- !u!114 &1732034760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205324,6 +205776,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.045, z: -2.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1733717900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205891,6 +206347,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 474099889}
+  captured: 1
 --- !u!114 &1735682003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207040,6 +207500,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.7, y: 0.125, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &1755808801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209311,6 +209775,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.15, y: 1.35, z: 2.34}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1782788598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210598,6 +211066,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0.55, z: -0.95}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1791029319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211830,6 +212302,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.22, y: 1.42, z: 0.35}
+  homeRot: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1800655715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214661,6 +215137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 1.15, z: 2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1824680465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216571,6 +217051,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: -0.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1846914936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217301,6 +217785,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1853396363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220259,6 +220747,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.045, z: 2.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 361372701}
+  captured: 1
 --- !u!114 &1874836365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220705,6 +221197,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1384654779}
+  captured: 1
 --- !u!114 &1879488708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221551,6 +222047,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.95, y: 0, z: 1.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1893309409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223722,6 +224222,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.15, y: 0.02, z: 0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &1920237225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224688,6 +225192,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.55, y: 1.15, z: -2.18}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &1923860549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225539,6 +226047,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.35, y: 0.48, z: -0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1241239856}
+  captured: 1
 --- !u!114 &1927927313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225864,6 +226376,8 @@ MonoBehaviour:
   morph: {fileID: 1928802753}
   hubDissolve: {fileID: 1928802751}
   gaze: {fileID: 1928802750}
+  sessionWaitSeconds: 3
+  fallbackProfile: 0
 --- !u!114 &1928802750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228719,6 +229233,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: -1.15}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1384654779}
+  captured: 1
 --- !u!114 &1971018764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229198,6 +229716,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0.15, y: 0.05, z: -0.82}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1971699442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229553,6 +230075,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.16, z: 0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 569347207}
+  captured: 1
 --- !u!114 &1972502505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229909,6 +230435,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 474099889}
+  captured: 1
 --- !u!114 &1972723768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230389,6 +230919,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &1976409768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233505,6 +234039,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.125, z: 0.7}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &2009322282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234720,6 +235258,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.55, y: 0, z: 1.35}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 2000320245}
+  captured: 1
 --- !u!114 &2020513143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235462,6 +236004,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &2028192852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236205,6 +236751,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.41, y: 0.55, z: -0.95}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &2033857105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236872,6 +237422,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 2.12, z: -0.85}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &2040495796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238253,6 +238807,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -1.85, y: 0, z: 0.05}
+  homeRot: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  homeParent: {fileID: 713998814}
+  captured: 1
 --- !u!114 &2056225852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239497,6 +240055,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.05, y: 1.78, z: 2.22}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 747865137}
+  captured: 1
 --- !u!114 &2061127326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239828,6 +240390,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0, z: 0}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 350393174}
+  captured: 1
 --- !u!114 &2062858534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240242,6 +240808,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 2.05, y: 0.85, z: 0.55}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &2065875877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241510,6 +242080,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -0.62, y: 0.05, z: -0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &2077787203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242405,6 +242979,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.62, y: 0.02, z: 0.72}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1468804238}
+  captured: 1
 --- !u!114 &2087652945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243336,6 +243914,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: -2.42, y: 1.4, z: -0.4}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 1261535241}
+  captured: 1
 --- !u!114 &2093349351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245745,6 +246327,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 1.15, y: 0.08, z: 0.85}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 757940097}
+  captured: 1
 --- !u!114 &2118648238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247148,6 +247734,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13a8499d9e396e4c9d87393be69e736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GenJutsu.ProfileDemo.BoundsReset
+  homeLocal: {x: 0, y: 0.16, z: 0.05}
+  homeRot: {x: 0, y: 0, z: 0, w: 1}
+  homeParent: {fileID: 631304112}
+  captured: 1
 --- !u!114 &2136454080
 MonoBehaviour:
   m_ObjectHideFlags: 0

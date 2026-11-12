@@ -1,0 +1,34 @@
+inicio: estado=WhiteSpace prontoSemSessao=False temSessao=False
+passo 0 (sem sessao, espera Zen): COMECAR apertado, aceitou=True
+passo 0: entrou na casa Zen em 6,5s, fonte=padrao
+  Zen: pegaveis comparados=25 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  print artifacts/v3.6/zen-entrada.png
+  print artifacts/v3.6/zen-sala.png
+  Zen: baguncei 30 pegaveis num monte so (teste de reset na proxima sessao)
+passo 1 (QA36C, espera Cyber): COMECAR apertado, aceitou=True
+passo 1: entrou na casa Cyber em 3,5s, fonte=sessao
+  Cyber: pegaveis comparados=29 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  print artifacts/v3.6/cyber-entrada.png
+  print artifacts/v3.6/cyber-sala.png
+  Cyber: baguncei 35 pegaveis num monte so (teste de reset na proxima sessao)
+passo 2 (QA36E, espera Excentrico): COMECAR apertado, aceitou=True
+passo 2: entrou na casa Excentrico em 3,5s, fonte=sessao
+  Excentrico: pegaveis comparados=39 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  print artifacts/v3.6/excentrico-entrada.png
+  print artifacts/v3.6/excentrico-sala.png
+  Excentrico: baguncei 44 pegaveis num monte so (teste de reset na proxima sessao)
+passo 3 (QA36A, espera Acolhedor): COMECAR apertado, aceitou=True
+passo 3: entrou na casa Acolhedor em 3,5s, fonte=sessao
+  Acolhedor: pegaveis comparados=33 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  print artifacts/v3.6/acolhedor-entrada.png
+  print artifacts/v3.6/acolhedor-sala.png
+  Acolhedor: baguncei 38 pegaveis num monte so (teste de reset na proxima sessao)
+passo 4 (QA36Z, espera Zen): COMECAR apertado, aceitou=True
+passo 4: entrou na casa Zen em 3,5s, fonte=sessao
+  Zen: pegaveis comparados=25 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  Zen: baguncei 30 pegaveis num monte so (teste de reset na proxima sessao)
+passo 5 (QA36C2, espera Cyber): COMECAR apertado, aceitou=True
+passo 5: entrou na casa Cyber em 3,5s, fonte=sessao
+  Cyber: pegaveis comparados=29 fora_do_lugar=0 erro_max=0,0000m amontoados(pares<2cm)=0 sem_projeto=0 OK
+  Cyber: baguncei 35 pegaveis num monte so (teste de reset na proxima sessao)
+RESULTADO: OK

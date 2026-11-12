@@ -15,9 +15,12 @@ namespace GenJutsu.Gen
     {
         static bool missingLogged;
 
+        /// <summary>QA no Editor: não grava nada no histórico do site.</summary>
+        public static bool Muted;
+
         public static void Note(string baseUrl, string role, string text, string kind)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (Muted || string.IsNullOrWhiteSpace(text))
                 return;
             var root = string.IsNullOrEmpty(baseUrl) ? "https://genjutsuai.vercel.app" : baseUrl.TrimEnd('/');
             var body = GeminiLiveMessages.HistoryBody(GuestSession.Code, role, text, kind);

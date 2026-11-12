@@ -19,7 +19,7 @@ namespace GenJutsu.ProfileDemo
                 rest[i].Park();
                 var reset = rest[i].GetComponent<BoundsReset>();
                 if (reset != null)
-                    reset.Capture();
+                    reset.CaptureIfMissing();
                 var pose = rest[i].GetComponent<ResettablePose>();
                 if (pose != null)
                     pose.Capture();

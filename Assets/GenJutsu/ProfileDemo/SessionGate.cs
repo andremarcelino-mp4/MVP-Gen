@@ -46,7 +46,7 @@ namespace GenJutsu.ProfileDemo
             HideCardVisual();
             ShowWaiting();
 #if UNITY_EDITOR
-            if (System.IO.File.Exists("Temp/dojo-shots.marker"))
+            if (System.IO.File.Exists("Temp/dojo-shots.marker") || System.IO.File.Exists("Temp/comecar-check.on"))
                 suppressNetworkPoll = true;
 #endif
         }

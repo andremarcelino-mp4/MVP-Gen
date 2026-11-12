@@ -33,7 +33,7 @@ namespace GenJutsu.ProfileDemo.EditorTools
                     paths.Add(scenes[i].path);
             }
 
-            var r = BuildPipeline.BuildPlayer(paths.ToArray(), "Builds/Android/MVP Gen.apk", BuildTarget.Android, BuildOptions.None);
+            var r = BuildPipeline.BuildPlayer(paths.ToArray(), "Builds/Android/MVP Gen v" + PlayerSettings.bundleVersion + ".apk", BuildTarget.Android, BuildOptions.None);
             Directory.CreateDirectory("artifacts/pr10-v4");
             File.WriteAllText("artifacts/pr10-v4/apk-build.txt", r.summary.result + " bytes=" + r.summary.totalSize + " " + System.DateTime.Now.ToString("o"));
             if (r.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)

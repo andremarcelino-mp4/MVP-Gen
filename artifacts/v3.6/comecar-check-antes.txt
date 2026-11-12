@@ -1,0 +1,73 @@
+inicio: estado=WhiteSpace prontoSemSessao=False temSessao=False
+passo 0 (sem sessao, espera Zen): COMECAR apertado, aceitou=True
+FALHA: passo 0: COMECAR nao entrou na sala em 15s (estado=WhiteSpace, prontoSessao=False)
+passo 0: repetindo com sessao Zen para medir os moveis
+passo 0 (QA36Z0, espera Zen): COMECAR apertado, aceitou=True
+passo 0: entrou na casa Zen em 3,5s, fonte=(n/a)
+  Zen: pegaveis comparados=25 fora_do_lugar=25 erro_max=3,2921m amontoados(pares<2cm)=299 sem_projeto=0 FALHOU
+    Lantern erro=1,937m em (0.00, -0.16, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,937m em (0.00, -0.16, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,062m em (0.00, -0.16, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,062m em (0.00, -0.16, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,325m em (0.00, -0.16, 0.00) (projeto (0.00, 0.16, 0.05))
+    Bonsai erro=3,292m em (0.00, -0.16, 0.00) (projeto (-2.95, 0.02, -1.45))
+  print artifacts/v3.6/zen-entrada.png
+  print artifacts/v3.6/zen-sala.png
+  Zen: baguncei 30 pegaveis num monte so (teste de reset na proxima sessao)
+passo 1 (QA36C, espera Cyber): COMECAR apertado, aceitou=True
+passo 1: entrou na casa Cyber em 3,5s, fonte=(n/a)
+  Cyber: pegaveis comparados=29 fora_do_lugar=27 erro_max=3,9045m amontoados(pares<2cm)=325 sem_projeto=0 FALHOU
+    Lantern erro=1,963m em (0.00, -0.36, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,963m em (0.00, -0.36, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,086m em (0.00, -0.36, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,086m em (0.00, -0.36, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,519m em (0.00, -0.36, 0.00) (projeto (0.00, 0.16, 0.05))
+    NeonFront erro=2,384m em (0.00, -0.36, 0.00) (projeto (0.00, 0.05, -2.35))
+  print artifacts/v3.6/cyber-entrada.png
+  print artifacts/v3.6/cyber-sala.png
+  Cyber: baguncei 35 pegaveis num monte so (teste de reset na proxima sessao)
+passo 2 (QA36E, espera Excentrico): COMECAR apertado, aceitou=True
+passo 2: entrou na casa Excentrico em 3,6s, fonte=(n/a)
+  Excentrico: pegaveis comparados=39 fora_do_lugar=38 erro_max=3,5625m amontoados(pares<2cm)=630 sem_projeto=0 FALHOU
+    Lantern erro=1,950m em (0.00, -0.28, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,950m em (0.00, -0.28, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,074m em (0.00, -0.28, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,074m em (0.00, -0.28, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,438m em (0.00, -0.28, 0.00) (projeto (0.00, 0.16, 0.05))
+    Splat erro=3,475m em (0.00, -0.28, 0.00) (projeto (-1.70, 1.55, 2.42))
+  print artifacts/v3.6/excentrico-entrada.png
+  print artifacts/v3.6/excentrico-sala.png
+  Excentrico: baguncei 44 pegaveis num monte so (teste de reset na proxima sessao)
+passo 3 (QA36A, espera Acolhedor): COMECAR apertado, aceitou=True
+passo 3: entrou na casa Acolhedor em 3,5s, fonte=(n/a)
+  Acolhedor: pegaveis comparados=33 fora_do_lugar=33 erro_max=3,3656m amontoados(pares<2cm)=528 sem_projeto=0 FALHOU
+    Lantern erro=1,935m em (0.00, -0.14, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,935m em (0.00, -0.14, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,061m em (0.00, -0.14, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,061m em (0.00, -0.14, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,308m em (0.00, -0.14, 0.00) (projeto (0.00, 0.16, 0.05))
+    Plant erro=3,366m em (0.00, -0.14, 0.00) (projeto (-2.90, 0.02, 1.70))
+  print artifacts/v3.6/acolhedor-entrada.png
+  print artifacts/v3.6/acolhedor-sala.png
+  Acolhedor: baguncei 38 pegaveis num monte so (teste de reset na proxima sessao)
+passo 4 (QA36Z, espera Zen): COMECAR apertado, aceitou=True
+passo 4: entrou na casa Zen em 3,5s, fonte=(n/a)
+  Zen: pegaveis comparados=25 fora_do_lugar=25 erro_max=3,3025m amontoados(pares<2cm)=299 sem_projeto=0 FALHOU
+    Lantern erro=1,953m em (0.00, -0.30, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,953m em (0.00, -0.30, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,077m em (0.00, -0.30, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,077m em (0.00, -0.30, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,461m em (0.00, -0.30, 0.00) (projeto (0.00, 0.16, 0.05))
+    Bonsai erro=3,302m em (0.00, -0.30, 0.00) (projeto (-2.95, 0.02, -1.45))
+  Zen: baguncei 30 pegaveis num monte so (teste de reset na proxima sessao)
+passo 5 (QA36C2, espera Cyber): COMECAR apertado, aceitou=True
+passo 5: entrou na casa Cyber em 3,5s, fonte=(n/a)
+  Cyber: pegaveis comparados=29 fora_do_lugar=27 erro_max=3,9064m amontoados(pares<2cm)=325 sem_projeto=0 FALHOU
+    Lantern erro=1,964m em (0.00, -0.36, 0.00) (projeto (-1.55, 0.00, -1.15))
+    Lantern erro=1,964m em (0.00, -0.36, 0.00) (projeto (1.55, 0.00, -1.15))
+    Lantern erro=2,087m em (0.00, -0.36, 0.00) (projeto (-1.55, 0.00, 1.35))
+    Lantern erro=2,087m em (0.00, -0.36, 0.00) (projeto (1.55, 0.00, 1.35))
+    Top erro=0,524m em (0.00, -0.36, 0.00) (projeto (0.00, 0.16, 0.05))
+    NeonFront erro=2,385m em (0.00, -0.36, 0.00) (projeto (0.00, 0.05, -2.35))
+  Cyber: baguncei 35 pegaveis num monte so (teste de reset na proxima sessao)
+RESULTADO: FALHOU
