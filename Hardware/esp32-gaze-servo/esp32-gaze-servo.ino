@@ -7,7 +7,7 @@
 // (linhas antigas Y,..,P,..,S,.. também são aceitas; usa P em radianos)
 //
 // Ligações: servo sinal GPIO18 (fonte 5-6 V/2 A+ externa, GND comum)
-//           MPU6050 VCC 3V3, GND, SDA GPIO21, SCL GPIO22 (colado na parte que inclina)
+//           MPU6050 VCC 3V3, GND, SDA GPIO21, SCL GPIO19 (colado na parte que inclina)
 // Wi-Fi: redes do config.h + redes gravadas pelo portal "GenJutsu-Maquete".
 //        Segure o botão BOOT (GPIO0) ao ligar para abrir o portal à força.
 
@@ -29,7 +29,7 @@
 // ---------- ajustes ----------
 static const int SERVO_PIN = 18;
 static const int SDA_PIN = 21;
-static const int SCL_PIN = 22;
+static const int SCL_PIN = 19;
 static const int PORTAL_BTN_PIN = 0;
 static const uint16_t UDP_PORT = 9000;
 static const float PITCH_LIMIT = 60.0f;   // graus de cabeça aceitos
