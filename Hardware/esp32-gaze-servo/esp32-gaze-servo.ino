@@ -18,7 +18,6 @@
 #endif
 
 #include <WiFi.h>
-#include <WiFiMulti.h>
 #include <WiFiUdp.h>
 #include <WiFiManager.h>
 #include <PubSubClient.h>
@@ -58,7 +57,6 @@ static int32_t gLastSeq = -1;
 static portMUX_TYPE gMux = portMUX_INITIALIZER_UNLOCKED;
 
 // ---------- objetos ----------
-WiFiMulti wifiMulti;
 WiFiUDP udp;
 WiFiClient netClient;
 PubSubClient mqtt(netClient);
@@ -173,12 +171,13 @@ static void autoCalibrate() {
   Serial.printf("[MPU] eixo=%c sinal=%+.0f ganho=%.2f -> malha FECHADA\n", mpuAxis ? 'Y' : 'X', mpuSign, mpuGain);
 }
 
-static void controlTask(void*) {
-  float tgtSmooth = 0, integ = 0, cmd = SERVO_CENTER;
-  uint32_t lastLog = 0;
-  TickType_t wake = xTaskGetTickCount();
-  for (;;) {
-    vTaskDelayUntil(&wake, pdMS_TO_TICKS(10));
+// Roda no loop() a cada 10 ms (sem task separada: a task travava o Wi-Fi no core 3.x).
+static float tgtSmooth = 0, integ = 0, cmd = SERVO_CENTER;
+static uint32_t lastLog = 0, lastCtl = 0;
+static void controlStep() {
+  if (millis() - lastCtl < 10) return;
+  lastCtl = millis();
+  {
     const float dt = 0.01f;
     uint32_t now = millis();
     float target;
@@ -217,26 +216,35 @@ static void controlTask(void*) {
     gReal = real; gCmd = cmd;
 
     if (now - lastLog >= 200) {      // ~5 Hz
+      char ageBuf[12];
+      if (have) snprintf(ageBuf, sizeof(ageBuf), "%lu", (unsigned long)age); else strcpy(ageBuf, "-");
       lastLog = now;
       Serial.printf("alvo=%6.1f real=%6.1f servo=%5.1f %s src=%c rx=%lu idade=%s wifi=%s mqtt=%s\n",
                     tgtSmooth, real, cmd, mpuOk ? "PI" : "OL", (char)gSrc, (unsigned long)gRxCount,
-                    have ? String(age).c_str() : "-",
+                    ageBuf,
                     gWifiUp ? "ok" : "off", gMqttUp ? "ok" : "off");
     }
   }
 }
 
 // ================= rede =================
+static String knownSsid[8], knownPass[8];
+static int knownN = 0, wifiIdx = 0;
+static void addKnown(const char* s, const char* p) {
+  for (int i = 0; i < knownN; i++) if (knownSsid[i] == s) { knownPass[i] = p; return; }
+  if (knownN < 8) { knownSsid[knownN] = s; knownPass[knownN] = p; knownN++; }
+}
+
 static void addKnownNetworks() {
-  if (strlen(WIFI_SSID_1)) wifiMulti.addAP(WIFI_SSID_1, WIFI_PASS_1);
-  if (strlen(WIFI_SSID_2)) wifiMulti.addAP(WIFI_SSID_2, WIFI_PASS_2);
+  if (strlen(WIFI_SSID_1)) addKnown(WIFI_SSID_1, WIFI_PASS_1);
+  if (strlen(WIFI_SSID_2)) addKnown(WIFI_SSID_2, WIFI_PASS_2);
   prefs.begin("wifi", true);
   int n = prefs.getInt("n", 0);
   for (int i = 0; i < n && i < 5; i++) {
     String s = prefs.getString(("s" + String(i)).c_str(), "");
     String p = prefs.getString(("p" + String(i)).c_str(), "");
     if (s.length()) {
-      wifiMulti.addAP(s.c_str(), p.c_str());
+      addKnown(s.c_str(), p.c_str());
       Serial.printf("[WiFi] rede salva: %s\n", s.c_str());
     }
   }
@@ -259,7 +267,7 @@ static void saveNetwork(const String& ssid, const String& pass) {
   prefs.putString(("p" + String(slot)).c_str(), pass);
   if (n < 5) prefs.putInt("n", n + 1); else prefs.putInt("next", slot + 1);
   prefs.end();
-  wifiMulti.addAP(ssid.c_str(), pass.c_str());
+  addKnown(ssid.c_str(), pass.c_str());
   Serial.printf("[WiFi] rede nova gravada: %s\n", ssid.c_str());
 }
 
@@ -303,8 +311,13 @@ static void ensureWifi() {
   if (up) return;
   if (!wifiLostAt) wifiLostAt = millis();
   if (millis() < wifiNextTry) return;
-  wifiNextTry = millis() + 3000;
-  if (wifiMulti.run(8000) == WL_CONNECTED) return;  // tenta todas as redes conhecidas
+  wifiNextTry = millis() + 10000;    // tenta uma rede conhecida por vez, sem bloquear
+  if (knownN > 0) {
+    int i = wifiIdx++ % knownN;
+    Serial.printf("[WiFi] tentando %s...\n", knownSsid[i].c_str());
+    WiFi.disconnect();
+    WiFi.begin(knownSsid[i].c_str(), knownPass[i].c_str());
+  }
   if (millis() - wifiLostAt > OFFLINE_PORTAL_MS) {
     runPortal();
     wifiLostAt = millis();
@@ -374,7 +387,6 @@ void setup() {
   mqtt.setSocketTimeout(4);
   mqtt.setBufferSize(256);
 
-  xTaskCreatePinnedToCore(controlTask, "ctl", 4096, nullptr, 3, nullptr, 1);
 
   WiFi.mode(WIFI_STA);
   WiFi.setSleep(false);
@@ -382,10 +394,11 @@ void setup() {
   addKnownNetworks();
   bool forcePortal = digitalRead(PORTAL_BTN_PIN) == LOW;
   Serial.printf("[WiFi] procurando redes conhecidas (%s)...\n", WIFI_SSID_1);
-  if (forcePortal || wifiMulti.run(15000) != WL_CONNECTED) runPortal();
+  if (forcePortal) runPortal();       // sem rede conhecida por 2 min o portal abre sozinho
 }
 
 void loop() {
+  controlStep();
   ensureWifi();
   pollUdp();
   ensureMqtt();
