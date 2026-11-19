@@ -120,3 +120,7 @@ Assets/GenJutsu/AI_Test/VoiceModel/*.onnx
 
 # Graphify local knowledge graph
 graphify-out/
+
+# ESP32 maquete: Wi-Fi local credentials (template: config.example.h)
+Hardware/esp32-gaze-servo/config.h
+Hardware/esp32-gaze-servo/build/
