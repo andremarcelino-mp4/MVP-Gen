@@ -1,4 +1,4 @@
-﻿// GenJutsu maquete: ESP32 + MG996R (inclinação cima/baixo) + MPU6050 na maquete.
+// GenJutsu maquete: ESP32 + MG996R (inclinação cima/baixo) + MPU6050 na maquete.
 //
 // O Quest 3S envia a inclinação da cabeça (pitch) por dois caminhos; vale o que chegar mais novo:
 //   1) MQTT público pela internet  -> funciona com o ESP32 em QUALQUER rede (sem IP fixo)
@@ -27,6 +27,7 @@
 #include <ESP32Servo.h>
 
 // ---------- ajustes ----------
+static const bool USE_MPU = true;       // true = usa o MPU6050 para corrigir (malha fechada); false = servo direto
 static const int SERVO_PIN = 18;
 static const int SDA_PIN = 21;
 static const int SCL_PIN = 19;
@@ -129,101 +130,139 @@ static void onMqtt(char* topic, byte* payload, unsigned int len) {
   handleLine(buf, 'M');
 }
 
-// ================= controle (task própria, não trava com a rede) =================
+// ================= controle: servo de ROTAÇÃO CONTÍNUA (360°) + MPU6050 =================
+// O MG996R 360° não vai para um ângulo: o pulso define velocidade/sentido (1500 us = parado).
+// O MPU mede o ângulo real da maquete e o firmware gira o servo até alcançar o ângulo da cabeça.
+static const int   STOP_US      = 1500;  // pulso parado (ajuste se o servo "andar" sozinho parado)
+static const int   MIN_US       = 45;    // menor pulso que faz o servo realmente girar
+static const int   MAX_US       = 220;   // velocidade máxima (até ~500)
+static const float KP_US        = 9.0f;  // us de velocidade por grau de erro
+static const float DEADBAND_DEG = 1.5f;  // erro aceitável: para o servo
+static const float ANGLE_LIMIT  = 50.0f; // nunca passa disso (proteção mecânica)
+static const float CAL_US       = 90.0f; // velocidade usada no teste de sentido
+
 static float readMpu() {
   mpu.update();
   float a = (mpuAxis == 0) ? mpu.getAngleX() : mpu.getAngleY();
   return mpuSign * a;
 }
 
+static void spinFor(int us, int ms) {
+  uint32_t t0 = millis();
+  servo.writeMicroseconds(STOP_US + us);
+  while (millis() - t0 < (uint32_t)ms) { mpu.update(); delay(5); }
+  servo.writeMicroseconds(STOP_US);
+}
+
 static void autoCalibrate() {
-  // Maquete parada e nivelada: zera o MPU e descobre eixo/sentido/ganho com um pequeno movimento.
-  servo.write((int)SERVO_CENTER);
-  delay(1200);
-  Serial.println("[MPU] calibrando (deixe a maquete parada)...");
+  // Maquete parada e nivelada: zera o MPU e descobre eixo/sentido com um giro curto (vai e volta).
+  servo.writeMicroseconds(STOP_US);
+  delay(800);
+  Serial.println("[MPU] calibrando (deixe a maquete parada e nivelada)...");
   mpu.calcOffsets();
-  for (int i = 0; i < 50; i++) { mpu.update(); delay(5); }
+  for (int i = 0; i < 60; i++) { mpu.update(); delay(5); }
   float x0 = mpu.getAngleX(), y0 = mpu.getAngleY();
-  const float step = 15.0f;
-  for (int i = 0; i <= 30; i++) {           // sobe 15° em ~300 ms
-    servo.write((int)(SERVO_CENTER + step * i / 30.0f));
-    mpu.update();
-    delay(10);
+  float dx = 0, dy = 0;
+  int ms = 150;
+  for (int tries = 0; tries < 4; tries++) {          // aumenta o giro até ver ~5° de movimento
+    spinFor((int)CAL_US, ms);
+    for (int i = 0; i < 40; i++) { mpu.update(); delay(5); }
+    dx = mpu.getAngleX() - x0; dy = mpu.getAngleY() - y0;
+    if (fabsf(dx) >= 5.0f || fabsf(dy) >= 5.0f || fabsf(dx) > 25 || fabsf(dy) > 25) break;
+    ms += 100;
   }
-  for (int i = 0; i < 70; i++) { mpu.update(); delay(10); }
-  float dx = mpu.getAngleX() - x0, dy = mpu.getAngleY() - y0;
-  for (int i = 30; i >= 0; i--) {
-    servo.write((int)(SERVO_CENTER + step * i / 30.0f));
-    mpu.update();
-    delay(10);
-  }
-  for (int i = 0; i < 50; i++) { mpu.update(); delay(10); }
+  // volta para perto do nível
   float best = fabsf(dx) >= fabsf(dy) ? dx : dy;
   mpuAxis = fabsf(dx) >= fabsf(dy) ? 0 : 1;
-  Serial.printf("[MPU] teste 15 graus: dX=%.1f dY=%.1f\n", dx, dy);
-  if (fabsf(best) < 4.0f) {
+  Serial.printf("[MPU] teste de giro: dX=%.1f dY=%.1f\n", dx, dy);
+  if (fabsf(best) < 3.0f) {
     mpuOk = false;
-    Serial.println("[MPU] maquete nao se moveu no teste -> malha ABERTA (servo direto)");
+    spinFor(-(int)CAL_US, ms);
+    Serial.println("[MPU] maquete nao se moveu -> servo PARADO (confira alimentacao/acoplamento)");
     return;
   }
   mpuSign = best > 0 ? 1.0f : -1.0f;
-  mpuGain = constrain(fabsf(best) / step, 0.3f, 3.0f);
-  Serial.printf("[MPU] eixo=%c sinal=%+.0f ganho=%.2f -> malha FECHADA\n", mpuAxis ? 'Y' : 'X', mpuSign, mpuGain);
+  mpuOk = true;
+  uint32_t t0 = millis();                              // retorna ao nível usando o próprio MPU
+  while (millis() - t0 < 3000) {
+    float a = readMpu();
+    if (fabsf(a) < DEADBAND_DEG) break;
+    servo.writeMicroseconds(STOP_US + (a > 0 ? -1 : 1) * (MIN_US + 20));
+    delay(10);
+  }
+  servo.writeMicroseconds(STOP_US);
+  Serial.printf("[MPU] eixo=%c sinal=%+.0f -> malha FECHADA (velocidade)\n", mpuAxis ? 'Y' : 'X', mpuSign);
 }
 
-// Roda no loop() a cada 10 ms (sem task separada: a task travava o Wi-Fi no core 3.x).
-static float tgtSmooth = 0, integ = 0, cmd = SERVO_CENTER;
+static float tgtSmooth = 0;
+static int outUs = 0;
 static uint32_t lastLog = 0, lastCtl = 0;
 static void controlStep() {
   if (millis() - lastCtl < 10) return;
   lastCtl = millis();
-  {
-    const float dt = 0.01f;
-    uint32_t now = millis();
-    float target;
-    uint32_t last;
-    bool have;
-    portENTER_CRITICAL(&gMux);
-    target = gTarget; last = gLastRxMs; have = gHaveRx;
-    portEXIT_CRITICAL(&gMux);
-    uint32_t age = have ? now - last : 0xFFFFFFFF;
-    if (!have) {
-      target = 0;
-    } else if (age > LEVEL_MS) {
-      target = tgtSmooth * 0.995f;   // volta devagar ao nível
-      portENTER_CRITICAL(&gMux); gTarget = target; portEXIT_CRITICAL(&gMux);
-    } else if (age > HOLD_MS) {
-      target = tgtSmooth;            // segura a última posição
-    }
-    tgtSmooth += (target - tgtSmooth) * TARGET_SMOOTH;
+  uint32_t now = millis();
+  float target;
+  uint32_t last;
+  bool have;
+  portENTER_CRITICAL(&gMux);
+  target = gTarget; last = gLastRxMs; have = gHaveRx;
+  portEXIT_CRITICAL(&gMux);
+  uint32_t age = have ? now - last : 0xFFFFFFFF;
+  if (!have) {
+    target = 0;
+  } else if (age > LEVEL_MS) {
+    target = tgtSmooth * 0.995f;   // volta devagar ao nível
+    portENTER_CRITICAL(&gMux); gTarget = target; portEXIT_CRITICAL(&gMux);
+  } else if (age > HOLD_MS) {
+    target = tgtSmooth;            // segura a última posição
+  }
+  target = constrain(target, -ANGLE_LIMIT, ANGLE_LIMIT);
+  tgtSmooth += (target - tgtSmooth) * TARGET_SMOOTH;
 
-    float real = tgtSmooth;
-    float want;
-    if (mpuOk) {
-      real = readMpu();
-      float err = tgtSmooth - real;
-      if (fabsf(err) > 0.5f) integ += KI * err * dt;
-      integ = constrain(integ, -I_LIMIT, I_LIMIT);
-      want = SERVO_CENTER + (tgtSmooth + KP * err) / mpuGain + integ;
-    } else {
-      want = SERVO_CENTER + tgtSmooth;
+  float real = 0;
+  int want = 0;
+  if (mpuOk) {
+    real = readMpu();
+    float err = tgtSmooth - real;
+    if (isnan(real)) {
+      want = 0;
+    } else if (fabsf(err) > DEADBAND_DEG) {
+      float mag = MIN_US + KP_US * (fabsf(err) - DEADBAND_DEG);
+      if (mag > MAX_US) mag = MAX_US;
+      want = (err > 0 ? 1 : -1) * (int)mag;
     }
-    want = constrain(want, SERVO_MIN, SERVO_MAX);
-    float maxStep = SLEW_DEG_S * dt;
-    cmd += constrain(want - cmd, -maxStep, maxStep);
-    if (cmd <= SERVO_MIN || cmd >= SERVO_MAX) integ *= 0.98f;  // anti-windup no fim de curso
-    servo.writeMicroseconds(map((long)(cmd * 10), 0, 1800, 500, 2400));
-    gReal = real; gCmd = cmd;
+    // proteção: passou do limite, só deixa girar de volta
+    if (real > ANGLE_LIMIT && want > 0) want = 0;
+    if (real < -ANGLE_LIMIT && want < 0) want = 0;
+  }
+  // proteção contra giro em falso: girando >1,5 s sem a maquete mexer 1° -> para por 3 s
+  static uint32_t moveStart = 0, stallUntil = 0;
+  static float moveRef = 0;
+  if (now < stallUntil) {
+    want = 0;
+  } else if (mpuOk && abs(outUs) >= MIN_US) {
+    if (moveStart == 0) { moveStart = now; moveRef = real; }
+    if (fabsf(real - moveRef) >= 1.0f) { moveStart = now; moveRef = real; }
+    else if (now - moveStart > 1500) {
+      stallUntil = now + 3000; moveStart = 0; want = 0; outUs = 0;
+      Serial.println("[MPU] servo girando mas maquete parada -> pausa 3 s (confira acoplamento/batente)");
+    }
+  } else {
+    moveStart = 0;
+  }
+  // rampa suave para não dar tranco
+  int step = 25;
+  if (want > outUs + step) outUs += step; else if (want < outUs - step) outUs -= step; else outUs = want;
+  servo.writeMicroseconds(STOP_US + outUs);
+  gReal = real; gCmd = outUs;
 
-    if (now - lastLog >= 200) {      // ~5 Hz
-      char ageBuf[12];
-      if (have) snprintf(ageBuf, sizeof(ageBuf), "%lu", (unsigned long)age); else strcpy(ageBuf, "-");
-      lastLog = now;
-      Serial.printf("alvo=%6.1f real=%6.1f servo=%5.1f %s src=%c rx=%lu idade=%s wifi=%s mqtt=%s\n",
-                    tgtSmooth, real, cmd, mpuOk ? "PI" : "OL", (char)gSrc, (unsigned long)gRxCount,
-                    ageBuf,
-                    gWifiUp ? "ok" : "off", gMqttUp ? "ok" : "off");
-    }
+  if (now - lastLog >= 200) {      // ~5 Hz
+    char ageBuf[12];
+    if (have) snprintf(ageBuf, sizeof(ageBuf), "%lu", (unsigned long)age); else strcpy(ageBuf, "-");
+    lastLog = now;
+    Serial.printf("alvo=%6.1f real=%6.1f vel=%+4d %s src=%c rx=%lu idade=%s wifi=%s mqtt=%s\n",
+                  tgtSmooth, real, outUs, mpuOk ? "MF" : "PARADO", (char)gSrc, (unsigned long)gRxCount,
+                  ageBuf, gWifiUp ? "ok" : "off", gMqttUp ? "ok" : "off");
   }
 }
 
@@ -333,7 +372,7 @@ static void ensureMqtt() {
   Serial.printf("[MQTT] conectando %s:%d ...\n", host, MQTT_PORT);
   if (mqtt.connect(clientId.c_str(), topicStatus.c_str(), 0, true, "offline")) {
     mqtt.subscribe(topicGaze.c_str(), 0);
-    String st = "online " + WiFi.SSID() + " " + WiFi.localIP().toString() + (mpuOk ? " PI" : " OL");
+    String st = "online " + WiFi.SSID() + " " + WiFi.localIP().toString() + (mpuOk ? " MF" : " PARADO");
     mqtt.publish(topicStatus.c_str(), st.c_str(), true);
     Serial.printf("[MQTT] conectado %s  assinando %s\n", host, topicGaze.c_str());
     mqttBackoff = 1000;
@@ -366,12 +405,17 @@ void setup() {
 
   servo.setPeriodHertz(50);
   servo.attach(SERVO_PIN, 500, 2400);
-  servo.write((int)SERVO_CENTER);
+  servo.writeMicroseconds(1500);  // rotação contínua: parado
 
-  Wire.begin(SDA_PIN, SCL_PIN);
-  Wire.setClock(400000);
-  byte st = mpu.begin();
-  if (st == 0) {
+  byte st = 255;
+  if (USE_MPU) {
+    Wire.begin(SDA_PIN, SCL_PIN);
+    Wire.setClock(400000);
+    st = mpu.begin();
+  }
+  if (!USE_MPU) {
+    Serial.println("[MPU] desativado (USE_MPU=false) -> servo direto");
+  } else if (st == 0) {
     mpuOk = true;
     autoCalibrate();
   } else {
