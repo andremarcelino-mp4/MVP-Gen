@@ -16,6 +16,7 @@ namespace GenJutsu.ProfileDemo
         public TMP_Text status;
         public SessionApiClient client;
         public CanvasGroup group;
+        public SessionTokenMeter tokenMeter;
         public float pollSeconds = 2f;
 
         /// <summary>Shot rig and tests skip the network and push JSON through <see cref="Ingest"/>.</summary>
@@ -154,6 +155,8 @@ namespace GenJutsu.ProfileDemo
             {
                 case SessionApiClient.Kind.WaitingForAdmin:
                 case SessionApiClient.Kind.Ended:
+                    if (tokenMeter != null && result.tokens.HasCounts)
+                        tokenMeter.NoteApi(result.tokens);
                     if (applied)
                         ClearSession();
                     else
@@ -168,11 +171,15 @@ namespace GenJutsu.ProfileDemo
                         ClearSession();
                     GuestSession.Save(result.sessionCode, result.displayName, null);
                     ShowWelcome(result.displayName);
+                    if (tokenMeter != null && result.tokens.HasCounts)
+                        tokenMeter.NoteApi(result.tokens);
                     return;
                 case SessionApiClient.Kind.Ready:
                     GuestSession.Save(result.sessionCode, result.displayName, result.profile);
                     ShowWelcome(result.displayName);
                     Notify(result.profile, result.sessionKey);
+                    if (tokenMeter != null && result.tokens.HasCounts)
+                        tokenMeter.NoteApi(result.tokens);
                     return;
             }
         }
@@ -193,6 +200,8 @@ namespace GenJutsu.ProfileDemo
             HasSession = true;
             ActiveSessionKey = key;
             ActiveProfile = id;
+            if (tokenMeter != null)
+                tokenMeter.BeginVisit();
             ProfileResolved?.Invoke(id);
         }
 
@@ -203,6 +212,8 @@ namespace GenJutsu.ProfileDemo
             HasSession = false;
             ActiveSessionKey = null;
             ShowWaiting();
+            if (tokenMeter != null)
+                tokenMeter.ShowEndOfVisit();
             SessionEnded?.Invoke();
         }
 

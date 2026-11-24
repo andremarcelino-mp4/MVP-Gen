@@ -470,6 +470,7 @@ namespace GenJutsu.GenCore
         public string StateRaw = "";
         public ChatAction[] Actions = Array.Empty<ChatAction>();
         public bool IsChat;
+        public LlmTokenUsage Usage;
     }
 
     public static class ChatReplyParser
@@ -492,6 +493,7 @@ namespace GenJutsu.GenCore
                 ReplyText = obj.Str("reply_text") ?? obj.Str("replyText") ?? "",
                 IsChat = true
             };
+            LlmTokenUsage.TryRead(obj, out reply.Usage);
             if (obj.TryGet("state", out var state))
                 reply.StateRaw = state is JNull ? "" : state.Raw ?? "";
             if (obj.TryGet("actions", out var actions) && actions is JArr arr)

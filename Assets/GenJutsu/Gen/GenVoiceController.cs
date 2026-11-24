@@ -23,6 +23,7 @@ namespace GenJutsu.Gen
         public string baseUrl = "https://genjutsuai.vercel.app";
         public SessionGate gate;
         public ProfileDemoDirector director;
+        public SessionTokenMeter tokenMeter;
 
         public GenVoicePhase Phase { get; private set; } = GenVoicePhase.Idle;
         public event System.Action<string> HouseJson;
@@ -337,6 +338,8 @@ namespace GenJutsu.Gen
                     tools.Handle(json);
                 }
                 OnGemini(ev);
+                if (ev.HasUsage && tokenMeter != null)
+                    tokenMeter.NoteLocal(ev.Usage, true);
                 return;
             }
 
@@ -349,6 +352,8 @@ namespace GenJutsu.Gen
             connecting = false;
             if (chat == null)
                 return;
+            if (tokenMeter != null && chat.Usage.HasCounts)
+                tokenMeter.NoteLocal(chat.Usage, false);
             reply = string.IsNullOrEmpty(chat.ReplyText) ? chat.Transcript : chat.ReplyText;
             if (!string.IsNullOrEmpty(reply))
                 GenHistoryClient.Note(baseUrl, "gen", reply, "chat");

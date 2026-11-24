@@ -18,6 +18,10 @@ namespace GenJutsu.Gen
 
             var voice = director.GetComponent<GenVoiceController>() ?? director.gameObject.AddComponent<GenVoiceController>();
             voice.Configure(director.sessionGate, director, url);
+            var meter = EnsureTokenMeter(director);
+            voice.tokenMeter = meter;
+            if (director.sessionGate != null)
+                director.sessionGate.tokenMeter = meter;
 
             var applier = director.GetComponent<HouseStateApplier>() ?? director.gameObject.AddComponent<HouseStateApplier>();
             applier.director = director;
@@ -33,6 +37,25 @@ namespace GenJutsu.Gen
 
             voice.HouseJson -= listener.Ingest;
             voice.HouseJson += listener.Ingest;
+        }
+
+        static SessionTokenMeter EnsureTokenMeter(ProfileDemoDirector director)
+        {
+            if (director.sessionGate != null && director.sessionGate.tokenMeter != null)
+                return director.sessionGate.tokenMeter;
+            var existing = Object.FindFirstObjectByType<SessionTokenMeter>(FindObjectsInactive.Include);
+            if (existing != null)
+                return existing;
+            var parent = director.sessionGate != null
+                ? director.sessionGate.transform.parent
+                : (director.transform.parent != null ? director.transform.parent : director.transform);
+            var go = new GameObject("SessionTokenMeter");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(0f, 1.18f, 0.55f);
+            var meter = go.AddComponent<SessionTokenMeter>();
+            meter.EnsureVisual();
+            meter.Hide();
+            return meter;
         }
     }
 }
