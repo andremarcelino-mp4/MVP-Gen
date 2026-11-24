@@ -16,16 +16,23 @@ namespace GenJutsu.Gen
                 ? api.baseUrl
                 : "https://genjutsuai.vercel.app";
 
-            var voice = director.GetComponent<GenVoiceController>() ?? director.gameObject.AddComponent<GenVoiceController>();
+            if (!director.TryGetComponent<GenVoiceController>(out var voice))
+                voice = director.gameObject.AddComponent<GenVoiceController>();
             voice.Configure(director.sessionGate, director, url);
+            var meter = EnsureTokenMeter(director);
+            voice.tokenMeter = meter;
+            if (director.sessionGate != null)
+                director.sessionGate.tokenMeter = meter;
 
-            var applier = director.GetComponent<HouseStateApplier>() ?? director.gameObject.AddComponent<HouseStateApplier>();
+            if (!director.TryGetComponent<HouseStateApplier>(out var applier))
+                applier = director.gameObject.AddComponent<HouseStateApplier>();
             applier.director = director;
             applier.music = director.music != null
                 ? director.music
                 : director.GetComponent<ProceduralMusic>();
 
-            var listener = director.GetComponent<HouseStateListener>() ?? director.gameObject.AddComponent<HouseStateListener>();
+            if (!director.TryGetComponent<HouseStateListener>(out var listener))
+                listener = director.gameObject.AddComponent<HouseStateListener>();
             listener.baseUrl = url;
             listener.gate = director.sessionGate;
             listener.applier = applier;
@@ -33,6 +40,25 @@ namespace GenJutsu.Gen
 
             voice.HouseJson -= listener.Ingest;
             voice.HouseJson += listener.Ingest;
+        }
+
+        static SessionTokenMeter EnsureTokenMeter(ProfileDemoDirector director)
+        {
+            if (director.sessionGate != null && director.sessionGate.tokenMeter != null)
+                return director.sessionGate.tokenMeter;
+            var existing = Object.FindFirstObjectByType<SessionTokenMeter>(FindObjectsInactive.Include);
+            if (existing != null)
+                return existing;
+            var parent = director.sessionGate != null
+                ? director.sessionGate.transform.parent
+                : (director.transform.parent != null ? director.transform.parent : director.transform);
+            var go = new GameObject("SessionTokenMeter");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(0f, 1.18f, 0.55f);
+            var meter = go.AddComponent<SessionTokenMeter>();
+            meter.EnsureVisual();
+            meter.Hide();
+            return meter;
         }
     }
 }

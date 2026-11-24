@@ -316,6 +316,41 @@ namespace GenJutsu.GenCore.Tests
             Assert.AreEqual(GenVoicePhase.Listening, GenVoicePhases.AfterServerInterrupted(GenVoicePhase.Speaking, true));
         }
 
+        [Test]
+        public void GeminiUsageMetadata_IsReadEvenWithoutAudio()
+        {
+            var json = "{\"usageMetadata\":{\"promptTokenCount\":900,\"responseTokenCount\":334,\"totalTokenCount\":1234}}";
+            Assert.IsTrue(GeminiLiveMessages.TryReadServer(json, out var ev));
+            Assert.IsTrue(ev.HasUsage);
+            Assert.AreEqual(900, ev.Usage.In);
+            Assert.AreEqual(334, ev.Usage.Out);
+            Assert.AreEqual(1234, ev.Usage.Total);
+        }
+
+        [Test]
+        public void ChatReply_ReadsUsageFromSiteFallback()
+        {
+            Assert.IsTrue(ChatReplyParser.TryParse(
+                "{\"reply_text\":\"oi\",\"usage\":{\"prompt_tokens\":10,\"completion_tokens\":4,\"total_tokens\":14}}",
+                out var reply));
+            Assert.AreEqual(10, reply.Usage.In);
+            Assert.AreEqual(4, reply.Usage.Out);
+            Assert.AreEqual(14, reply.Usage.Total);
+        }
+
+        [Test]
+        public void TokenUsage_PrefersLocal_AndFormatsPtBr()
+        {
+            var local = new LlmTokenUsage { In = 900, Out = 334, Total = 1234 };
+            var api = new LlmTokenUsage { In = 1, Out = 1, Total = 2 };
+            Assert.AreEqual(1234, LlmTokenUsage.PreferLocal(local, api).Total);
+            Assert.AreEqual(2, LlmTokenUsage.PreferLocal(default, api).Total);
+            StringAssert.Contains("1.234 tokens", local.FormatPtBr());
+            StringAssert.Contains("entrada 900", local.FormatPtBr());
+            StringAssert.Contains("saída 334", local.FormatPtBr());
+            Assert.IsFalse(default(LlmTokenUsage).HasCounts);
+        }
+
         sealed class MockTransport : IVoiceTransport
         {
             public string Last;

@@ -148,5 +148,49 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 "{\"session\":{\"id\":\"VISIT1\",\"profile_id\":\"Zen\",\"session_code\":\"EXU4RN\",\"status\":\"active\"}}");
             Assert.AreEqual("VISIT1", key);
         }
+
+        [Test]
+        public void SessionApi_ReadsTokenFieldsOnEndedAndOnNullWrapper()
+        {
+            var ended = SessionApiClient.Parse(
+                "{\"session\":{\"id\":\"AB3K7Q\",\"status\":\"ended\",\"tokens_in\":900,\"tokens_out\":334,\"tokens_total\":1234,\"calls\":4}}",
+                200, true);
+            Assert.AreEqual(SessionApiClient.Kind.Ended, ended.kind);
+            Assert.AreEqual(900, ended.tokens.In);
+            Assert.AreEqual(334, ended.tokens.Out);
+            Assert.AreEqual(1234, ended.tokens.Total);
+            Assert.AreEqual(4, ended.tokens.Calls);
+
+            var idle = SessionApiClient.Parse(
+                "{\"session\":null,\"tokens_in\":12,\"tokens_out\":8,\"tokens_total\":20}",
+                200, true);
+            Assert.AreEqual(SessionApiClient.Kind.WaitingForAdmin, idle.kind);
+            Assert.AreEqual(20, idle.tokens.Total);
+        }
+
+        [Test]
+        public void TokenMeter_PrefersLocalUsage_AndHidesWhenEmpty()
+        {
+            var go = new UnityEngine.GameObject("TokenMeterTest");
+            var meter = go.AddComponent<SessionTokenMeter>();
+            meter.BeginVisit();
+            meter.NoteApi(new GenJutsu.GenCore.LlmTokenUsage { In = 1, Out = 1, Total = 2 });
+            meter.NoteLocal(new GenJutsu.GenCore.LlmTokenUsage { In = 900, Out = 334, Total = 1234 }, false);
+            var snap = meter.Snapshot();
+            Assert.AreEqual(1234, snap.Total);
+            StringAssert.Contains("1.234", snap.FormatPtBr());
+            StringAssert.Contains("entrada 900", snap.FormatPtBr());
+            meter.ShowEndOfVisit();
+            Assert.IsNotNull(meter.label);
+            Assert.AreEqual(1f, meter.group.alpha, 0.001f);
+
+            var empty = new UnityEngine.GameObject("TokenMeterEmpty");
+            var hide = empty.AddComponent<SessionTokenMeter>();
+            hide.BeginVisit();
+            hide.ShowEndOfVisit();
+            Assert.AreEqual(0f, hide.group != null ? hide.group.alpha : 0f);
+            UnityEngine.Object.DestroyImmediate(go);
+            UnityEngine.Object.DestroyImmediate(empty);
+        }
     }
 }

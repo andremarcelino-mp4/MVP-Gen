@@ -43,6 +43,8 @@ namespace GenJutsu.GenCore
         public string Text = "";
         public readonly List<GeminiAudioChunk> Audio = new List<GeminiAudioChunk>();
         public readonly List<GeminiToolCall> Tools = new List<GeminiToolCall>();
+        public LlmTokenUsage Usage;
+        public bool HasUsage;
     }
 
     /// <summary>
@@ -302,8 +304,14 @@ namespace GenJutsu.GenCore
                 }
             }
 
+            if (LlmTokenUsage.TryRead(obj, out var usage))
+            {
+                ev.Usage = usage;
+                ev.HasUsage = true;
+            }
+
             return ev.SetupComplete || ev.Interrupted || ev.TurnComplete || ev.GoAway || ev.Audio.Count > 0
-                   || ev.Tools.Count > 0 || !string.IsNullOrEmpty(ev.Text);
+                   || ev.Tools.Count > 0 || !string.IsNullOrEmpty(ev.Text) || ev.HasUsage;
         }
 
         public static int RateFromMime(string mime)

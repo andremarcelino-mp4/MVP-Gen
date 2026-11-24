@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GenJutsu.GenCore;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -36,6 +37,7 @@ namespace GenJutsu.ProfileDemo
             public string sessionKey;
             public string error;
             public long httpStatus;
+            public LlmTokenUsage tokens;
         }
 
         /// <summary>Active session selected in /admin. No code typed on the headset.</summary>
@@ -52,6 +54,15 @@ namespace GenJutsu.ProfileDemo
             done?.Invoke(Parse(body, req.responseCode, req.result == UnityWebRequest.Result.Success));
         }
 
+        static Result WithTokens(Result result, string body, string payload)
+        {
+            if (LlmTokenUsage.TryRead(body, out var fromBody))
+                result.tokens = fromBody;
+            if (!string.IsNullOrEmpty(payload) && LlmTokenUsage.TryRead(payload, out var fromInner) && fromInner.HasCounts)
+                result.tokens = fromInner;
+            return result;
+        }
+
         /// <summary>
         /// Pure parse of GET /api/session. httpSuccess is the transport result, not "a visit exists".
         /// genjustuai PR #9: 200 {session:{id, status:'active', ...}} or 200 {session:null}.
@@ -60,7 +71,7 @@ namespace GenJutsu.ProfileDemo
         public static Result Parse(string body, long httpStatus, bool httpSuccess)
         {
             if (httpStatus == 404 || httpStatus == 204)
-                return NoActive(body, httpStatus);
+                return WithTokens(NoActive(body, httpStatus), body, null);
 
             if (!httpSuccess)
             {
@@ -75,11 +86,11 @@ namespace GenJutsu.ProfileDemo
             if (TryGetSessionPayload(body, out var payload, out var sessionNull))
             {
                 if (sessionNull || string.IsNullOrEmpty(payload))
-                    return NoActive(body, httpStatus);
-                return ParseVisit(payload, httpStatus);
+                    return WithTokens(NoActive(body, httpStatus), body, null);
+                return WithTokens(ParseVisit(payload, httpStatus), body, payload);
             }
 
-            return ParseVisit(body ?? "", httpStatus);
+            return WithTokens(ParseVisit(body ?? "", httpStatus), body, body);
         }
 
         static Result NoActive(string body, long httpStatus)
