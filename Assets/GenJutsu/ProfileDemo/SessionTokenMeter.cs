@@ -93,16 +93,19 @@ namespace GenJutsu.ProfileDemo
             if (label != null)
                 return;
 
-            var canvas = gameObject.GetComponent<Canvas>() ?? gameObject.AddComponent<Canvas>();
+            if (!gameObject.TryGetComponent<Canvas>(out var canvas))
+                canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
-            if (GetComponent<CanvasScaler>() == null)
-                gameObject.AddComponent<CanvasScaler>().dynamicPixelsPerUnit = 8f;
+            if (!TryGetComponent<CanvasScaler>(out var scaler))
+                scaler = gameObject.AddComponent<CanvasScaler>();
+            scaler.dynamicPixelsPerUnit = 8f;
             var rect = (RectTransform)transform;
             rect.sizeDelta = new Vector2(780f, 72f);
             if (transform.localScale == Vector3.one)
                 transform.localScale = Vector3.one * 0.0011f;
 
-            group = gameObject.GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            if (!gameObject.TryGetComponent<CanvasGroup>(out group))
+                group = gameObject.AddComponent<CanvasGroup>();
             group.interactable = false;
             group.blocksRaycasts = false;
             group.alpha = 0f;

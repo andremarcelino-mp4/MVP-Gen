@@ -16,20 +16,23 @@ namespace GenJutsu.Gen
                 ? api.baseUrl
                 : "https://genjutsuai.vercel.app";
 
-            var voice = director.GetComponent<GenVoiceController>() ?? director.gameObject.AddComponent<GenVoiceController>();
+            if (!director.TryGetComponent<GenVoiceController>(out var voice))
+                voice = director.gameObject.AddComponent<GenVoiceController>();
             voice.Configure(director.sessionGate, director, url);
             var meter = EnsureTokenMeter(director);
             voice.tokenMeter = meter;
             if (director.sessionGate != null)
                 director.sessionGate.tokenMeter = meter;
 
-            var applier = director.GetComponent<HouseStateApplier>() ?? director.gameObject.AddComponent<HouseStateApplier>();
+            if (!director.TryGetComponent<HouseStateApplier>(out var applier))
+                applier = director.gameObject.AddComponent<HouseStateApplier>();
             applier.director = director;
             applier.music = director.music != null
                 ? director.music
                 : director.GetComponent<ProceduralMusic>();
 
-            var listener = director.GetComponent<HouseStateListener>() ?? director.gameObject.AddComponent<HouseStateListener>();
+            if (!director.TryGetComponent<HouseStateListener>(out var listener))
+                listener = director.gameObject.AddComponent<HouseStateListener>();
             listener.baseUrl = url;
             listener.gate = director.sessionGate;
             listener.applier = applier;

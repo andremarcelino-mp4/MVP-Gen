@@ -73,10 +73,13 @@ namespace GenJutsu.Gen
             }
 
             view.EnsureVisual();
-            mic = GetComponent<QuestMicrophoneCapture>() ?? gameObject.AddComponent<QuestMicrophoneCapture>();
+            if (!TryGetComponent<QuestMicrophoneCapture>(out mic))
+                mic = gameObject.AddComponent<QuestMicrophoneCapture>();
             mic.EnsurePermission();
-            player = GetComponent<StreamingAudioPlayer>() ?? gameObject.AddComponent<StreamingAudioPlayer>();
-            speaker = GetComponent<AndroidCaptionSpeaker>() ?? gameObject.AddComponent<AndroidCaptionSpeaker>();
+            if (!TryGetComponent<StreamingAudioPlayer>(out player))
+                player = gameObject.AddComponent<StreamingAudioPlayer>();
+            if (!TryGetComponent<AndroidCaptionSpeaker>(out speaker))
+                speaker = gameObject.AddComponent<AndroidCaptionSpeaker>();
             gemini = new GeminiLiveTransport();
             fallback = new GroqFallbackTransport();
             tools = new GenToolBridge(baseUrl, gemini, json =>
