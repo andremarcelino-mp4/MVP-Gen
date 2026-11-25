@@ -54,6 +54,7 @@ namespace GenJutsu.ProfileDemo
             GenJutsu.Gen.GenBootstrap.Ensure(director);
             WhiteRoomSetup.Ensure(dojo);
             LocomotionGuard.Apply();
+            HouseSpawn.EnsureFloorTracking();
             QuestGiRig.Ensure(director);
             DojoToys.EnsureAll();
             QuestClarity.Ensure(director);
