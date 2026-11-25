@@ -329,12 +329,31 @@ namespace GenJutsu.Gen
             Show();
         }
 
+        public void SayLocal(string line)
+        {
+            if (string.IsNullOrEmpty(line))
+                return;
+            reply = line;
+            Phase = GenVoicePhase.Idle;
+            if (speaker != null)
+                speaker.Speak(line);
+            Show();
+        }
+
         public void HandleSocketMessage(string json)
         {
             if (string.IsNullOrEmpty(json))
                 return;
             if (GeminiLiveMessages.TryReadServer(json, out var ev))
             {
+                if (TryFurnitureSpeech(ev.InputTranscript))
+                {
+                    Show();
+                    if (ev.HasUsage && tokenMeter != null)
+                        tokenMeter.NoteLocal(ev.Usage, true);
+                    return;
+                }
+
                 if (ev.Tools.Count > 0 && tools != null)
                 {
                     GenVoiceLog.Info("toolCall count=" + ev.Tools.Count + " first=" + ev.Tools[0].Name);
@@ -347,7 +366,22 @@ namespace GenJutsu.Gen
             }
 
             if (ChatReplyParser.TryParse(json, out var chat))
+            {
+                if (chat != null && TryFurnitureSpeech(chat.Transcript))
+                    return;
                 OnChat(chat);
+            }
+        }
+
+        bool TryFurnitureSpeech(string speech)
+        {
+            if (string.IsNullOrWhiteSpace(speech) || director == null)
+                return false;
+            var host = FurnitureMoveHost.Ensure(director);
+            if (host == null || !host.TryHandle(speech, out var line) || string.IsNullOrEmpty(line))
+                return false;
+            SayLocal(line);
+            return true;
         }
 
         void OnChat(ChatReply chat)
