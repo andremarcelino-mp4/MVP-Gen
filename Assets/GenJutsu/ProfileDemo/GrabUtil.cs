@@ -14,6 +14,9 @@ namespace GenJutsu.ProfileDemo
             if (body == null)
                 body = go.AddComponent<Rigidbody>();
             body.mass = mass;
+            body.useGravity = true;
+            body.isKinematic = false;
+            body.constraints = RigidbodyConstraints.None;
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             body.sleepThreshold = 0.02f;
@@ -22,6 +25,8 @@ namespace GenJutsu.ProfileDemo
                 grab = go.AddComponent<XRGrabInteractable>();
             grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
             grab.throwOnDetach = true;
+            grab.forceGravityOnDetach = true;
+            grab.retainTransformParent = false;
             grab.useDynamicAttach = true;
             if (go.GetComponent<XRGeneralGrabTransformer>() == null)
                 go.AddComponent<XRGeneralGrabTransformer>();
@@ -92,12 +97,12 @@ namespace GenJutsu.ProfileDemo
                 body = GetComponent<Rigidbody>();
             if (body == null)
                 return;
-            body.isKinematic = true;
-            body.useGravity = false;
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
+            body.isKinematic = false;
+            body.useGravity = true;
+            body.constraints = RigidbodyConstraints.None;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-            body.Sleep();
         }
 
         void Wake()
@@ -106,6 +111,7 @@ namespace GenJutsu.ProfileDemo
                 return;
             body.isKinematic = false;
             body.useGravity = false;
+            body.constraints = RigidbodyConstraints.None;
             body.collisionDetectionMode = CollisionDetectionMode.Continuous;
             body.WakeUp();
         }
@@ -116,7 +122,9 @@ namespace GenJutsu.ProfileDemo
                 return;
             body.isKinematic = false;
             body.useGravity = true;
+            body.constraints = RigidbodyConstraints.None;
             body.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            body.WakeUp();
         }
     }
 

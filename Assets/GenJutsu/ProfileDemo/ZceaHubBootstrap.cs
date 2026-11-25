@@ -57,6 +57,7 @@ namespace GenJutsu.ProfileDemo
             HouseSpawn.EnsureFloorTracking();
             QuestGiRig.Ensure(director);
             DojoToys.EnsureAll();
+            HouseGrabPhysics.Apply();
             QuestClarity.Ensure(director);
             var voice = director.GetComponent<GenJutsu.Gen.GenVoiceController>();
             if (director.sessionGate != null && voice != null)

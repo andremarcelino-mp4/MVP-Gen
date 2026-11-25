@@ -36,5 +36,56 @@ namespace GenJutsu.ProfileDemo.EditorTools
                 Object.DestroyImmediate(origin);
             }
         }
+
+        [Test]
+        public void HouseGrabPhysics_GivesGravityToProps_AndSolidFloorColliders()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Deck";
+            Object.DestroyImmediate(floor.GetComponent<Collider>());
+            var table = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            table.name = "Table";
+            Object.DestroyImmediate(table.GetComponent<Collider>());
+            var prop = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            prop.name = "Ball";
+            var grab = prop.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+            grab.retainTransformParent = true;
+            grab.throwOnDetach = false;
+            grab.forceGravityOnDetach = false;
+            var body = prop.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            body.useGravity = false;
+            var token = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            token.name = "Token";
+            token.AddComponent<ProfileToken>();
+            var tokenGrab = token.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+            var tokenBody = token.AddComponent<Rigidbody>();
+            tokenBody.isKinematic = true;
+            tokenBody.useGravity = false;
+
+            try
+            {
+                HouseGrabPhysics.Apply();
+                Assert.IsFalse(body.isKinematic);
+                Assert.IsTrue(body.useGravity);
+                Assert.IsTrue(grab.throwOnDetach);
+                Assert.IsTrue(grab.forceGravityOnDetach);
+                Assert.IsFalse(grab.retainTransformParent);
+                Assert.IsTrue(HouseGrabPhysics.HasSolidCollider(floor));
+                Assert.IsTrue(HouseGrabPhysics.HasSolidCollider(table));
+                Assert.IsTrue(tokenBody.isKinematic);
+                Assert.IsFalse(tokenBody.useGravity);
+            }
+            finally
+            {
+                Object.DestroyImmediate(floor);
+                Object.DestroyImmediate(table);
+                Object.DestroyImmediate(prop);
+                Object.DestroyImmediate(token);
+                var hub = GameObject.Find("HubFloor");
+                if (hub != null)
+                    Object.DestroyImmediate(hub);
+            }
+        }
     }
 }

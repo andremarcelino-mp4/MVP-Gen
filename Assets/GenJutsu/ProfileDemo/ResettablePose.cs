@@ -22,7 +22,6 @@ namespace GenJutsu.ProfileDemo
         Vector3 homePosition;
         Quaternion homeRotation;
         bool captured;
-        bool homeKinematic;
         float awayTimer;
         float floorTimer;
         Coroutine flight;
@@ -63,7 +62,6 @@ namespace GenJutsu.ProfileDemo
             homeParent = transform.parent;
             homePosition = transform.position;
             homeRotation = transform.rotation;
-            homeKinematic = body != null && body.isKinematic;
             captured = true;
         }
 
@@ -122,7 +120,9 @@ namespace GenJutsu.ProfileDemo
                     body.angularVelocity = Vector3.zero;
                 }
 
-                body.isKinematic = homeKinematic;
+                body.isKinematic = false;
+                body.useGravity = true;
+                body.constraints = RigidbodyConstraints.None;
                 body.position = homePosition;
                 body.rotation = homeRotation;
             }

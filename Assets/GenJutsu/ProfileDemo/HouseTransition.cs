@@ -53,6 +53,7 @@ namespace GenJutsu.ProfileDemo
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(true);
             GrabRest.SettleUnder(transform);
+            HouseGrabPhysics.Apply();
         }
 
         public IEnumerator Dissolve(Vector3 origin)
