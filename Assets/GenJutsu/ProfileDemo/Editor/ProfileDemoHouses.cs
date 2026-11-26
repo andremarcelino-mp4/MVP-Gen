@@ -68,14 +68,14 @@ namespace GenJutsu.ProfileDemo.EditorTools
             var lamp = Glow("DojoLantern_" + h.info.Key, lantern, lanternEmission);
 
             var platform = Piece(h, "Platform", Vector3.zero);
-            Deco(PrimitiveType.Cube, "Deck", platform, new Vector3(0f, -0.05f, 0f), new Vector3(Deck, 0.14f, Deck), woodDark);
-            Deco(PrimitiveType.Cube, "Lip", platform, new Vector3(0f, 0.03f, -3.05f), new Vector3(Deck, 0.04f, 0.18f), wood);
-            Deco(PrimitiveType.Cube, "TatamiField", platform, new Vector3(0f, 0.028f, 0f), new Vector3(Interior, 0.02f, Interior), border);
+            Prim(PrimitiveType.Cube, "Deck", platform, new Vector3(0f, -0.05f, 0f), new Vector3(Deck, 0.14f, Deck), woodDark);
+            Prim(PrimitiveType.Cube, "Lip", platform, new Vector3(0f, 0.03f, -3.05f), new Vector3(Deck, 0.04f, 0.18f), wood);
+            Prim(PrimitiveType.Cube, "TatamiField", platform, new Vector3(0f, 0.028f, 0f), new Vector3(Interior, 0.02f, Interior), border);
             for (var x = -1; x <= 1; x++)
             {
                 for (var z = -1; z <= 1; z++)
                 {
-                    Deco(PrimitiveType.Cube, "Tatami", platform,
+                    Prim(PrimitiveType.Cube, "Tatami", platform,
                         new Vector3(x * MatPitch, 0.042f, z * MatPitch),
                         new Vector3(MatSize, 0.016f, MatSize), tatami);
                 }

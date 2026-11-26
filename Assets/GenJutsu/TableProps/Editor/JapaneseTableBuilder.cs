@@ -370,6 +370,8 @@ namespace GenJutsu.TableProps.EditorTools
                 grab = go.AddComponent<XRGrabInteractable>();
             grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
             grab.throwOnDetach = true;
+            grab.forceGravityOnDetach = true;
+            grab.retainTransformParent = false;
             grab.useDynamicAttach = true;
 
             if (go.GetComponent<XRGeneralGrabTransformer>() == null)
@@ -401,6 +403,8 @@ namespace GenJutsu.TableProps.EditorTools
                 grab = go.AddComponent<XRGrabInteractable>();
             grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
             grab.throwOnDetach = true;
+            grab.forceGravityOnDetach = true;
+            grab.retainTransformParent = false;
             grab.useDynamicAttach = false;
             grab.attachTransform = attachGo.transform;
             grab.matchAttachPosition = true;

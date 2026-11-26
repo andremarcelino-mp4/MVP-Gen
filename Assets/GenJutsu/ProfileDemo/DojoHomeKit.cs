@@ -293,12 +293,7 @@ namespace GenJutsu.ProfileDemo
             go.transform.localScale = scale;
             var col = go.GetComponent<Collider>();
             if (col != null)
-            {
-                if (Application.isPlaying)
-                    Object.Destroy(col);
-                else
-                    Object.DestroyImmediate(col);
-            }
+                col.isTrigger = false;
             var r = go.GetComponent<Renderer>();
             r.sharedMaterial = mat;
             r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
