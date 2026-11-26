@@ -14,6 +14,32 @@ namespace GenJutsu.ProfileDemo.EditorTools
     /// </summary>
     public static class MaqueteApkBuild
     {
+        public static void BuildCurrentVersion()
+        {
+            Debug.Log("[MaqueteApkBuild] version " + PlayerSettings.bundleVersion + " code " +
+                      PlayerSettings.Android.bundleVersionCode);
+            Directory.CreateDirectory("Builds/Android");
+            var scenes = new System.Collections.Generic.List<string>();
+            foreach (var s in EditorBuildSettings.scenes)
+                if (s.enabled)
+                    scenes.Add(s.path);
+
+            const string apk = "Builds/Android/MVP Gen.apk";
+            var report = BuildPipeline.BuildPlayer(scenes.ToArray(), apk, BuildTarget.Android, BuildOptions.None);
+            var sum = report.summary;
+            Debug.Log("[MaqueteApkBuild] result=" + sum.result + " size=" + sum.totalSize + " errors=" + sum.totalErrors);
+            if (sum.result != BuildResult.Succeeded)
+            {
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
+                return;
+            }
+
+            File.Copy(apk, "Builds/Android/MVP Gen v" + PlayerSettings.bundleVersion + ".apk", true);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(0);
+        }
+
         [MenuItem("GenJutsu/Build APK (bump version)")]
         public static void Build()
         {

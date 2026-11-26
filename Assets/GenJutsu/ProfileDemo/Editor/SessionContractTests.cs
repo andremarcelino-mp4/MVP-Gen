@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using GenJutsu.ProfileDemo;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace GenJutsu.ProfileDemo.EditorTools
 {
@@ -113,14 +114,18 @@ namespace GenJutsu.ProfileDemo.EditorTools
         }
 
         [Test]
-        public void Grabbables_RestKinematicUntilGrabbed()
+        public void Grabbables_UseGravityAndAreNotKinematic()
         {
             var go = UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
             var grab = GrabUtil.Make(go, 0.2f);
             var body = go.GetComponent<UnityEngine.Rigidbody>();
             Assert.IsNotNull(grab);
-            Assert.IsTrue(body.isKinematic);
-            Assert.IsFalse(body.useGravity);
+            Assert.AreEqual(XRBaseInteractable.MovementType.VelocityTracking, grab.movementType);
+            Assert.IsTrue(grab.throwOnDetach);
+            Assert.IsTrue(grab.forceGravityOnDetach);
+            Assert.IsFalse(grab.retainTransformParent);
+            Assert.IsFalse(body.isKinematic);
+            Assert.IsTrue(body.useGravity);
             UnityEngine.Object.DestroyImmediate(go);
         }
 

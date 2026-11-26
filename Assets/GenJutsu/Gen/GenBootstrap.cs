@@ -33,6 +33,9 @@ namespace GenJutsu.Gen
 
             voice.HouseJson -= listener.Ingest;
             voice.HouseJson += listener.Ingest;
+
+            var host = FurnitureMoveHost.Ensure(director);
+            FurnitureMovePanel.Ensure(host, voice.transform, voice.SayLocal);
         }
     }
 }

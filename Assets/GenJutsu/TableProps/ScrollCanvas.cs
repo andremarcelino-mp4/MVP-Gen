@@ -395,62 +395,22 @@ namespace GenJutsu.TableProps
             }
 
             System.Array.Copy(paperPixels, pixels, paperPixels.Length);
-            PaintDragon(res);
         }
 
-        void PaintDragon(int res)
+        /// <summary>Dark ink stamps (brush). Aged paper grain stays above this threshold.</summary>
+        public int CountDarkInkPixels(int rgbSumMax = 140)
         {
-            var ink = new Color32(42, 38, 32, 255);
-            for (var s = 0; s < 420; s++)
+            if (pixels == null)
+                return 0;
+            var n = 0;
+            for (var i = 0; i < pixels.Length; i++)
             {
-                var t = s / 419f;
-                var x = 0.18f + t * 0.62f + 0.07f * Mathf.Sin(t * 14f);
-                var y = 0.32f + 0.2f * Mathf.Sin(t * 7.2f) + t * 0.08f;
-                var rad = (0.055f - t * 0.028f) * res;
-                Stamp(res, x * (res - 1), y * (res - 1), rad, ink, 0.92f);
+                var p = pixels[i];
+                if (p.r + p.g + p.b <= rgbSumMax)
+                    n++;
             }
 
-            Stamp(res, 0.82f * (res - 1), 0.58f * (res - 1), res * 0.07f, ink, 1f);
-            Stamp(res, 0.88f * (res - 1), 0.64f * (res - 1), res * 0.028f, ink, 1f);
-            Stamp(res, 0.9f * (res - 1), 0.7f * (res - 1), res * 0.018f, ink, 1f);
-            for (var w = 0; w < 40; w++)
-            {
-                var t = w / 39f;
-                Stamp(res, (0.86f + t * 0.1f) * (res - 1), (0.56f + t * 0.04f) * (res - 1), res * 0.008f, ink, 0.8f);
-                Stamp(res, (0.86f + t * 0.08f) * (res - 1), (0.52f - t * 0.05f) * (res - 1), res * 0.008f, ink, 0.8f);
-            }
-
-            for (var c = 0; c < 3; c++)
-            {
-                var cx = 0.28f + c * 0.16f;
-                var cy = 0.78f - (c % 2) * 0.08f;
-                Stamp(res, cx * (res - 1), cy * (res - 1), res * 0.045f, ink, 0.35f);
-            }
-        }
-
-        void Stamp(int res, float fx, float fy, float radius, Color32 ink, float alpha)
-        {
-            var x0 = Mathf.Max(0, Mathf.FloorToInt(fx - radius));
-            var x1 = Mathf.Min(res - 1, Mathf.CeilToInt(fx + radius));
-            var y0 = Mathf.Max(0, Mathf.FloorToInt(fy - radius));
-            var y1 = Mathf.Min(res - 1, Mathf.CeilToInt(fy + radius));
-            var r2 = radius * radius;
-            for (var y = y0; y <= y1; y++)
-            {
-                var dy = y - fy;
-                for (var x = x0; x <= x1; x++)
-                {
-                    var dx = x - fx;
-                    var d = dx * dx + dy * dy;
-                    if (d > r2)
-                        continue;
-                    var w = (1f - d / r2) * alpha;
-                    var i = y * res + x;
-                    var p = paperPixels[i];
-                    paperPixels[i] = Color32.Lerp(p, ink, w);
-                    pixels[i] = paperPixels[i];
-                }
-            }
+            return n;
         }
 
         Texture2D BuildNormalMap()

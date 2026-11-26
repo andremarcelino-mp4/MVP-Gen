@@ -14,6 +14,10 @@ namespace GenJutsu.ProfileDemo
             if (body == null)
                 body = go.AddComponent<Rigidbody>();
             body.mass = mass;
+            var light = mass < 4f;
+            body.useGravity = light;
+            body.isKinematic = !light;
+            body.constraints = RigidbodyConstraints.None;
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             body.sleepThreshold = 0.02f;
@@ -21,7 +25,9 @@ namespace GenJutsu.ProfileDemo
             if (grab == null)
                 grab = go.AddComponent<XRGrabInteractable>();
             grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
-            grab.throwOnDetach = mass < 4f;
+            grab.throwOnDetach = light;
+            grab.forceGravityOnDetach = light;
+            grab.retainTransformParent = false;
             grab.useDynamicAttach = true;
             if (go.GetComponent<XRGeneralGrabTransformer>() == null)
                 go.AddComponent<XRGeneralGrabTransformer>();
