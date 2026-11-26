@@ -151,7 +151,12 @@ namespace GenJutsu.ProfileDemo
 
             var printGrab = print.AddComponent<XRGrabInteractable>();
             printGrab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
+            printGrab.throwOnDetach = true;
+            printGrab.forceGravityOnDetach = true;
+            printGrab.retainTransformParent = false;
             printGrab.useDynamicAttach = true;
+            body.useGravity = true;
+            body.isKinematic = false;
 
             prints.Enqueue((print, material, texture));
             while (prints.Count > maxPrints)

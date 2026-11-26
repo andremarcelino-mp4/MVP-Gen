@@ -41,6 +41,7 @@ namespace GenJutsu.GenCore
         public bool TurnComplete;
         public bool GoAway;
         public string Text = "";
+        public string InputTranscript = "";
         public readonly List<GeminiAudioChunk> Audio = new List<GeminiAudioChunk>();
         public readonly List<GeminiToolCall> Tools = new List<GeminiToolCall>();
     }
@@ -246,8 +247,11 @@ namespace GenJutsu.GenCore
                 if (content.TryGet("turnComplete", out var done) && done is JBool db && db.Value)
                     ev.TurnComplete = true;
                 var text = new StringBuilder();
+                var input = new StringBuilder();
                 AppendText(content.Obj("outputTranscription"), text);
                 AppendText(content.Obj("inputTranscription"), text);
+                AppendText(content.Obj("inputTranscription"), input);
+                ev.InputTranscript = input.ToString();
                 var turn = content.Obj("modelTurn");
                 if (turn != null && turn.TryGet("parts", out var parts) && parts is JArr arr)
                 {

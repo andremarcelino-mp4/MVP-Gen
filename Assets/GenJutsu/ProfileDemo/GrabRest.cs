@@ -46,10 +46,19 @@ namespace GenJutsu.ProfileDemo
                 body = GetComponent<Rigidbody>();
             if (body == null)
                 return;
-            body.isKinematic = true;
-            body.useGravity = false;
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
+            body.constraints = RigidbodyConstraints.None;
+            if (grab != null && HouseGrabPhysics.IsPhysicalProp(grab))
+            {
+                body.isKinematic = false;
+                body.useGravity = true;
+                body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+                return;
+            }
+
+            body.isKinematic = true;
+            body.useGravity = false;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             body.Sleep();
         }
@@ -60,6 +69,7 @@ namespace GenJutsu.ProfileDemo
                 return;
             body.isKinematic = false;
             body.useGravity = false;
+            body.constraints = RigidbodyConstraints.None;
             body.collisionDetectionMode = CollisionDetectionMode.Continuous;
             body.WakeUp();
         }
@@ -70,7 +80,9 @@ namespace GenJutsu.ProfileDemo
                 return;
             body.isKinematic = false;
             body.useGravity = true;
+            body.constraints = RigidbodyConstraints.None;
             body.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            body.WakeUp();
         }
     }
 }

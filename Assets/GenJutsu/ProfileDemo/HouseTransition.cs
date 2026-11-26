@@ -75,6 +75,7 @@ namespace GenJutsu.ProfileDemo
             if (interactivesRoot != null)
                 interactivesRoot.SetActive(true);
             GrabRest.SettleUnder(transform);
+            HouseGrabPhysics.Apply();
         }
 
         void RestoreProps()

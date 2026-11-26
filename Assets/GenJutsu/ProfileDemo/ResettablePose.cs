@@ -126,7 +126,14 @@ namespace GenJutsu.ProfileDemo
                     body.angularVelocity = Vector3.zero;
                 }
 
-                body.isKinematic = homeKinematic;
+                if (HouseGrabPhysics.IsPhysicalProp(grab))
+                {
+                    body.isKinematic = false;
+                    body.useGravity = true;
+                    body.constraints = RigidbodyConstraints.None;
+                }
+                else
+                    body.isKinematic = homeKinematic;
                 body.position = transform.position;
                 body.rotation = transform.rotation;
             }

@@ -11,6 +11,7 @@ namespace GenJutsu.ProfileDemo
         {
             if (house == null)
                 return;
+            EnsureFloorTracking();
             var origin = FindOrigin();
             var head = Camera.main != null ? Camera.main.transform : origin;
             if (origin == null || head == null)
@@ -32,6 +33,44 @@ namespace GenJutsu.ProfileDemo
             origin.position += new Vector3(feet.x - now.x, 0f, feet.z - now.z);
             var p = origin.position;
             origin.position = new Vector3(p.x, feet.y, p.z);
+            origin.localScale = Vector3.one;
+        }
+
+        /// <summary>
+        /// Quest standing height: Floor tracking, Camera Offset Y = 0, rig scale 1.
+        /// Device mode plus Camera Y Offset 1.65 stacked on real HMD height (~1.6 m) put the eyes ~3 m up.
+        /// </summary>
+        public static void EnsureFloorTracking()
+        {
+            var xr = Object.FindFirstObjectByType<XROrigin>();
+            if (xr != null)
+            {
+                xr.RequestedTrackingOriginMode = XROrigin.TrackingOriginMode.Floor;
+                ZeroFloorOffset(xr.CameraFloorOffsetObject != null ? xr.CameraFloorOffsetObject.transform : null);
+                var origin = xr.Origin != null ? xr.Origin.transform : xr.transform;
+                origin.localScale = Vector3.one;
+                return;
+            }
+
+            ZeroFloorOffset(FindNamed("Camera Offset"));
+            var fallback = FindOrigin();
+            if (fallback != null)
+                fallback.localScale = Vector3.one;
+        }
+
+        static void ZeroFloorOffset(Transform offset)
+        {
+            if (offset == null)
+                return;
+            var p = offset.localPosition;
+            offset.localPosition = new Vector3(p.x, 0f, p.z);
+            offset.localScale = Vector3.one;
+        }
+
+        static Transform FindNamed(string name)
+        {
+            var go = GameObject.Find(name);
+            return go != null ? go.transform : null;
         }
 
         public static Transform FindOrigin()
