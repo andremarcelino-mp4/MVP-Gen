@@ -52,14 +52,18 @@ namespace GenJutsu.ProfileDemo.EditorTools
             grab.retainTransformParent = true;
             grab.throwOnDetach = false;
             grab.forceGravityOnDetach = false;
-            var body = prop.AddComponent<Rigidbody>();
+            var body = prop.GetComponent<Rigidbody>();
+            if (body == null)
+                body = prop.AddComponent<Rigidbody>();
             body.isKinematic = true;
             body.useGravity = false;
             var token = GameObject.CreatePrimitive(PrimitiveType.Cube);
             token.name = "Token";
             token.AddComponent<ProfileToken>();
-            var tokenGrab = token.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
-            var tokenBody = token.AddComponent<Rigidbody>();
+            token.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+            var tokenBody = token.GetComponent<Rigidbody>();
+            if (tokenBody == null)
+                tokenBody = token.AddComponent<Rigidbody>();
             tokenBody.isKinematic = true;
             tokenBody.useGravity = false;
 
